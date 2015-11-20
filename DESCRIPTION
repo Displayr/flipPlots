@@ -1,10 +1,11 @@
 Package: flipPlots
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Creates Plots
 Version: 0.1
 Date: 2015-11-07
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Author: Numbers International Pty Ltd
+Maintainer: Tim Bock <tim.bock@numbers.net.au>
+Description: Wrappers for various plot types
 License: What license is it under?
 LazyData: TRUE
+imports: rgdal, ggplot2
