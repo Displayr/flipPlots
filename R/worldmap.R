@@ -13,6 +13,8 @@ getCoordinates <- function()
 #' Uses \code{\link{Zelig:zelimethods}}
 #' which depend on the \code{\link{class}} of the first argument.
 #'
+#' @example
+#' GeographicRegionNames("continents")
 #' @export
 GeographicRegionNames <- function(type)
 {
@@ -46,6 +48,7 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
                     legend.title = "",
                     only.show.regions.in.table = FALSE,
                     remove.antarctica = TRUE,
+                    remove.seven.sease = TRUE,
                     add.detail = FALSE){
      # Correcting comment name errors.
     if (type == "name")
@@ -66,7 +69,7 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
         dimnames(table)[[2]] = table.name
     } else
     {
-        if (remove.last.column)
+        if (remove.last.column & ncol(table) > 1)
             table = table[, -ncol(table), drop = FALSE]
      }
      if (remove.last.row)
@@ -77,6 +80,8 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
     coords[[type]] = as.character(coords[[type]])
     if (remove.antarctica)
          coords = coords[!coords$continent %in% "Antarctica",]
+    if (remove.seven.sease)
+         coords = coords[!coords$continent %in% "Seven seas (open ocean)",]
 
 #     if (type = "name")
 #     {
@@ -91,7 +96,6 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
     coords.names = coords[[type]]
     # Checking to see if input data is OK.
     incorrect.names = table.names %in% coords.names
-    print(incorrect.names)
     if (sum(incorrect.names) == 0)
         stop(paste("Incorrect country names:", paste(table.names[!incorrect.names],collapse=",")))
     # Splicing data onto coordinate data.frame.
@@ -126,7 +130,7 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
                     opacity = opacity, na.label = "0")
     if (n.categories == 1) {
         map = addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
-                          fillOpacity = opacity, color = ~pal(x1))
+                          fillOpacity = opacity, color = ~pal(table1))
     } else {
         for (i in 1:n.categories) {
             cl = as.formula(paste("~pal(table", i, ")", sep = ""))
@@ -137,13 +141,13 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
         map = addLayersControl(map, baseGroups = categories,
             options = layersControlOptions(collapsed = FALSE))
     }
-
 map}
 
 
-z = 1:7
-names(z) = c("Asia", "Africa", "Europe", "South America", "Oceania", "North America")
-WorldMap(as.matrix(z), type = "continent")
-
-
-#world.map <- worldMap(QInputs(formTableOrR))
+# z = matrix(1:6, 6,
+#            dimnames =list(
+#                c("Asia", "Africa", "Europe", "South America", "Oceania", "North America"), "A"
+#            ))
+#
+# print(z)
+# WorldMap(z, type = "continent", remove.last.row = FALSE, remove.last.column = FALSE)
