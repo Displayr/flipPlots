@@ -1,11 +1,3 @@
-library(rgdal)
-
-
-getCoordinates <- function()
-{
-    return(rgdal::readOGR("https://raw.github.com/datasets/geo-boundaries-world-110m/master/countries.geojson", "OGRGeoJSON"))
-}
-
 #' \code{GeographicRegionNames} Returns the list of unique geographic names that can be used when creating a WorldMap.
 #'
 #' @param type... The name of the geographic region type. E.g.,\code{name}, \code{continent},
@@ -16,17 +8,24 @@ getCoordinates <- function()
 #' @export
 GeographicRegionNames <- function(type)
 {
-    unique(getCoordinates()[[type]])
+    data(coordinates, envir=environment())
+    unique(coordinates[[type]])
 }
-# Example: GeographicRegionNames("continent")
 
 #' \code{GeographicRegionTypes} The geographic region types that are available for refering in a map. E.g., \code{name}, \code{continent},
 #'
 #' @export
 GeographicRegionTypes <- function()
 {
-    names(GeographicRegionNames())
+    data(coordinates, envir=environment())
+    names(coordinates)
 }
+# # Reading the coordinates.
+# getCoordinates <- function()
+# {
+#     return(rgdal::readOGR("https://raw.github.com/datasets/geo-boundaries-world-110m/master/countries.geojson", "OGRGeoJSON"))
+# }
+
 
 #' \code{Linear Regression} Linear Regression.
 #'
@@ -72,8 +71,9 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
      if (remove.last.row)
         table = table[-nrow(table), , drop = FALSE]
     table.names = rownames(table)
-    # Getting geographic boundarie
-    coords <- getCoordinates()
+    # Getting geographic boundaries
+    data(coordinates, envir=environment())
+    coords <- coordinates
     coords[[type]] = as.character(coords[[type]])
     if (remove.antarctica)
          coords = coords[!coords$continent %in% "Antarctica",]
@@ -141,9 +141,9 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
 map}
 
 
-z = 1:7
-names(z) = c("Asia", "Africa", "Europe", "South America", "Oceania", "North America")
-WorldMap(as.matrix(z), type = "continent")
+# z = 1:7
+# names(z) = c("Asia", "Africa", "Europe", "South America", "Oceania", "North America")
+# WorldMap(as.matrix(z), type = "continent")
 
 
 #world.map <- worldMap(QInputs(formTableOrR))
