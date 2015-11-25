@@ -2,23 +2,86 @@
 % Please edit documentation in R/worldmap.R
 \name{WorldMap}
 \alias{WorldMap}
-\title{\code{Linear Regression} Linear Regression.}
+\title{\code{WorldMap} World Map}
 \usage{
-WorldMap(table, treat.zeros.differently = TRUE, remove.last.column = TRUE,
-  remove.last.row = TRUE, type = "name", colors = c("#CCF3FF", "#23B0DB"),
-  legend.title = "", only.show.regions.in.table = FALSE,
-  remove.antarctica = TRUE, add.detail = FALSE)
+WorldMap(table, type = "name", treat.NA.as.0 = FALSE,
+  only.show.regions.in.table = FALSE, add.detail = FALSE,
+  remove.last.column = FALSE, remove.last.row = FALSE,
+  colors = c("#CCF3FF", "#23B0DB"), color.NA = "#808080",
+  legend.title = "", remove.antarctica = TRUE)
 }
 \arguments{
-\item{object}{An object for which a summary is desired..}
+\item{table}{An matrix, two-dimensional array, table or vector, containing the data
+to be plotted. The \code{\link{rownames}} (or  \code{\link{rownames}} in the case
+of a vector) should contain the names of the geographic entities to be plotted (see
+\code{type}).}
+
+\item{type}{The type of geographic information to be plotted. By default, this is
+\code{name}, which refers to the name of the country. To see a list of the available
+types, use \code{GeographicRegionTypes()}. To see a complete list of names within a type,
+use \code{GeographicRegionRowNames("type")}.}
+
+\item{treat.NA.as.0}{Plots any \code{NA} values in the data and any geographical entities
+without data with as having a 0 value.}
+
+\item{only.show.regions.in.table}{When TRUE, only geographic entities that are included in
+the table are shown on the table.}
+
+\item{add.detail}{Display names of geographical entities on the map. When TRUE, it also changes
+the appearance of the map, making the map wrap around. The only way to prevent this is to
+resize the map.}
+
+\item{remove.last.column}{Deletes the last column of the table priori to creating the map
+, unless the table is a vector or only has one column.}
+
+\item{colors}{A vector of two colors, which are used as endpoints in interpolating colors.}
+
+\item{color.NA}{The color used to represent missing values. Not used when \link{treat.NA.as.0},
+is set to missing.}
+
+\item{legend.title}{The text to appear above the legend.}
+
+\item{remove.antarctica}{Automatically removes Antarctica from the ma. Defaults to TRUE.}
+
+\item{remove.seven.seas}{Automatically removes the seven seas from the map. Defaults to TRUE.}
 
 \item{...}{Additional arguments affecting the goodness-of-fit displayed.}
 }
 \description{
-reports the goodness-of-fit of an object.
+Creates a map with a table as an input, using shading to represent the values of
+countries on the map.
 }
 \details{
-Uses \code{\link{Zelig:zelimethods}}
-which depend on the \code{\link{class}} of the first argument.
+This function is based on the \code{\link{leaflet}} package. See
+\url{https://rstudio.github.io/leaflet/} for an overview of this package and
+how to use it without using \code{\link{WorldMap}}.
+}
+\examples{
+WorldMap(valid.continent.names, type = "continent")
+WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
+WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE, remove.last.column = TRUE)
+WorldMap(valid.continent.names[,1], type = "continent", treat.NA.as.0 = TRUE)
+WorldMap(valid.continent.names, type = "continent", remove.last.column = TRUE)
+WorldMap(valid.continent.names, type = "continent", remove.last.row = TRUE)
+WorldMap(valid.continent.names, type = "continent", colors = c("#AAAAAA", "#FFFFFF"))
+WorldMap(valid.continent.names, type = "continent",
+         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = TRUE, color.NA = "#23B0DB")
+WorldMap(valid.continent.names, type = "continent",
+         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB")
+WorldMap(valid.continent.names, type = "continent",
+         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
+         legend.title = "\% agree")
+WorldMap(valid.continent.names, type = "continent",
+         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
+         legend.title = "\% agree", only.show.regions.in.table = TRUE)
+WorldMap(valid.continent.names, type = "continent",
+         treat.NA.as.0 = TRUE,
+         legend.title = "\% agree", only.show.regions.in.table = TRUE)
+valid.continent.names[1] <- NA
+WorldMap(valid.continent.names, type = "continent",
+         legend.title = "\% agree", only.show.regions.in.table = TRUE)
+WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
+WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
+WorldMap(valid.continent.names, type = "continent", add.detail = TRUE, remove.antarctica = FALSE)
 }
 

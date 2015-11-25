@@ -2,11 +2,18 @@
 % Please edit documentation in R/worldmap.R
 \name{GeographicRegionTypes}
 \alias{GeographicRegionTypes}
-\title{\code{GeographicRegionTypes} The geographic region types that are available for refering in a map. E.g., \code{name}, \code{continent},}
+\title{\code{GeographicRegionTypes} Types of Geographic Regions
+The geographic region types that are available for refering
+in a map. E.g., \code{name}, \code{continent},}
 \usage{
 GeographicRegionTypes()
 }
 \description{
-\code{GeographicRegionTypes} The geographic region types that are available for refering in a map. E.g., \code{name}, \code{continent},
+\code{GeographicRegionTypes} Types of Geographic Regions
+The geographic region types that are available for refering
+in a map. E.g., \code{name}, \code{continent},
+}
+\examples{
+GeographicRegionTypes()
 }
 

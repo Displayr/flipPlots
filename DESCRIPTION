@@ -8,4 +8,5 @@ Maintainer: Tim Bock <tim.bock@numbers.net.au>
 Description: Wrappers for various plot types
 License: What license is it under?
 LazyData: TRUE
-imports: rgdal, ggplot2
+imports: leaflet, rgdal, ggplot2
+Suggests: testthat

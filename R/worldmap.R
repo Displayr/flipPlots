@@ -1,26 +1,28 @@
-#' \code{GeographicRegionNames} Returns the list of unique geographic names that can be used when creating a WorldMap.
+#' \code{GeographicRegionRowNames} Names of geographic regions.
+#' Returns the list of unique geographic names that
+#' can be used when creating a WorldMap.
+#' @param type... The name of the geographic region type. See \code{\link{GeographicRegionTypes}}
+#' @examples
+#' GeographicRegionRowNames("name")
+#' GeographicRegionRowNames("continent")
 #'
-#' @param type... The name of the geographic region type. E.g.,\code{name}, \code{continent},
-#' @details
-#' Uses \code{\link{Zelig:zelimethods}}
-#' which depend on the \code{\link{class}} of the first argument.
-#'
-#' @example
-#' GeographicRegionNames("continents")
 #' @export
-GeographicRegionNames <- function(type)
+GeographicRegionRowNames <- function(type)
 {
-    data(coordinates, envir=environment())
-    unique(coordinates[[type]])
+    data("country.coordinates", envir=environment())
+    unique(country.coordinates[[type]])
 }
 
-#' \code{GeographicRegionTypes} The geographic region types that are available for refering in a map. E.g., \code{name}, \code{continent},
-#'
+#' \code{GeographicRegionTypes} Types of Geographic Regions
+#' The geographic region types that are available for refering
+#' in a map. E.g., \code{name}, \code{continent},
+#' @examples
+#' GeographicRegionTypes()
 #' @export
 GeographicRegionTypes <- function()
 {
-    data(coordinates, envir=environment())
-    names(coordinates)
+    data("country.coordinates", envir=environment())
+    names(country.coordinates)
 }
 # # Reading the coordinates.
 # getCoordinates <- function()
@@ -28,28 +30,79 @@ GeographicRegionTypes <- function()
 #     return(rgdal::readOGR("https://raw.github.com/datasets/geo-boundaries-world-110m/master/countries.geojson", "OGRGeoJSON"))
 # }
 
-
-#' \code{Linear Regression} Linear Regression.
+#' \code{WorldMap} World Map
 #'
-#' reports the goodness-of-fit of an object.
-#' @param object An object for which a summary is desired..
+#' Creates a map with a table as an input, using shading to represent the values of
+#' countries on the map.
+#' @param table An matrix, two-dimensional array, table or vector, containing the data
+#' to be plotted. The \code{\link{rownames}} (or  \code{\link{rownames}} in the case
+#' of a vector) should contain the names of the geographic entities to be plotted (see
+#' \code{type}).
+#' @param type The type of geographic information to be plotted. By default, this is
+#' \code{name}, which refers to the name of the country. To see a list of the available
+#' types, use \code{GeographicRegionTypes()}. To see a complete list of names within a type,
+#' use \code{GeographicRegionRowNames("type")}.
+#' @param treat.NA.as.0 Plots any \code{NA} values in the data and any geographical entities
+#' without data with as having a 0 value.
+#' @param only.show.regions.in.table When TRUE, only geographic entities that are included in
+#' the table are shown on the table.
+#' @param add.detail Display names of geographical entities on the map. When TRUE, it also changes
+#' the appearance of the map, making the map wrap around. The only way to prevent this is to
+#' resize the map.
+#' @param remove.last.column Deletes the last column of the table priori to creating the map
+#' , unless the table is a vector or only has one column.
+#' @param colors A vector of two colors, which are used as endpoints in interpolating colors.
+#' @param color.NA The color used to represent missing values. Not used when \link{treat.NA.as.0},
+#' is set to missing.
+#' @param legend.title The text to appear above the legend.
+#' @param remove.antarctica Automatically removes Antarctica from the ma. Defaults to TRUE.
+#' @param remove.seven.seas Automatically removes the seven seas from the map. Defaults to TRUE.
 #' @param ... Additional arguments affecting the goodness-of-fit displayed.
 #' @details
-#' Uses \code{\link{Zelig:zelimethods}}
-#' which depend on the \code{\link{class}} of the first argument.
-#'
+#' This function is based on the \code{\link{leaflet}} package. See
+#' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
+#' how to use it without using \code{\link{WorldMap}}.
+# valid.continent.names <- matrix(1:4, 4, 2, dimnames = list(c("Asia", "Africa", "Europe", "South America"), LETTERS[1:2]))
+#' @examples
+#' WorldMap(valid.continent.names, type = "continent")
+#' WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
+#' WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE, remove.last.column = TRUE)
+#' WorldMap(valid.continent.names[,1], type = "continent", treat.NA.as.0 = TRUE)
+#' WorldMap(valid.continent.names, type = "continent", remove.last.column = TRUE)
+#' WorldMap(valid.continent.names, type = "continent", remove.last.row = TRUE)
+#' WorldMap(valid.continent.names, type = "continent", colors = c("#AAAAAA", "#FFFFFF"))
+#' WorldMap(valid.continent.names, type = "continent",
+#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = TRUE, color.NA = "#23B0DB")
+#' WorldMap(valid.continent.names, type = "continent",
+#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB")
+#' WorldMap(valid.continent.names, type = "continent",
+#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
+#'          legend.title = "% agree")
+#' WorldMap(valid.continent.names, type = "continent",
+#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
+#'          legend.title = "% agree", only.show.regions.in.table = TRUE)
+#' WorldMap(valid.continent.names, type = "continent",
+#'          treat.NA.as.0 = TRUE,
+#'          legend.title = "% agree", only.show.regions.in.table = TRUE)
+#' valid.continent.names[1] <- NA
+#' WorldMap(valid.continent.names, type = "continent",
+#'          legend.title = "% agree", only.show.regions.in.table = TRUE)
+#' WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
+#' WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
+#' WorldMap(valid.continent.names, type = "continent", add.detail = TRUE, remove.antarctica = FALSE)
 #' @export
-WorldMap = function(table, treat.zeros.differently = TRUE,
-                     remove.last.column = TRUE,
-                     remove.last.row = TRUE,
+WorldMap = function(table,
                     type = "name",
-                    colors = c("#CCF3FF","#23B0DB"),
-                    legend.title = "",
+                    treat.NA.as.0 = FALSE,
                     only.show.regions.in.table = FALSE,
-                    remove.antarctica = TRUE,
-                    remove.seven.sease = TRUE,
-                    add.detail = FALSE){
-     # Correcting comment name errors.
+                    add.detail = FALSE,
+                    remove.last.column = FALSE,
+                    remove.last.row = FALSE,
+                    colors = c("#CCF3FF","#23B0DB"),
+                    color.NA = "#808080",
+                    legend.title = "",
+                    remove.antarctica = TRUE){
+     # Correcting rowname errors for country names.
     if (type == "name")
     {
         correct.names <- c("United States", "United Kingdom")
@@ -59,62 +112,66 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
             rownames(table)[rows.to.change] <- correct.names
     }
     # Neatening the data.
+    table.name <- deparse(substitute(table))
     if(is.vector(table) || length(dim(table)) == 1)
     {
-        table.name = deparse(substitute(table))
-        table = as.matrix(table)
-        if(is.null(dimnames(table)))
+        if(is.null(names(table)))
             stop(paste(table.name, "has no names."))
+        table <- as.matrix(table)
         dimnames(table)[[2]] = table.name
-    } else
-    {
-        if (remove.last.column & ncol(table) > 1)
-            table = table[, -ncol(table), drop = FALSE]
-     }
-     if (remove.last.row)
-        table = table[-nrow(table), , drop = FALSE]
-    table.names = rownames(table)
-    # Getting geographic boundaries
-    data(coordinates, envir=environment())
-    coords <- coordinates
-    coords[[type]] = as.character(coords[[type]])
-    if (remove.antarctica)
-         coords = coords[!coords$continent %in% "Antarctica",]
-    if (remove.seven.sease)
-         coords = coords[!coords$continent %in% "Seven seas (open ocean)",]
-
-#     if (type = "name")
-#     {
-#     if (remove.antarctica) {
-#         antarctica = c("Fr. S. Antarctic Lands", "Antarctica")
-#         coords.names = coords$name
-#         coords = coords[!coords.names %in% antarctica,]
-#     }
-    coords.names = coords[[type]]
-    if (only.show.regions.in.table)
-        coords = coords[coords.names %in% table.names,]
-    coords.names = coords[[type]]
-    # Checking to see if input data is OK.
-    incorrect.names = table.names %in% coords.names
-    if (sum(incorrect.names) == 0)
-        stop(paste("Incorrect country names:", paste(table.names[!incorrect.names],collapse=",")))
-    # Splicing data onto coordinate data.frame.
-    country.lookup = match(coords.names,table.names)
-    categories = colnames(table)
-    n.categories = length(categories)
-    for (i in 1:n.categories) {
-        new.var = table[country.lookup, i]
-        if(treat.zeros.differently) {
-            zeroes = new.var == 0
-            if (sum(zeroes, na.rm = TRUE) > 0)
-                new.var[zeroes] = NA
-        } else
-            new.var[is.na(new.var)] = 0
-        coords$table = new.var
-        names(coords)[ncol(coords)] = paste("table", i, sep = "")
     }
-    coords$table.max = apply(table, 1, max)[country.lookup]
-    require(leaflet)
+    else
+    {
+        if(length(dim(table)) != 2)
+            stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
+        if(is.null(colnames(table)))
+            stop(paste(table.name, "has no column names"))
+        if(is.null(rownames(table)))
+            stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
+        if (remove.last.column & ncol(table) > 1)
+            table <- table[, -ncol(table), drop = FALSE]
+    }
+    if (remove.last.row)
+        table <- table[-nrow(table), , drop = FALSE]
+    table.names <- rownames(table)
+    if (treat.NA.as.0)
+        table[is.na(table)] <- 0
+    # Getting geographic boundaries
+    data("country.coordinates", envir=environment())
+    coords <- country.coordinates
+    coords[[type]] <- as.character(coords[[type]])
+    if (remove.antarctica)
+         coords <- coords[!coords$continent %in% "Antarctica",]
+    coords.names <- coords[[type]]
+    if (only.show.regions.in.table)
+        coords <- coords[coords.names %in% table.names,]
+    coords.names <- coords[[type]]
+    # Checking to see if input data is OK.
+    incorrect.names <- !table.names %in% coords.names
+    if (sum(incorrect.names) != 0)
+        stop(paste("Incorrect rowname:", paste(table.names[incorrect.names],collapse=",")))
+    # Splicing data onto coordinate data.frame.
+    country.lookup <- match(coords.names,table.names)
+    categories <- colnames(table)
+    n.categories <- length(categories)
+    for (i in 1:n.categories)
+    {
+        new.var <- table[country.lookup, i]
+        if(treat.NA.as.0)
+            new.var[is.na(new.var)] <- 0
+        coords$table <- new.var
+        names(coords)[ncol(coords)] <- paste("table", i, sep = "")
+    }
+    # Creating a variable for use in scaling the legend.
+    min.value <- min(table, na.rm = TRUE)
+    if (treat.NA.as.0 & nrow(table) < nrow(country.coordinates))
+        min.value <- min(0, min.value)
+    coords$table.max <- apply(table, 1, max)[country.lookup]
+    if(treat.NA.as.0)
+        coords$table.max[is.na(coords$table.max)] <- 0
+    min.in.table.max <- min(coords$table.max , na.rm = TRUE)
+    if (min.value < min.in.table.max) #Replacing the minimum with the global minimum.
+        coords$table.max[match(min.in.table.max, coords$table.max)] <- min.value
     # Creating the map
     map = leaflet(coords)
     opacity = 1
@@ -122,18 +179,19 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
         opacity = .2
         map = addTiles(map)
     }
-    pal <- colorNumeric(palette = colors,domain = c(0, max(table)),
-            na.color =ifelse(treat.zeros.differently,"white", "#808080"))
-    map = addLegend(map, "bottomright", pal = pal, values = ~table.max,
+    .pal <- colorNumeric(palette = colors,domain = range(coords$table.max, na.rm = TRUE),
+            na.color = color.NA)
+    map <- addLegend(map, "bottomright", pal = .pal, values = ~table.max,
                     title = legend.title,
                     labFormat = labelFormat(prefix = ""),
-                    opacity = opacity, na.label = "0")
+                    opacity = opacity,
+                    na.label = ifelse(treat.NA.as.0, "0", "NA"))
     if (n.categories == 1) {
         map = addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
-                          fillOpacity = opacity, color = ~pal(table1))
+                          fillOpacity = opacity, color = ~.pal(table1))
     } else {
         for (i in 1:n.categories) {
-            cl = as.formula(paste("~pal(table", i, ")", sep = ""))
+            cl = as.formula(paste("~.pal(table", i, ")", sep = ""))
             map = addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
                                fillOpacity = opacity,
                               color = cl, group = categories[i])
@@ -142,14 +200,4 @@ WorldMap = function(table, treat.zeros.differently = TRUE,
             options = layersControlOptions(collapsed = FALSE))
     }
 map}
-
-
-
-# z = matrix(1:6, 6,
-#            dimnames =list(
-#                c("Asia", "Africa", "Europe", "South America", "Oceania", "North America"), "A"
-#            ))
-#
-# print(z)
-# WorldMap(z, type = "continent", remove.last.row = FALSE, remove.last.column = FALSE)
 
