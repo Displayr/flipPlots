@@ -31,57 +31,28 @@ the table are shown on the table.}
 the appearance of the map, making the map wrap around. The only way to prevent this is to
 resize the map.}
 
-\item{remove.last.column}{Deletes the last column of the table priori to creating the map
+\item{remove.last.column}{Deletes the last column of the table prior to creating the map
+, unless the table is a vector or only has one column.}
+
+\item{remove.last.row}{Deletes the bottom row  of the table prior to creating the map
 , unless the table is a vector or only has one column.}
 
 \item{colors}{A vector of two colors, which are used as endpoints in interpolating colors.}
 
-\item{color.NA}{The color used to represent missing values. Not used when \link{treat.NA.as.0},
+\item{color.NA}{The color used to represent missing values. Not used when \code{treat.NA.as.0},
 is set to missing.}
 
 \item{legend.title}{The text to appear above the legend.}
 
 \item{remove.antarctica}{Automatically removes Antarctica from the ma. Defaults to TRUE.}
-
-\item{remove.seven.seas}{Automatically removes the seven seas from the map. Defaults to TRUE.}
-
-\item{...}{Additional arguments affecting the goodness-of-fit displayed.}
 }
 \description{
 Creates a map with a table as an input, using shading to represent the values of
 countries on the map.
 }
 \details{
-This function is based on the \code{\link{leaflet}} package. See
+This function is based on the \code{leaflet} package. See
 \url{https://rstudio.github.io/leaflet/} for an overview of this package and
-how to use it without using \code{\link{WorldMap}}.
-}
-\examples{
-WorldMap(valid.continent.names, type = "continent")
-WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
-WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE, remove.last.column = TRUE)
-WorldMap(valid.continent.names[,1], type = "continent", treat.NA.as.0 = TRUE)
-WorldMap(valid.continent.names, type = "continent", remove.last.column = TRUE)
-WorldMap(valid.continent.names, type = "continent", remove.last.row = TRUE)
-WorldMap(valid.continent.names, type = "continent", colors = c("#AAAAAA", "#FFFFFF"))
-WorldMap(valid.continent.names, type = "continent",
-         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = TRUE, color.NA = "#23B0DB")
-WorldMap(valid.continent.names, type = "continent",
-         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB")
-WorldMap(valid.continent.names, type = "continent",
-         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
-         legend.title = "\% agree")
-WorldMap(valid.continent.names, type = "continent",
-         colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
-         legend.title = "\% agree", only.show.regions.in.table = TRUE)
-WorldMap(valid.continent.names, type = "continent",
-         treat.NA.as.0 = TRUE,
-         legend.title = "\% agree", only.show.regions.in.table = TRUE)
-valid.continent.names[1] <- NA
-WorldMap(valid.continent.names, type = "continent",
-         legend.title = "\% agree", only.show.regions.in.table = TRUE)
-WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
-WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
-WorldMap(valid.continent.names, type = "continent", add.detail = TRUE, remove.antarctica = FALSE)
+how to use it without using \code{WorldMap}.
 }
 

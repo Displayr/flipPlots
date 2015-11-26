@@ -9,15 +9,11 @@ can be used when creating a WorldMap.}
 GeographicRegionRowNames(type)
 }
 \arguments{
-\item{type...}{The name of the geographic region type. See \code{\link{GeographicRegionTypes}}}
+\item{type}{The name of the geographic region type. See \code{\link{GeographicRegionTypes}}}
 }
 \description{
 \code{GeographicRegionRowNames} Names of geographic regions.
 Returns the list of unique geographic names that
 can be used when creating a WorldMap.
-}
-\examples{
-GeographicRegionRowNames("name")
-GeographicRegionRowNames("continent")
 }
 

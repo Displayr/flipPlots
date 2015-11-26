@@ -1,10 +1,8 @@
+globalVariables("country.coordinates")
 #' \code{GeographicRegionRowNames} Names of geographic regions.
 #' Returns the list of unique geographic names that
 #' can be used when creating a WorldMap.
-#' @param type... The name of the geographic region type. See \code{\link{GeographicRegionTypes}}
-#' @examples
-#' GeographicRegionRowNames("name")
-#' GeographicRegionRowNames("continent")
+#' @param type The name of the geographic region type. See \code{\link{GeographicRegionTypes}}
 #'
 #' @export
 GeographicRegionRowNames <- function(type)
@@ -16,8 +14,6 @@ GeographicRegionRowNames <- function(type)
 #' \code{GeographicRegionTypes} Types of Geographic Regions
 #' The geographic region types that are available for refering
 #' in a map. E.g., \code{name}, \code{continent},
-#' @examples
-#' GeographicRegionTypes()
 #' @export
 GeographicRegionTypes <- function()
 {
@@ -49,47 +45,20 @@ GeographicRegionTypes <- function()
 #' @param add.detail Display names of geographical entities on the map. When TRUE, it also changes
 #' the appearance of the map, making the map wrap around. The only way to prevent this is to
 #' resize the map.
-#' @param remove.last.column Deletes the last column of the table priori to creating the map
+#' @param remove.last.column Deletes the last column of the table prior to creating the map
+#' , unless the table is a vector or only has one column.
+#' @param remove.last.row Deletes the bottom row  of the table prior to creating the map
 #' , unless the table is a vector or only has one column.
 #' @param colors A vector of two colors, which are used as endpoints in interpolating colors.
-#' @param color.NA The color used to represent missing values. Not used when \link{treat.NA.as.0},
+#' @param color.NA The color used to represent missing values. Not used when \code{treat.NA.as.0},
 #' is set to missing.
 #' @param legend.title The text to appear above the legend.
 #' @param remove.antarctica Automatically removes Antarctica from the ma. Defaults to TRUE.
-#' @param remove.seven.seas Automatically removes the seven seas from the map. Defaults to TRUE.
-#' @param ... Additional arguments affecting the goodness-of-fit displayed.
 #' @details
-#' This function is based on the \code{\link{leaflet}} package. See
+#' This function is based on the \code{leaflet} package. See
 #' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
-#' how to use it without using \code{\link{WorldMap}}.
+#' how to use it without using \code{WorldMap}.
 # valid.continent.names <- matrix(1:4, 4, 2, dimnames = list(c("Asia", "Africa", "Europe", "South America"), LETTERS[1:2]))
-#' @examples
-#' WorldMap(valid.continent.names, type = "continent")
-#' WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
-#' WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE, remove.last.column = TRUE)
-#' WorldMap(valid.continent.names[,1], type = "continent", treat.NA.as.0 = TRUE)
-#' WorldMap(valid.continent.names, type = "continent", remove.last.column = TRUE)
-#' WorldMap(valid.continent.names, type = "continent", remove.last.row = TRUE)
-#' WorldMap(valid.continent.names, type = "continent", colors = c("#AAAAAA", "#FFFFFF"))
-#' WorldMap(valid.continent.names, type = "continent",
-#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = TRUE, color.NA = "#23B0DB")
-#' WorldMap(valid.continent.names, type = "continent",
-#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB")
-#' WorldMap(valid.continent.names, type = "continent",
-#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
-#'          legend.title = "% agree")
-#' WorldMap(valid.continent.names, type = "continent",
-#'          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
-#'          legend.title = "% agree", only.show.regions.in.table = TRUE)
-#' WorldMap(valid.continent.names, type = "continent",
-#'          treat.NA.as.0 = TRUE,
-#'          legend.title = "% agree", only.show.regions.in.table = TRUE)
-#' valid.continent.names[1] <- NA
-#' WorldMap(valid.continent.names, type = "continent",
-#'          legend.title = "% agree", only.show.regions.in.table = TRUE)
-#' WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
-#' WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
-#' WorldMap(valid.continent.names, type = "continent", add.detail = TRUE, remove.antarctica = FALSE)
 #' @export
 WorldMap = function(table,
                     type = "name",
@@ -173,31 +142,58 @@ WorldMap = function(table,
     if (min.value < min.in.table.max) #Replacing the minimum with the global minimum.
         coords$table.max[match(min.in.table.max, coords$table.max)] <- min.value
     # Creating the map
-    map = leaflet(coords)
+    map = leaflet::leaflet(coords)
     opacity = 1
     if (add.detail) {
         opacity = .2
-        map = addTiles(map)
+        map = leaflet::addTiles(map)
     }
-    .pal <- colorNumeric(palette = colors,domain = range(coords$table.max, na.rm = TRUE),
+    .pal <- leaflet::colorNumeric(palette = colors,domain = range(coords$table.max, na.rm = TRUE),
             na.color = color.NA)
-    map <- addLegend(map, "bottomright", pal = .pal, values = ~table.max,
+    map <- leaflet::addLegend(map, "bottomright", pal = .pal, values = ~table.max,
                     title = legend.title,
-                    labFormat = labelFormat(prefix = ""),
+                    labFormat = leaflett::labelFormat(prefix = ""),
                     opacity = opacity,
                     na.label = ifelse(treat.NA.as.0, "0", "NA"))
     if (n.categories == 1) {
-        map = addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
+        map = leaflett::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
                           fillOpacity = opacity, color = ~.pal(table1))
     } else {
         for (i in 1:n.categories) {
             cl = as.formula(paste("~.pal(table", i, ")", sep = ""))
-            map = addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
+            map = leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
                                fillOpacity = opacity,
                               color = cl, group = categories[i])
         }
-        map = addLayersControl(map, baseGroups = categories,
-            options = layersControlOptions(collapsed = FALSE))
+        map = leaflet::addLayersControl(map, baseGroups = categories,
+            options = leaflet::layersControlOptions(collapsed = FALSE))
     }
 map}
 
+
+# WorldMap(valid.continent.names, type = "continent")
+# WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
+# WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE, remove.last.column = TRUE)
+# WorldMap(valid.continent.names[,1], type = "continent", treat.NA.as.0 = TRUE)
+# WorldMap(valid.continent.names, type = "continent", remove.last.column = TRUE)
+# WorldMap(valid.continent.names, type = "continent", remove.last.row = TRUE)
+# WorldMap(valid.continent.names, type = "continent", colors = c("#AAAAAA", "#FFFFFF"))
+# WorldMap(valid.continent.names, type = "continent",
+#          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = TRUE, color.NA = "#23B0DB")
+# WorldMap(valid.continent.names, type = "continent",
+#          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB")
+# WorldMap(valid.continent.names, type = "continent",
+#          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
+#          legend.title = "% agree")
+# WorldMap(valid.continent.names, type = "continent",
+#          colors = c("#AAAAAA", "#FFFFFF"), treat.NA.as.0 = FALSE, color.NA = "#23B0DB",
+#          legend.title = "% agree", only.show.regions.in.table = TRUE)
+# WorldMap(valid.continent.names, type = "continent",
+#          treat.NA.as.0 = TRUE,
+#          legend.title = "% agree", only.show.regions.in.table = TRUE)
+# valid.continent.names[1] <- NA
+# WorldMap(valid.continent.names, type = "continent",
+#          legend.title = "% agree", only.show.regions.in.table = TRUE)
+# WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
+# WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
+# WorldMap(valid.continent.names, type = "continent", add.detail = TRUE, remove.antarctica = FALSE)

@@ -3,12 +3,8 @@
 \name{LabeledScatterPlot}
 \alias{LabeledScatterPlot}
 \alias{LabeledScatterPlot.default}
-\alias{LabeledScatterPlot.smacof}
-\alias{LabeledScatterPlot.smacofB}
-\alias{LabeledScatterPlot.smacofR}
 \title{Find better cootrdinates for text labels
-\code{GetYlim} Identifies a better set of coordinates to place labels in a labeled ggplot scatterplot.
- #}
+\code{LabeledScatterPlot} Scatterplot with Labeled Points.}
 \usage{
 LabeledScatterPlot(coords, ...)
 
@@ -16,18 +12,12 @@ LabeledScatterPlot(coords, ...)
   row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
   fixed.aspect = TRUE, auto.tidy = TRUE, colors = qColors,
   auto.color = 10, general.color = "gray28", cex = 1, ...)
-
-\method{LabeledScatterPlot}{smacof}(object, ...)
-
-\method{LabeledScatterPlot}{smacofB}(object, ...)
-
-\method{LabeledScatterPlot}{smacofR}(object, row.description = "Rows",
-  column.description = "Columns", ...)
 }
 \arguments{
 \item{coords}{The xy coordinates of the points.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments.
+#}
 
 \item{group}{A factor indicating group membership for each point.}
 
@@ -51,42 +41,25 @@ LabeledScatterPlot(coords, ...)
 
 \item{cex}{Relative font, line and glyph size.}
 
-\item{object}{An object to be plotted.}
+\item{coords}{Relative font, line and glyph size.}
 
-\item{row.description}{A title for the rows.}
+\item{object}{An object to be plotted.
+#}
+
+\item{row.description}{A title for the rows.
+#}
 
 \item{column.description}{A title for the columns.}
-
-\item{coords}{Relative font, line and glyph size.}
 }
 \value{
 p A \code{\link[ggplot2]{ggplot}} plot.
 }
 \description{
 Find better cootrdinates for text labels
-\code{GetYlim} Identifies a better set of coordinates to place labels in a labeled ggplot scatterplot.
- #
+\code{LabeledScatterPlot} Scatterplot with Labeled Points.
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{default}: Default labeled scatterplot
-
-\item \code{smacof}: Labeled scatterplot of smacof object
-
-\item \code{smacofB}: Labeled scatterplot of smacofB object
-
-\item \code{smacofR}: Labeled scatterplot of smacofR object
 }}
-\examples{
-# MDS - square
-library(smacof)
-data(breakfastDissimilarities)
-mdsInterval <- smacofSym(breakfastDissimilarities[[4]],
-    type = "interval", eps = 1e-12, itmax = 100000)
-LabeledScatterPlot(mdsInterval, title = "Interval-scale MDS of Breakfast Dissimilarities")
-
-data(colaPerceptions)
-LabeledScatterPlot(colaPerceptions[,c(7,8)], title = "Scatterplot of perceptions data",
-                          auto.tidy = TRUE, auto.color = 5, fixed.aspect = TRUE)
-}
 

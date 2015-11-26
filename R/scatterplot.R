@@ -1,3 +1,4 @@
+globalVariables("qColors")
 #' Distance between points
 #' \code{Distance} A Euclidean distance between points
 #'
@@ -169,7 +170,7 @@ IsOverlap = function(boxes, this.box) {
 #' @param p A \code{\link[ggplot2]{ggplot}} plot.
 #' @return A vector containing the minimum and and maximum value of x plotted.
 GetXlim = function(p) {
-  g = ggplot_build(p)
+  g = ggplot2::ggplot_build(p)
   g$panel$ranges[[1]]$x.range
 }
 
@@ -179,7 +180,7 @@ GetXlim = function(p) {
 #' @param p A \code{\link[ggplot2]{ggplot}} plot.
 #' @return A vector containing the minimum and and maximum value of y  plotted.
 GetYlim = function(p) {
-  g = ggplot_build(p)
+  g = ggplot2::ggplot_build(p)
   g$panel$ranges[[1]]$y.range
 }
 
@@ -278,8 +279,7 @@ ReducePointAndLabelOverlap = function (p, cex = 1, fixed.aspect = FALSE, tstep =
 
 
 #' Find better cootrdinates for text labels
-#' \code{GetYlim} Identifies a better set of coordinates to place labels in a labeled ggplot scatterplot.
-#'  #
+#' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
 #' @param coords The xy coordinates of the points.
 #' @param group A factor indicating group membership for each point.
 #' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
@@ -294,32 +294,28 @@ ReducePointAndLabelOverlap = function (p, cex = 1, fixed.aspect = FALSE, tstep =
 #' @param general.color The color to be used in axes and titles.
 #' @param cex Relative font, line and glyph size.
 #' @param ... Additional arguments.
-#' @param object An object to be plotted.
-#' @param row.description A title for the rows.
-#' @param column.description A title for the columns.
+#'# @param object An object to be plotted.
+#'# @param row.description A title for the rows.
+#'# @param column.description A title for the columns.
 #' @return p A \code{\link[ggplot2]{ggplot}} plot.
-#' @examples
 #'
-#' # MDS - square
-#' library(smacof)
-#' data(breakfastDissimilarities)
-#' mdsInterval <- smacofSym(breakfastDissimilarities[[4]],
-#'     type = "interval", eps = 1e-12, itmax = 100000)
-#' LabeledScatterPlot(mdsInterval, title = "Interval-scale MDS of Breakfast Dissimilarities")
-#'
-#' data(colaPerceptions)
-#' LabeledScatterPlot(colaPerceptions[,c(7,8)], title = "Scatterplot of perceptions data",
-#'                           auto.tidy = TRUE, auto.color = 5, fixed.aspect = TRUE)
+# # MDS - square
+# data(breakfastDissimilarities)
+#     type = "interval", eps = 1e-12, itmax = 100000)
+# LabeledScatterPlot(mdsInterval, title = "Interval-scale MDS of Breakfast Dissimilarities")
+#
+# data(colaPerceptions)
+# LabeledScatterPlot(colaPerceptions[,c(7,8)], title = "Scatterplot of perceptions data",
+#                           auto.tidy = TRUE, auto.color = 5, fixed.aspect = TRUE)
 #' @export
 LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot")
 
 #' @describeIn LabeledScatterPlot  Default labeled scatterplot
 #' @export
-LabeledScatterPlot.default = function(coords, group = NULL, row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
+LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
                                       fixed.aspect = TRUE, auto.tidy = TRUE,
                                       colors = qColors, auto.color = 10, general.color = "gray28",
                                       cex = 1, ...) {
-  require("ggplot2")
   # identifying the labels
   if (is.null(row.labels))
     row.labels = rownames(coords)
@@ -351,9 +347,10 @@ LabeledScatterPlot.default = function(coords, group = NULL, row.labels = NULL, c
   point.coords = as.data.frame(coords)
   point.coords$labels =  row.labels
   # initial plot to get the coordinates
-  p = ggplot(point.coords, aes_string(x = col.labels[1], y = col.labels[2], label = "labels")) + geom_point()
+  p = ggplot2::ggplot(point.coords, ggplot2::aes_string(x = col.labels[1], y = col.labels[2], label = "labels"))
+  + ggplot2::geom_point()
   if (fixed.aspect)
-    p = p + coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
+    p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
   #
   # moving points and labels to avoid overlap
   #
@@ -369,27 +366,27 @@ LabeledScatterPlot.default = function(coords, group = NULL, row.labels = NULL, c
   #
   # creating the plot a second time
   #
-  p = ggplot(point.coords, aes_string(x = col.labels[1], y = col.labels[2]))#, colour = "labels")) #+  scale_fill_manual(values=c("#F8766D", "#00BA38"))
-  p = p + theme_bw()
-  p = p + geom_point(size = 2 * cex, aes(colour = group))
-  p = p + geom_text(data = label.coords, aes_string(x = col.labels[1], y = col.labels[2], label = "labels", group = "group", colour = "group"), size = 3 * cex, show_guide  = F )
-  p = p + labs(title = title)
-  p = p + xlim(smallest.x, biggest.x) + ylim(smallest.y, biggest.y)
-  p = p + scale_colour_manual(values = qColors, name = legend.title)
+  p = ggplot2::ggplot(point.coords, ggplot2::aes_string(x = col.labels[1], y = col.labels[2]))#, colour = "labels")) #+  scale_fill_manual(values=c("#F8766D", "#00BA38"))
+  p = p + ggplot2::theme_bw()
+  p = p + ggplot2::geom_point(size = 2 * cex, ggplot2::aes(colour = group))
+  p = p + ggplot2::geom_text(data = label.coords, ggplot2::aes_string(x = col.labels[1], y = col.labels[2], label = "labels", group = "group", colour = "group"), size = 3 * cex, show_guide  = F )
+  p = p + ggplot2::labs(title = title)
+  p = p + ggplot2::xlim(smallest.x, biggest.x) + ggplot2::ylim(smallest.y, biggest.y)
+  p = p + ggplot2::scale_colour_manual(values = qColors, name = legend.title)
   if (fixed.aspect)
-    p = p + coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
+    p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
   if (has.groups) {
     #p = p + scale_colour_manual(values = qColors, name = legend.title)
-    p = p + theme(legend.text = element_text(colour = general.color, size = 10 * cex))
+    p = p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = 10 * cex))
   } else {
-    p = p + theme(legend.position = "none")
+    p = p + ggplot2::theme(legend.position = "none")
   }
-  p = p + theme(axis.text.x = element_text(colour = general.color, size = 8 * cex))
-  p = p + theme(axis.text.y = element_text(colour = general.color, size = 8 * cex))
-  p = p + theme(axis.title.x = element_text(colour = general.color, size = 10 * cex))
-  p = p + theme(axis.title.y = element_text(colour = general.color, size = 10 * cex))
-  p = p + theme(axis.title = element_text(size = 10, face = "bold"))
-  p = p + theme(plot.title = element_text(size = 12 * cex, face="bold", vjust = cex * 1.2))
+  p = p + ggplot2::theme(axis.text.x = ggplot2::element_text(colour = general.color, size = 8 * cex))
+  p = p + ggplot2::theme(axis.text.y = ggplot2::element_text(colour = general.color, size = 8 * cex))
+  p = p + ggplot2::theme(axis.title.x = ggplot2::element_text(colour = general.color, size = 10 * cex))
+  p = p + ggplot2::theme(axis.title.y = ggplot2::element_text(colour = general.color, size = 10 * cex))
+  p = p + ggplot2::theme(axis.title = ggplot2::element_text(size = 10, face = "bold"))
+  p = p + ggplot2::theme(plot.title = ggplot2::element_text(size = 12 * cex, face="bold", vjust = cex * 1.2))
   #
   # connecting points to text using lines
   #
@@ -408,15 +405,15 @@ LabeledScatterPlot.default = function(coords, group = NULL, row.labels = NULL, c
       line.color = colors[group[i]]
       if (abs.slope(x, y, x1, y1) < 0.5) {
         if (x > x1) { # point to the righy of label
-          p = p + geom_segment(aes_string(x = x, xend = cs[3], y = y, yend = cs[2] + h / 2), colour = line.color, size = cex / 2)#, size = 3)
+          p = p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[3], y = y, yend = cs[2] + h / 2), colour = line.color, size = cex / 2)#, size = 3)
         } else  { # point to the left of label
-          p = p + geom_segment(aes_string(x = x, xend = cs[1], y = y, yend = cs[2] + h / 2), colour = line.color, size = cex / 2)#, colour = transparent.colors[i], size = 3)
+          p = p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1], y = y, yend = cs[2] + h / 2), colour = line.color, size = cex / 2)#, colour = transparent.colors[i], size = 3)
         }
       } else {
         if (y > y1) { # point above the label
-          p = p + geom_segment(aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[8]), colour = line.color, size = cex / 2)##, colour = transparent.colors[i], size = 3)
+          p = p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[8]), colour = line.color, size = cex / 2)##, colour = transparent.colors[i], size = 3)
         } else  { # point below the label
-          p = p + geom_segment(aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[2]), colour = line.color, size = cex / 2)##, colour = transparent.colors[i], size = 3)
+          p = p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[2]), colour = line.color, size = cex / 2)##, colour = transparent.colors[i], size = 3)
         }
       }
     }
@@ -424,26 +421,27 @@ LabeledScatterPlot.default = function(coords, group = NULL, row.labels = NULL, c
   p
 }
 
-
-#' @describeIn LabeledScatterPlot  Labeled scatterplot of smacof object
-#' @export
-LabeledScatterPlot.smacof = function(object, ...) {
-  LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
-}
-
-#' @describeIn LabeledScatterPlot  Labeled scatterplot of smacofB object
-#' @export
-LabeledScatterPlot.smacofB = function(object, ...) {
-  LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
-}
-
-
-#' @describeIn LabeledScatterPlot  Labeled scatterplot of smacofR object
-#' @export
-LabeledScatterPlot.smacofR = function(object, row.description = "Rows", column.description = "Columns",  ...) {
-  coords = rbind(object$conf.row, object$conf.col)
-  print(coords)
-  group = c(rep(row.description, length(object$spp.row)),rep(column.description, length(object$spp.col)))
-  print(group)
-  LabeledScatterPlot.default(coords, fixed.aspect = TRUE, group = group, ...)
-}
+#
+# #'  @describeIn LabeledScatterPlot  Labeled scatterplot of smacof object
+# #'  @export
+# LabeledScatterPlot.smacof = function(object, ...)
+# {
+#     LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
+# }
+#
+# #'  @describeIn LabeledScatterPlot  Labeled scatterplot of smacofB object
+# #'  @export
+# LabeledScatterPlot.smacofB = function(object, ...)
+# {
+#     LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
+# }
+#
+#
+# #'  @describeIn LabeledScatterPlot  Labeled scatterplot of smacofR object
+# #'  @export
+# LabeledScatterPlot.smacofR = function(object, ...) # # row.description = "Rows", column.description = "Columns",  ...) {
+# {
+#     coords = rbind(object$conf.row, object$conf.col)
+#     group = c(rep(row.description, length(object$spp.row)),rep(column.description, length(object$spp.col)))
+#     LabeledScatterPlot.default(coords, fixed.aspect = TRUE, group = group, ...)
+# }

@@ -1,0 +1,18 @@
+{
+    "contents" : "#' Prices of 50,000 round cut diamonds.\n#'\n#' A dataset containing the prices and other attributes of almost 54,000\n#' diamonds.\n#'\n#' @format A SpatialPolygonsDataFrame with data frame with 177 rows and 63 columns:\n#' @source \\url{#https://raw.github.com/datasets/geo-boundaries-world-110m/master/countries.geojson}\n\"country.coordinates\"\n",
+    "created" : 1448497934717.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3256259792",
+    "id" : "206AF7AC",
+    "lastKnownWriteTime" : 1448498454,
+    "path" : "~/GitHub/flipPlots/R/data.R",
+    "project_path" : "R/data.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

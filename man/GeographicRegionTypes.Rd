@@ -13,7 +13,4 @@ GeographicRegionTypes()
 The geographic region types that are available for refering
 in a map. E.g., \code{name}, \code{continent},
 }
-\examples{
-GeographicRegionTypes()
-}
 
