@@ -72,6 +72,7 @@ WorldMap = function(table,
                     legend.title = "",
                     remove.antarctica = TRUE){
      # Correcting rowname errors for country names.
+    requireNamespace("rgdal")
     if (type == "name")
     {
         correct.names <- c("United States", "United Kingdom")
