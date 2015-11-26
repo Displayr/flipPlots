@@ -1,4 +1,4 @@
-globalVariables("country.coordinates")
+globalVariables("map.coordinates")
 #' \code{GeographicRegionRowNames} Names of geographic regions.
 #' Returns the list of unique geographic names that
 #' can be used when creating a WorldMap.
@@ -7,8 +7,8 @@ globalVariables("country.coordinates")
 #' @export
 GeographicRegionRowNames <- function(type)
 {
-    data("country.coordinates", envir=environment())
-    unique(country.coordinates[[type]])
+    data("map.coordinates", envir=environment())
+    unique(map.coordinates[[type]])
 }
 
 #' \code{GeographicRegionTypes} Types of Geographic Regions
@@ -17,8 +17,8 @@ GeographicRegionRowNames <- function(type)
 #' @export
 GeographicRegionTypes <- function()
 {
-    data("country.coordinates", envir=environment())
-    names(country.coordinates)
+    data("map.coordinates", envir=environment())
+    names(map.coordinates)
 }
 # # Reading the coordinates.
 # getCoordinates <- function()
@@ -108,8 +108,8 @@ WorldMap = function(table,
     if (treat.NA.as.0)
         table[is.na(table)] <- 0
     # Getting geographic boundaries
-    data("country.coordinates", envir=environment())
-    coords <- country.coordinates
+    data("map.coordinates", envir=environment())
+    coords <- map.coordinates
     coords[[type]] <- as.character(coords[[type]])
     if (remove.antarctica)
          coords <- coords[!coords$continent %in% "Antarctica",]
@@ -140,7 +140,7 @@ WorldMap = function(table,
     }
     # Creating a variable for use in scaling the legend.
     min.value <- min(table, na.rm = TRUE)
-    if (treat.NA.as.0 & nrow(table) < nrow(country.coordinates))
+    if (treat.NA.as.0 & nrow(table) < nrow(map.coordinates))
         min.value <- min(0, min.value)
     coords$table.max <- apply(table, 1, max)[country.lookup]
     if(treat.NA.as.0)
@@ -182,7 +182,7 @@ map}
 # #
 # valid.continent.names <- matrix(0:2, 3, 1, dimnames = list(c("Fake", "Europe", "South America"), LETTERS[1]))
 # WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
-# # #
+# #
 #
 # valid.continent.names <- matrix(1:3, 3, 2, dimnames = list(c("Asia", "Europe", "South America"), LETTERS[1:2]))
 # WorldMap(valid.continent.names, type = "continent")
