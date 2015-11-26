@@ -58,7 +58,6 @@ GeographicRegionTypes <- function()
 #' This function is based on the \code{leaflet} package. See
 #' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
 #' how to use it without using \code{WorldMap}.
-# valid.continent.names <- matrix(1:4, 4, 2, dimnames = list(c("Asia", "Africa", "Europe", "South America"), LETTERS[1:2]))
 #' @export
 WorldMap = function(table,
                     type = "name",
@@ -99,7 +98,7 @@ WorldMap = function(table,
             stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
         if (remove.last.column & ncol(table) > 1)
             table <- table[, -ncol(table), drop = FALSE]
-        if (ncol == 1)
+        if (ncol(table) == 1)
             dimnames(table)[[2]] = table.name
 
     }
@@ -120,7 +119,10 @@ WorldMap = function(table,
     coords.names <- coords[[type]]
     # Checking to see if input data is OK.
     if (treat.NA.as.0)
-        table.names <- table.name[apply(table, 1, max, na.rm = TRUE) > 0]
+    {
+        table <- table[apply(table, 1, max, na.rm = TRUE) > 0, , drop = FALSE]
+        table.names <- rownames(table)
+    }
     incorrect.names <- !table.names %in% coords.names
     if (sum(incorrect.names) != 0)
         stop(paste("Incorrect rowname:", paste(table.names[incorrect.names],collapse=",")))
@@ -153,15 +155,16 @@ WorldMap = function(table,
         opacity = .2
         map = leaflet::addTiles(map)
     }
-    .pal <- leaflet::colorNumeric(palette = colors,domain = range(coords$table.max, na.rm = TRUE),
+    max.range <- max(coords$table.max, na.rm = TRUE)
+    .pal <- leaflet::colorNumeric(palette = colors,domain = c(min.value, max.range),
             na.color = color.NA)
     map <- leaflet::addLegend(map, "bottomright", pal = .pal, values = ~table.max,
                     title = legend.title,
-                    labFormat = leaflett::labelFormat(prefix = ""),
+                    labFormat = leaflet::labelFormat(prefix = ""),
                     opacity = opacity,
                     na.label = ifelse(treat.NA.as.0, "0", "NA"))
     if (n.categories == 1) {
-        map = leaflett::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
+        map = leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
                           fillOpacity = opacity, color = ~.pal(table1))
     } else {
         for (i in 1:n.categories) {
@@ -175,7 +178,13 @@ WorldMap = function(table,
     }
 map}
 
-
+#
+# #
+# valid.continent.names <- matrix(0:2, 3, 1, dimnames = list(c("Fake", "Europe", "South America"), LETTERS[1]))
+# WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
+# # #
+#
+# valid.continent.names <- matrix(1:3, 3, 2, dimnames = list(c("Asia", "Europe", "South America"), LETTERS[1:2]))
 # WorldMap(valid.continent.names, type = "continent")
 # WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE)
 # WorldMap(valid.continent.names, type = "continent", treat.NA.as.0 = TRUE, remove.last.column = TRUE)
