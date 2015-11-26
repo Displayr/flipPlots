@@ -87,7 +87,6 @@ WorldMap = function(table,
         if(is.null(names(table)))
             stop(paste(table.name, "has no names."))
         table <- as.matrix(table)
-        dimnames(table)[[2]] = table.name
     }
     else
     {
@@ -99,6 +98,9 @@ WorldMap = function(table,
             stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
         if (remove.last.column & ncol(table) > 1)
             table <- table[, -ncol(table), drop = FALSE]
+        if (ncol == 1)
+            dimnames(table)[[2]] = table.name
+
     }
     if (remove.last.row)
         table <- table[-nrow(table), , drop = FALSE]
