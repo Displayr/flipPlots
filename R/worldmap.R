@@ -120,7 +120,7 @@ WorldMap = function(table,
     coords.names <- coords[[type]]
     # Checking to see if input data is OK.
     if (treat.NA.as.0)
-        table.names <- table.name[apply(table, 1, max, na.rm = TRUE) > 9]
+        table.names <- table.name[apply(table, 1, max, na.rm = TRUE) > 0]
     incorrect.names <- !table.names %in% coords.names
     if (sum(incorrect.names) != 0)
         stop(paste("Incorrect rowname:", paste(table.names[incorrect.names],collapse=",")))
