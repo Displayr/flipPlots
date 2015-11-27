@@ -72,14 +72,6 @@ WorldMap = function(table,
                     remove.antarctica = TRUE){
      # Correcting rowname errors for country names.
     requireNamespace("rgdal")
-    if (type == "name")
-    {
-        correct.names <- c("United States", "United Kingdom")
-        incorrect.names <- c("United States of America", "United Kingdom of Great Britain and Northern Ireland")
-        rows.to.change <- match(incorrect.names, rownames(table))
-        if(!is.na(rows.to.change[1]))
-            rownames(table)[rows.to.change] <- correct.names
-    }
     # Neatening the data.
 print("a")
     table.name <- deparse(substitute(table))
@@ -112,6 +104,15 @@ print("h")
 print("i")
     if (treat.NA.as.0)
         table[is.na(table)] <- 0
+    # Tidying some names.
+    if (type == "name")
+    {
+        correct.names <- c("United States", "United Kingdom")
+        incorrect.names <- c("United States of America", "United Kingdom of Great Britain and Northern Ireland")
+        rows.to.change <- match(incorrect.names, rownames(table))
+        if(!is.na(rows.to.change[1]))
+            rownames(table)[rows.to.change] <- correct.names
+    }
     # Getting geographic boundaries
     data("map.coordinates", envir=environment())
     coords <- map.coordinates
