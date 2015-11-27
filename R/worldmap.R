@@ -81,6 +81,7 @@ WorldMap = function(table,
             rownames(table)[rows.to.change] <- correct.names
     }
     # Neatening the data.
+print("a")
     table.name <- deparse(substitute(table))
     if(is.vector(table) || length(dim(table)) == 1)
     {
@@ -88,19 +89,27 @@ WorldMap = function(table,
             stop(paste(table.name, "has no names."))
         table <- as.matrix(table)
     }
+print("b")
     if(length(dim(table)) != 2)
         stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
+print("c")
     if (ncol(table) == 1 && is.null(dimnames(table)[[2]]))
         dimnames(table)[[2]] = table.name
+print("d")
     if(is.null(colnames(table)))
         stop(paste(table.name, "has no column names"))
+print("e")
     if(is.null(rownames(table)))
         stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
+print("f")
     if (remove.last.column & ncol(table) > 1)
         table <- table[, -ncol(table), drop = FALSE]
+print("g")
     if (remove.last.row)
         table <- table[-nrow(table), , drop = FALSE]
+print("h")
     table.names <- rownames(table)
+print("i")
     if (treat.NA.as.0)
         table[is.na(table)] <- 0
     # Getting geographic boundaries
@@ -209,7 +218,10 @@ map}
 # WorldMap(valid.continent.names, type = "continent", add.detail = TRUE, remove.antarctica = FALSE)
 # valid.country.names <- matrix(1:2, 2,dimnames =list(c("Australia", "New Zealand"), "A"))
 # WorldMap(valid.country.names)
-
-valid.country.names <- 1:2
-names(valid.country.names) <- c("Australia", "New Zealand")
-WorldMap(valid.country.names)
+# valid.country.names <- 1:2
+# names(valid.country.names) <- c("Australia", "New Zealand")
+# WorldMap(as.array(valid.country.names))
+#
+# valid.country.names <- array(1:2, dim = 2, dimnames = list(c("Australia", "New Zealand")))
+# WorldMap(valid.country.names)
+# a
