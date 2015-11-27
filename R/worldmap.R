@@ -88,20 +88,16 @@ WorldMap = function(table,
             stop(paste(table.name, "has no names."))
         table <- as.matrix(table)
     }
-    else
-    {
-        if(length(dim(table)) != 2)
-            stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
-        if(is.null(colnames(table)))
-            stop(paste(table.name, "has no column names"))
-        if(is.null(rownames(table)))
-            stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
-        if (remove.last.column & ncol(table) > 1)
-            table <- table[, -ncol(table), drop = FALSE]
-        if (ncol(table) == 1)
-            dimnames(table)[[2]] = table.name
-
-    }
+    if(length(dim(table)) != 2)
+        stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
+    if (ncol(table) == 1 && is.null(dimnames(table)[[2]]))
+        dimnames(table)[[2]] = table.name
+    if(is.null(colnames(table)))
+        stop(paste(table.name, "has no column names"))
+    if(is.null(rownames(table)))
+        stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
+    if (remove.last.column & ncol(table) > 1)
+        table <- table[, -ncol(table), drop = FALSE]
     if (remove.last.row)
         table <- table[-nrow(table), , drop = FALSE]
     table.names <- rownames(table)
@@ -211,3 +207,9 @@ map}
 # WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
 # WorldMap(valid.continent.names, type = "continent", remove.antarctica = FALSE)
 # WorldMap(valid.continent.names, type = "continent", add.detail = TRUE, remove.antarctica = FALSE)
+# valid.country.names <- matrix(1:2, 2,dimnames =list(c("Australia", "New Zealand"), "A"))
+# WorldMap(valid.country.names)
+
+valid.country.names <- 1:2
+names(valid.country.names) <- c("Australia", "New Zealand")
+WorldMap(valid.country.names)
