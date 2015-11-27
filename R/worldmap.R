@@ -83,7 +83,7 @@ WorldMap = function(table,
     # Neatening the data.
 print("a")
     table.name <- deparse(substitute(table))
-    if(is.vector(table) || length(dim(table)) == 1)
+    if(is.vector(table) | length(dim(table)) == 1)
     {
         if(is.null(names(table)))
             stop(paste(table.name, "has no names."))
@@ -93,7 +93,7 @@ print("b")
     if(length(dim(table)) != 2)
         stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
 print("c")
-    if (ncol(table) == 1 && is.null(dimnames(table)[[2]]))
+    if (ncol(table) == 1 & is.null(dimnames(table)[[2]]))
         dimnames(table)[[2]] = table.name
 print("d")
     if(is.null(colnames(table)))
