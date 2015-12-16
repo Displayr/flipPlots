@@ -1,4 +1,4 @@
-globalVariables("qColors")
+globalVariables("q.colors")
 #' Distance between points
 #' \code{Distance} A Euclidean distance between points
 #'
@@ -314,7 +314,7 @@ LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot")
 #' @export
 LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
                                       fixed.aspect = TRUE, auto.tidy = TRUE,
-                                      colors = qColors, auto.color = 10, general.color = "gray28",
+                                      colors = q.colors, auto.color = 10, general.color = "gray28",
                                       cex = 1, ...) {
   # identifying the labels
   if (is.null(row.labels))
@@ -347,10 +347,10 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
   point.coords = as.data.frame(coords)
   point.coords$labels =  row.labels
   # initial plot to get the coordinates
-  p = ggplot2::ggplot(point.coords, ggplot2::aes_string(x = col.labels[1], y = col.labels[2], label = "labels"))
-  + ggplot2::geom_point()
+  p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = col.labels[1], y = col.labels[2], label = "labels"))
+  p <- p + ggplot2::geom_point()
   if (fixed.aspect)
-    p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
+    p <- p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
   #
   # moving points and labels to avoid overlap
   #
@@ -372,7 +372,7 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
   p = p + ggplot2::geom_text(data = label.coords, ggplot2::aes_string(x = col.labels[1], y = col.labels[2], label = "labels", group = "group", colour = "group"), size = 3 * cex, show_guide  = F )
   p = p + ggplot2::labs(title = title)
   p = p + ggplot2::xlim(smallest.x, biggest.x) + ggplot2::ylim(smallest.y, biggest.y)
-  p = p + ggplot2::scale_colour_manual(values = qColors, name = legend.title)
+  p = p + ggplot2::scale_colour_manual(values = colors, name = legend.title)
   if (fixed.aspect)
     p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
   if (has.groups) {
