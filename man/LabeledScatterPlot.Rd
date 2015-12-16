@@ -10,7 +10,7 @@ LabeledScatterPlot(coords, ...)
 
 \method{LabeledScatterPlot}{default}(coords, group = NULL,
   row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
-  fixed.aspect = TRUE, auto.tidy = TRUE, colors = qColors,
+  fixed.aspect = TRUE, auto.tidy = TRUE, colors = q.colors,
   auto.color = 10, general.color = "gray28", cex = 1, ...)
 }
 \arguments{
