@@ -6,7 +6,7 @@ c( 0.0198, 0.177, 0.07054, 0.0297, 0.0396, 0.02719, 0.0136, 0.02847, 0.0198, 0.0
 c( 0.4543, 0.1275, 0.07673, 0.02847, 0.07293, 0.1077, 0.01609, 0.05198, 0.321, 0.01856, 0.0297),
 c( 0.06807, 0.1089, 0.06064, 0.0198, 0.1174, 0.04084, 0.01609, 0.01733, 0.03465, 0.01361, 0.03589),
 c( 0.08168, 0.224, 0.1015, 0.04579, 0.04815, 0.04084, 0.03094, 0.05562, 0.05322, 0.04084, 0.02847)),nrow=8,byrow=TRUE,
-dimnames=list(Brand=c('Coke','V',"Red\nBull","Lift\nPlus",'Diet.Coke','Fanta','Lift','Pepsi'),
+dimnames=list(Brand=c('Coke','V',"Red Bull","Lift Plus",'Diet Coke','Fanta','Lift','Pepsi'),
 Attribute=c('Kids', 'Teens', "Enjoy life", 'Picks you up', 'Refreshes', 'Cheers you up', 'Energy', 'Up-to-date', 'Fun', 'When tired', 'Relax')))
 
 devtools::use_data(csd.perceptions, internal = FALSE, overwrite = TRUE)
@@ -14,9 +14,9 @@ devtools::use_data(csd.perceptions, internal = FALSE, overwrite = TRUE)
 
 data(csd.perceptions)
 z <- csd.perceptions[,3:4]
-dimnames(z)[[2]] <- c("A", "B")#paste0("`", dimnames(z)[[2]], "`")
+dimnames(z)[[2]] <- c("a","b")#c("Dimension 1","Dimension 2")#paste0("`", dimnames(z)[[2]], "`")
 dimnames(z)[[1]] <- LETTERS[1:nrow(z)]
 
 #csd.perceptions[,3:4]
 LabeledScatterPlot(z)
-plotly::ggplotly()
+#plotly::ggplotly()
