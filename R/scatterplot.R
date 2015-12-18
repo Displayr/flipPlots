@@ -67,6 +67,7 @@ DistanceToBox <- function(px, py, ax, ay, bx, by, cx, cy, dx, dy) {
   d.p.bc <- DistanceToLineSegment(px, py, bx, by, cx, cy)
   d.p.cd <- DistanceToLineSegment(px, py, cx, cy, dx, dy)
   d.p.da <- DistanceToLineSegment(px, py, dx, dy, ax, ay)
+  print(c(d.horizontal, d.vertical,d.p.ab, d.p.bc, d.p.cd, d.p.da ))
   # checking to see if point is in the box
   if (d.p.bc <= d.horizontal & d.p.da <= d.horizontal & d.p.ab <= d.vertical & d.p.cd <= d.vertical)
     return(0)
@@ -96,23 +97,26 @@ DistanceToBox <- function(px, py, ax, ay, bx, by, cx, cy, dx, dy) {
 BoxOverlap <- function(ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) {
   # Returns: boolean
   #
-  if (DistanceToBox(ax1, ay1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-    return(TRUE)
-  if (DistanceToBox(bx1, by1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-    return(TRUE)
-  if (DistanceToBox(cx1, cy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-    return(TRUE)
-  if (DistanceToBox(dx1, dy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-    return(TRUE)
-  if (DistanceToBox(ax2, ay2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-    return(TRUE)
-  if (DistanceToBox(bx2, by2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-    return(TRUE)
-  if (DistanceToBox(cx2, cy2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-    return(TRUE)
-  if (DistanceToBox(dx2, dy2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-    return(TRUE)
-  FALSE
+public boolean overlaps (Rectangle r) {
+    return x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y;
+}
+#   if (DistanceToBox(ax1, ay1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
+#     return(TRUE)
+#   if (DistanceToBox(bx1, by1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
+#     return(TRUE)
+#   if (DistanceToBox(cx1, cy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
+#     return(TRUE)
+#   if (DistanceToBox(dx1, dy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
+#     return(TRUE)
+#   if (DistanceToBox(ax2, ay2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
+#     return(TRUE)
+#   if (DistanceToBox(bx2, by2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
+#     return(TRUE)
+#   if (DistanceToBox(cx2, cy2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
+#     return(TRUE)
+#   if (DistanceToBox(dx2, dy2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
+#     return(TRUE)
+#   FALSE
 }
 
 
@@ -149,19 +153,24 @@ BoxCenter = function(ax, ay, bx, by, cx, cy, dx, dy) {
 }
 
 #' Box Overlaps
-#' \code{IsOverlap} Tests if a box overlaps any other boxes.
+#' \code{OverlapIndex} Returns the index of the first overlapping box encountered.
 #'
 #' @param boxes A list of boxes, where each box is its coordinates.
 #' @param this.box The box to check to see if it overlaps with the rest.
-#' @return TRUE if there is an overlap and false otherwise.
-IsOverlap <- function(boxes, this.box) {
-  if (length(boxes) == 0)
-    return(FALSE)
-  for (box in boxes) {
-    if (BoxOverlap(box[1],box[2],box[3],box[4],box[5],box[6],box[7],box[8], this.box[1],this.box[2],this.box[3],this.box[4],this.box[5],this.box[6],this.box[7],this.box[8]))
-      return(TRUE)
-  }
-  FALSE
+#' @param this.box.index The index of this.box in the list of boxes.
+#' @return -1 if no overlaps found..
+#' @export
+OverlapIndex <- function(boxes, this.box, this.box.index) {
+    if (length(boxes) == 0)
+        return(-1)
+    for (i in 1:length(boxes))
+        if (i != this.box.index)
+        {
+            box <- boxes[[i]]
+            if (BoxOverlap(box[1],box[2],box[3],box[4],box[5],box[6],box[7],box[8], this.box[1],this.box[2],this.box[3],this.box[4],this.box[5],this.box[6],this.box[7],this.box[8]))
+                return(i)
+        }
+  -1
 }
 
 #' ggplot xlim
@@ -192,9 +201,11 @@ GetYlim <- function(p) {
 #' @param fixed.aspect If TRUE, forces the x and y dimensions to be on the same scale.
 #' @param tstep The angle (theta) step size as the algorithm spirals out.
 #' @param rstep The radius step size (in standard deviations) as the algorithm spirals out.
-#' @return label.coords Recommended label coordinates.
+#' @param rstep The radius step size (in standard deviations) as the algorithm spirals out.
+#' @param overlap.fudge Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
+#' no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.
 #' @return dimensions Width and height of the text to be plotted in terms of the scale of x and y.
-ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FALSE, tstep = 0.1, rstep = 0.1){
+ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed.aspect = FALSE, tstep = 0.1, rstep = 0.1, overlap.fudge = 1){
     # Inspired by  wordlayout {wordcloud}
     #
     # getting the coordinates
@@ -209,20 +220,43 @@ ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FA
     #  plot(p)
     #  stop("dog")
     #xlim <-
-    initial.x.scale <- x.scale <- diff(GetXlim(p)) / par()$pin[1]
-    y.scale <- diff(GetYlim(p)) / par()$pin[2]
-    if (fixed.aspect)
-    {
-        x.scale <- y.scale <- max(x.scale, y.scale)
-    }
-    character.height <- strheight("Jj", "inches") * .8 # Fudge factor.
-    print(strheight("Jj", "inches")) * 25.4
-    line.height <- character.height* y.scale
-    initial.w <- character.height * x.scale
-    widths <- strwidth(labels, "inches") * x.scale# / initial.x.scale
-    n.lines <- 1 + unlist(lapply(labels, function(x) length(grep("\n",x))))
-    heights <- line.height * n.lines
+    rng.x <- diff(GetXlim(p)) * 1.1 #Adjustment to deal with space left outside of convex hull of points.
+     print("rng.x")
+     print(rng.x)
+    rng.y <- diff(GetYlim(p)) * 1.1
+     print("rng.y")
+     print(rng.y)
+    width.plotting.region <- par()$pin[1] * 25.4 * .8 # Hack due to inaccuracy of pin
+     print("width.plotting.region")
+     print(width.plotting.region)
+    height.plotting.region <- par()$pin[2] * 25.4 * .96
+     print("height.plotting.region")
+     print(height.plotting.region)
+
+
+    x.p.mm <- rng.x / width.plotting.region
+    y.p.mm <- rng.y / height.plotting.region
+     print("x.p.mm")
+     print(x.p.mm)
+     print("y.p.mm")
+     print(y.p.mm)
+     print(fixed.aspect)
+     if (fixed.aspect)
+        x.p.mm <- y.p.mm <- max(x.p.mm, y.p.mm)
+     print("x.p.mm")
+     print(x.p.mm)
+     print("y.p.mm")
+     print(y.p.mm)
+
+    inches.to.mm.fudge  <- label.size * 1.384615 * 1.8 / 1.95 / overlap.fudge
+    character.height.mm <-  strheight("Jj", "inches") * inches.to.mm.fudge
+    #line.height.y.scale <- character.height.mm * y.p.mm * 1.02 # Adjustment for gaps between lines
+    smallish.size <- character.height.mm * x.p.mm
+    widths <- strwidth(labels, "inches") * inches.to.mm.fudge * x.p.mm# / initial.x.scale
+    n.lines <- 1 + stringr::str_count(labels, "\n")
+    heights <- strheight(labels, "inches") * inches.to.mm.fudge * y.p.mm
     dimensions <- matrix(c(widths,heights), n, 2, dimnames = list(labels, c("width", "height")))
+    print(dimensions)
     sdx <- sd(label.coords[,1], na.rm = TRUE)
     sdy <- sd(label.coords[,2], na.rm = TRUE)
     if (sdx == 0)
@@ -230,10 +264,6 @@ ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FA
     if (sdy == 0)
     sdy <- 1
     # computing position of the points.
-    boxes <- vector("list", n)
-    for (i in 1:n)
-        boxes[[i]] <- BoxCoordinates(point.coords[i,1], point.coords[i,2],
-                                     widths[i], heights[i])
     # preventing overlap of points
 #     for (i in 2:n)
 #         for (prev.i in 1:(i - 1))
@@ -246,11 +276,22 @@ ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FA
 #                 point.coords[i, 2] <- point.coords[i, 2] + h / 4 * sin(radian)
 #             }
     # getting the coordinates for the labels, with the initial labels positioned
-    # above the points if they are single lines of text, and in the "middle" otherwise.
-    offset <- (n.lines - 1 ) %/% 2 + 1
-    print(offset)
-    label.coords[, 2] <- label.coords[, 2] + line.height * offset
-    #
+    # above the points if they are single lines of text, and in the "middle" otherwise, trying
+    # to prevent the point being within a letter.
+    offset <- rep(0, n)
+#    offset[n.lines %% 2 == 1] <- 0.5
+    offset[n.lines  == 1] <- 1
+    offset[n.lines  == 2] <- 0.1
+    offset[n.lines  == 3] <- 0.23
+    label.coords[, 2] <- point.coords[, 2] + heights * offset
+    # Computing the coordinates of the boxes at their initial positions (after being moved off the point)
+    boxes <- vector("list", n)
+    for (i in 1:n)
+        boxes[[i]] <- BoxCoordinates(label.coords[i,1], label.coords[i,2],
+          widths[i], heights[i])
+    names(boxes) <- labels
+    print(boxes)
+#
     # Moving labels outwards in a spiral until they no longer overlap.
     #
     box.coordinates <- vector("list", n)
@@ -260,8 +301,10 @@ ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FA
         for (i in 1:n)
         {
             theta <- thetas[i]
-            x1 <- x0 <- label.coords[i, 1]
-            y1 <- y0 <- label.coords[i, 2]
+            x1 <- label.coords[i, 1]
+            y1 <- label.coords[i, 2]
+            x0 <- point.coords[i, 1]
+            y0 <- point.coords[i, 2]
             r <- 0
             label <- labels[i]
             w <- widths[i]
@@ -271,33 +314,43 @@ ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FA
             while (overlapped)
             {
                 this.box <- BoxCoordinates(x1, y1, w, h)
-                if (!IsOverlap(boxes, this.box)) {
-                    boxes[[i + n]] <- this.box
+                print(paste("this.box", i))
+
+                #print(boxes[[i]])
+                #stop("dog")
+                overlaps.with <-OverlapIndex(boxes, this.box, i)
+                if (overlaps.with == -1)
+                {
+                    boxes[[i]] <- this.box
                     label.coords[i, ] <-  c(x1, y1)
                     overlapped <- FALSE
-             }
-             else
-             {
-                new.position.counter <- new.position.counter + 1
-                if (new.position.counter == 1)
-                {    # trying to put the point underneath
-                     y1 <- y0 - 2 * h
+                    print("no overlap")
+                    print(this.box)
                 }
                 else
-                    if (new.position.counter == 2)
-                    {# trying to put the point to the left
-                        x1 <- x0 - (initial.w + widths[i])
-                        y1 <- y0 - h * 1.2
+                {
+                    #
+                    print(paste("Moving", i, " due to overlap with ", overlaps.with))
+                    # Trying to position the label on a different side of the point.
+                    new.position.counter <- new.position.counter + 1
+                    if (new.position.counter == 1)
+                    {   # Trying to put the label lower down
+                        y1 <- y0 - h * offset[i]
+                    }
+                    else if (new.position.counter == 2)
+                    {    # trying to put the point to the left
+                         x1 <- x0 - w / 2## - (smallish.size + widths[i])
+                         y1 <- y0# - h * 1.2
                     }
                     else if (new.position.counter == 3)
-                    {# trying to put the point to the left
-                        x1 <- x0 + (initial.w + widths[i])
-                        y1 <- y0 - h
+                    {# trying to put the point to the right
+                         x1 <- x0 + w / 2## - (smallish.size + widths[i])
+                         y1 <- y0# - h * 1.2
                     }
                     else
                     {
                         theta <- theta + tstep
-                        r <- r + rstep * tstep/(2 * pi)
+                        r <- r + rstep * tstep / (2 * pi)
                         x1 <- x0 + sdx * r * cos(theta)
                         y1 <- y0 + sdy * r * sin(theta)
                     }
@@ -305,6 +358,7 @@ ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FA
             }
         }
     }
+    print(boxes)
     list(label.coords = as.data.frame(label.coords), dimensions = dimensions)
 }
 
@@ -320,15 +374,17 @@ ReducePointAndLabelOverlap <- function (p, do.nothing = FALSE, fixed.aspect = FA
 #' @param fixed.aspect if true, forces the x and y dimensions to be on the same scale.
 #' @param auto.tidy Move the labels around so that fewer overlap.
 #' @param colors Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.
-#' @param auto.color When the number of rows of coords is less than or equal to this, a single color is used to label the points.  Otherwise, they cycle throuogh the colors.
+#' @param auto.color Automatically colors the points (if FALSE, the first color is used).
 #' @param general.color The color to be used in axes and titles.
 #' @param point.size Size of the dot representing the poing (i.e., the glyph).
 #' @param label.size Font size of the text labels on the plot.
 #' @param axis.title.size Font size of the axis titles.
 #' @param axis.label.size Font size of the axis labels.
 #' @param title.size Font size of the chart title.
+#' @param overlap.fudge Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
+#' no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.
 #' @param space.substitute Spaces in labels of points on plots are substituted with whatever is supplied.
-#' By default, a return character is used(i.e., \link{\n}). To replace with a period, use \link{\\.}.
+#' By default, a return character is used(i.e., \link{"\n"}). To replace with a period, use \link{"\\."}.
 #' @param ... Additional arguments.
 #'# @param object An object to be plotted.
 #'# @param row.description A title for the rows.
@@ -350,9 +406,10 @@ LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot")
 #' @export
 LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
                                       fixed.aspect = TRUE, auto.tidy = TRUE,
-                                      colors = q.colors, auto.color = 10, general.color = "gray28",
+                                      colors = q.colors, auto.color = TRUE, general.color = "gray28",
                                       point.size = 2, label.size = 10, legend.size = 10,
                                       axis.title.size = 12, axis.label.size = 10, title.size = 12,
+                                      overlap.fudge = 1,
                                       space.substitute = "\n",
                                       ...) {
   # Replacing spaces with ~ to work around bugs in ggplot
@@ -373,17 +430,21 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
   xlab <- "col1" #Due to bugs in ggplot, the true column names can only be added at the end.
   ylab <- "col2"
   dimnames(coords)[[2]] <- c(xlab, ylab)
-  # Setting the colors
-  #
-  has.groups <- !is.null(group)
-  if (!has.groups) {
-    if (auto.color >= n) {
-      group = rep(5, n)
-    } else {
-      group <- array(1:length(colors), n)
+    # Setting the colors
+    #
+    has.groups <- !is.null(group)
+    if (!has.groups)
+    {
+        if (auto.color)
+        {
+            group <- array(1:length(colors), n)
+        }
+        else
+        {
+            group = rep(1, n)
+        }
     }
-  }
-  group <- factor(group)
+    group <- factor(group)
   #
   # Setting limits to the axes so that they can easily accomodate the text
   #
@@ -395,13 +456,14 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
 #   p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = col.labels[1],
 #                                                          y = col.labels[2], label = "labels"))
   # p <- p + ggplot2::labs(x = col.labels[1], y = "big dog", label = "labels")
+  font.size.hack <- label.size * 25.4 / 72.77 # Converting from points to mm, only for geom_text
   p <- p + ggplot2::geom_point()
   if (fixed.aspect)
     p <- p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
   #
   # moving points and labels to avoid overlap
   #
-  new.coords <- ReducePointAndLabelOverlap(p, !auto.tidy, 1, fixed.aspect)
+  new.coords <- ReducePointAndLabelOverlap(p, label.size, !auto.tidy, fixed.aspect = fixed.aspect, overlap.fudge = overlap.fudge)
   label.dimensions <- new.coords$dimensions
   label.coords <- new.coords$label.coords
   point.coords$labels <- label.coords$labels <- row.labels
@@ -419,11 +481,10 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
   p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = xlab, y = ylab))#, colour = "labels")) #+  scale_fill_manual(values=c("#F8766D", "#00BA38"))
   p <- p + ggplot2::theme_bw()
   p <- p + ggplot2::geom_point(size = point.size, ggplot2::aes(colour = group))
-  font.size.hack <- label.size * 25.4 / 72.77 # Converting from points to mm, only for geom_text
   p <- p + ggplot2::geom_text(data = label.coords,
                               ggplot2::aes_string(x = "col1", y = "col2",
           label = "labels", group = "group", colour = "group",
-          lineheight = 1.05),
+          lineheight = 1.02),
           size = font.size.hack, show_guide  = F )
   p <- p + ggplot2::labs(title = title, x = col.labels[1], y = col.labels[2])#, label = "labels")
 #  p <- p + ggplot2::labs(title = title, x = col.labels[1], y = col.labels[2])#, label = "labels")
@@ -501,3 +562,5 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
 #     group = c(rep(row.description, length(object$spp.row)),rep(column.description, length(object$spp.col)))
 #     LabeledScatterPlot.default(coords, fixed.aspect = TRUE, group = group, ...)
 # }
+
+

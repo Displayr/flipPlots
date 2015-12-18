@@ -3,7 +3,7 @@
 \name{GetXlim}
 \alias{GetXlim}
 \title{ggplot xlim
-\code{GetXlim} Tests if a box overlaps any other boxes.}
+\code{GetXlim}}
 \usage{
 GetXlim(p)
 }
@@ -15,6 +15,6 @@ A vector containing the minimum and and maximum value of x plotted.
 }
 \description{
 ggplot xlim
-\code{GetXlim} Tests if a box overlaps any other boxes.
+\code{GetXlim}
 }
 

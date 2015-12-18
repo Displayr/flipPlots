@@ -1,0 +1,17 @@
+{
+    "contents" : "Package: flipPlots\nType: Package\nTitle: Creates Plots\nVersion: 0.1\nDate: 2015-11-07\nAuthor: Numbers International Pty Ltd\nMaintainer: Tim Bock <tim.bock@numbers.net.au>\nDescription: Wrappers for various plot types\nLicense: What license is it under?\nLazyData: TRUE\ndepends:  R (>= 2.10)\nimports: leaflet, rgdal, ggplot2, sp, smacof, plotly, stringr\nSuggests: testthat\n",
+    "created" : 1450406769051.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3278859708",
+    "id" : "30C1973E",
+    "lastKnownWriteTime" : 1450406777,
+    "path" : "~/GitHub/flipPlots/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "type" : "dcf"
+}

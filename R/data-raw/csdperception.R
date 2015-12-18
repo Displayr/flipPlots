@@ -13,16 +13,38 @@ devtools::use_data(csd.perceptions, internal = FALSE, overwrite = TRUE)
 
 
 data(csd.perceptions)
-z <- csd.perceptions[,3:4]
-dimnames(z)[[2]] <- c("col1","col2")#c("Dimension 1","Dimension 2")#paste0("`", dimnames(z)[[2]], "`")
-dimnames(z)[[1]] <- LETTERS[1:nrow(z)]
+z <- csd.perceptions[c(5:8, 1:4),3:4]
+
+#dimnames(z)[[2]] <- c("col1","col2")#c("Dimension 1","Dimension 2")#paste0("`", dimnames(z)[[2]], "`")
+#dimnames(z)[[1]] <- LETTERS[1:nrow(z)]
 
 #csd.perceptions[,3:4]
-LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE)
-LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE)
+LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = TRUE)
+LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = TRUE)
+LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
+
+LabeledScatterPlot(z, auto.tidy = TRUE, fixed.aspect = FALSE, label.size = 20, point.size = 3, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12)
+LabeledScatterPlot(z, auto.tidy = FALSE, fixed.aspect = FALSE, label.size = 20, point.size = 3, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12)
 
 LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE)
+
+
+
 LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE)
 
 
+z = matrix(c(1:10,1:10), 10, dimnames = list(c(rep("jJ", 3), rep("Big Dog", 3), rep("Stupendeously, Stupendeously big-canine", 4)), c("a1", "a2")))
+LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
+
 #plotly::ggplotly()
+scale
+c(23, 40,
+  30, 52,
+  10, 20
+  50, 85
+  100, 178
+
+

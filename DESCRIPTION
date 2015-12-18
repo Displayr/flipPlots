@@ -9,5 +9,5 @@ Description: Wrappers for various plot types
 License: What license is it under?
 LazyData: TRUE
 depends:  R (>= 2.10)
-imports: leaflet, rgdal, ggplot2, sp, smacof, plotly
+imports: leaflet, rgdal, ggplot2, sp, smacof, plotly, stringr
 Suggests: testthat

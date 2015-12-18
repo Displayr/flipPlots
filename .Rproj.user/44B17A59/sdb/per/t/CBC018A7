@@ -1,0 +1,17 @@
+{
+    "contents" : "\n#' @format A SpatialPolygonsDataFrame with data frame with 177 rows and 63 columns:\n#' @source \\url{http://www.naturalearthdata.com/downloads/50m-cultural-vectors/}\n#map.coordinates\"\n",
+    "created" : 1450406758504.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1412208755",
+    "id" : "CBC018A7",
+    "lastKnownWriteTime" : 1448579536,
+    "path" : "~/GitHub/flipPlots/R/data.R",
+    "project_path" : "R/data.R",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

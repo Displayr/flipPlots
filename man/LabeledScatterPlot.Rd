@@ -11,7 +11,10 @@ LabeledScatterPlot(coords, ...)
 \method{LabeledScatterPlot}{default}(coords, group = NULL,
   row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
   fixed.aspect = TRUE, auto.tidy = TRUE, colors = q.colors,
-  auto.color = 10, general.color = "gray28", cex = 1, ...)
+  auto.color = TRUE, general.color = "gray28", point.size = 2,
+  label.size = 10, legend.size = 10, axis.title.size = 12,
+  axis.label.size = 10, title.size = 12, overlap.fudge = 1,
+  space.substitute = "\\n", ...)
 }
 \arguments{
 \item{coords}{The xy coordinates of the points.}
@@ -35,13 +38,25 @@ LabeledScatterPlot(coords, ...)
 
 \item{colors}{Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.}
 
-\item{auto.color}{When the number of rows of coords is less than or equal to this, a single color is used to label the points.  Otherwise, they cycle throuogh the colors.}
+\item{auto.color}{Automatically colors the points (if FALSE, the first color is used).}
 
 \item{general.color}{The color to be used in axes and titles.}
 
-\item{cex}{Relative font, line and glyph size.}
+\item{point.size}{Size of the dot representing the poing (i.e., the glyph).}
 
-\item{coords}{Relative font, line and glyph size.}
+\item{label.size}{Font size of the text labels on the plot.}
+
+\item{axis.title.size}{Font size of the axis titles.}
+
+\item{axis.label.size}{Font size of the axis labels.}
+
+\item{title.size}{Font size of the chart title.}
+
+\item{overlap.fudge}{Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
+no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.}
+
+\item{space.substitute}{Spaces in labels of points on plots are substituted with whatever is supplied.
+By default, a return character is used(i.e., \link{"\n"}). To replace with a period, use \link{"\\."}.}
 
 \item{object}{An object to be plotted.
 #}
