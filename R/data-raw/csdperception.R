@@ -39,12 +39,3 @@ LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.
 LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
 LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
 
-#plotly::ggplotly()
-scale
-c(23, 40,
-  30, 52,
-  10, 20
-  50, 85
-  100, 178
-
-
