@@ -31,7 +31,7 @@ LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.
 
 
 
-LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE)
+LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10, axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE)
 
 
 z = matrix(c(1:10,1:10), 10, dimnames = list(c(rep("jJ", 3), rep("Big Dog", 3), rep("Stupendeously, Stupendeously big-canine", 4)), c("a1", "a2")))

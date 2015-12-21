@@ -21,8 +21,6 @@ ReducePointAndLabelOverlap(p, label.size, do.nothing = FALSE,
 
 \item{overlap.fudge}{Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
 no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.}
-
-\item{rstep}{The radius step size (in standard deviations) as the algorithm spirals out.}
 }
 \value{
 dimensions Width and height of the text to be plotted in terms of the scale of x and y.

@@ -13,6 +13,7 @@ library(MASS)
 
 
 LabeledScatterPlot(isoMDS(brand.sim)$points)
+InteractiveLabeledScatterPlot(isoMDS(brand.sim)$points)
 
 
 #' # MDS - square
@@ -25,3 +26,12 @@ LabeledScatterPlot(isoMDS(brand.sim)$points)
 #' data(colaPerceptions)
 #' LabeledScatterPlot(colaPerceptions[,c(7,8)], title = "Scatterplot of perceptions data",
 #'                           auto.tidy = TRUE, auto.color = 5, fixed.aspect = TRUE)
+library(ca)
+x.ca = ca(brand.associations)
+
+
+
+
+	R_opencpu
+	library(devtools)
+	install_github("NumbersInternational/scatterD3")

@@ -168,22 +168,6 @@ BoxCoordinates = function(x, y, w, h) {
   c(p1, p2, p3, p2, p3, p4, p1, p4)
 }
 
-# #' Box center
-# #' \code{boxCenter} Computes the coordinates of the center of a box based upon the coordinates of the corner.
-# #'
-# #' @param ax The x coordinate of the bottom-left of the box.
-# #' @param ay The y coordinate of the bottom-left of the box.
-# #' @param bx The x coordinate of the bottom-right of the box.
-# #' @param by The y coordinate of the bottom-right of the box.
-# #' @param cx The x coordinate of the top-right of the box.
-# #' @param cy The y coordinate of the top-right of the box.
-# #' @param dx The x coordinate of the top-left of the box.
-# #' @param dy The y coordinate of the top-left of the box.
-# #' @return vector containing the x,y coordinates of the center.
-# boxCenter = function(ax, ay, bx, by, cx, cy, dx, dy) {
-#   c((ax + bx) / 2, (ay + dy) / 2)
-# }
-
 #' \code{rectangleOverlapIndex} Returns the index of the first overlapping rectangle encountered.
 #'
 #' @param rectangles A list of rectangles, where each rectangle is its coordinates.
@@ -202,27 +186,6 @@ rectangleOverlapIndex <- function(rectangles, this.rectangle, this.rectangle.ind
         }
   -1
 }
-
-# #' Box Overlaps
-# #' \code{OverlapIndex} Returns the index of the first overlapping box encountered.
-# #'
-# #' @param boxes A list of boxes, where each box is its coordinates.
-# #' @param this.box The box to check to see if it overlaps with the rest.
-# #' @param this.box.index The index of this.box in the list of boxes.
-# #' @return -1 if no overlaps found..
-# #' @export
-# OverlapIndex <- function(boxes, this.box, this.box.index) {
-#     if (length(boxes) == 0)
-#         return(-1)
-#     for (i in 1:length(boxes))
-#         if (i != this.box.index)
-#         {
-#             box <- boxes[[i]]
-#             if (BoxOverlap(box[1],box[2],box[3],box[4],box[5],box[6],box[7],box[8], this.box[1],this.box[2],this.box[3],this.box[4],this.box[5],this.box[6],this.box[7],this.box[8]))
-#                 return(i)
-#         }
-#   -1
-# }
 
 #' ggplot xlim
 #' \code{GetXlim}
@@ -261,7 +224,7 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
     # getting the coordinates
     labels <- p$data$labels
     label.coords <- point.coords <- p$data[,1:2]
-    col.labels <- colnames(label.coords)
+    column.labels <- colnames(label.coords)
     n <- length(labels)
     # determining scale of the points and text relative to plot coordinates (dodgy hack)
     #print( par()$pin)
@@ -414,14 +377,13 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
 }
 
 
-#' Find better cootrdinates for text labels
 #' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
 #' @param coords The xy coordinates of the points.
 #' @param group A factor indicating group membership for each point.
 #' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
-#' @param col.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
+#' @param column.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
 #' @param title Title for the plot.
-#' @param legend.title Title for the legend (which only appears if group is not null).
+#' @param group.name Title for the legend (which only appears if group is not null).
 #' @param fixed.aspect if true, forces the x and y dimensions to be on the same scale.
 #' @param auto.tidy Move the labels around so that fewer overlap.
 #' @param colors Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.
@@ -439,9 +401,6 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
 #' @param space.substitute Spaces in labels of points on plots are substituted with whatever is supplied.
 #' By default, a return character is used(i.e., \link{"\n"}). To replace with a period, use \link{"\\."}.
 #' @param ... Additional arguments.
-#'# @param object An object to be plotted.
-#'# @param row.description A title for the rows.
-#'# @param column.description A title for the columns.
 #' @return p A \code{\link[ggplot2]{ggplot}} plot.
 #'
 # # MDS - square
@@ -457,9 +416,9 @@ LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot")
 
 #' @describeIn LabeledScatterPlot  Default labeled scatterplot
 #' @export
-LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, col.labels = NULL,
+LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, column.labels = NULL,
                                       title = "",
-                                      legend.title = "",
+                                      group.name = "",
                                       space.substitute = "\n",
                                       fixed.aspect = TRUE,
                                       auto.tidy = TRUE,
@@ -475,25 +434,20 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
                                       tstep = 0.1,
                                       rstep = 0.1,
                                       overlap.fudge = 1,
-                                      ...) {
-  # Replacing spaces with ~ to work around bugs in ggplot
-  dimnames(coords)[[1]] <- gsub(" ", space.substitute, dimnames(coords)[[1]])
-  # identifying the labels
-  if (is.null(row.labels))
-  {
-    row.labels <- rownames(coords)
-    #row.labels <-  gsub(" ", space.substitute, row.labels)
-  }
-  n <- length(row.labels)
-  if (is.null(col.labels)) {
-    col.labels <- colnames(coords)
-    if(is.null(col.labels)) {
-        col.labels <- c("Dimension 1", "Dimension 2")
-    }
-  }
-  xlab <- "col1" #Due to bugs in ggplot, the true column names can only be added at the end.
-  ylab <- "col2"
-  dimnames(coords)[[2]] <- c(xlab, ylab)
+                                      ...)
+{
+    # Extracting the labels
+    if (is.null(row.labels))
+        row.labels <- rownames(coords)
+    rownames(coords) <- row.labels <- gsub(" ", space.substitute, row.labels)
+    n <- length(row.labels)
+    if (is.null(column.labels))
+        column.labels <- colnames(coords)
+    if(is.null(column.labels))
+        column.labels <- c("Dimension 1", "Dimension 2")
+    xlab <- "col1" #Due to bugs in ggplot, the true column names can only be added at the end.
+    ylab <- "col2"
+    dimnames(coords)[[2]] <- c(xlab, ylab)
     # Setting the colors
     #
     has.groups <- !is.null(group)
@@ -517,9 +471,9 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
   # initial plot to get the coordinates
    p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = "col1",
                                                           y = "col2", label = "labels"))
-#   p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = col.labels[1],
-#                                                          y = col.labels[2], label = "labels"))
-  # p <- p + ggplot2::labs(x = col.labels[1], y = "big dog", label = "labels")
+#   p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = column.labels[1],
+#                                                          y = column.labels[2], label = "labels"))
+  # p <- p + ggplot2::labs(x = column.labels[1], y = "big dog", label = "labels")
   font.size.hack <- label.size * 25.4 / 72.77 # Converting from points to mm, only for geom_text
   p <- p + ggplot2::geom_point()
   if (fixed.aspect)
@@ -550,14 +504,14 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
           label = "labels", group = "group", colour = "group",
           lineheight = 1.02),
           size = font.size.hack, show_guide  = F )
-  p <- p + ggplot2::labs(title = title, x = col.labels[1], y = col.labels[2])#, label = "labels")
-#  p <- p + ggplot2::labs(title = title, x = col.labels[1], y = col.labels[2])#, label = "labels")
+  p <- p + ggplot2::labs(title = title, x = column.labels[1], y = column.labels[2])#, label = "labels")
+#  p <- p + ggplot2::labs(title = title, x = column.labels[1], y = column.labels[2])#, label = "labels")
   p <- p + ggplot2::xlim(smallest.x, biggest.x) + ggplot2::ylim(smallest.y, biggest.y)
-  p <- p + ggplot2::scale_colour_manual(values = colors, name = legend.title)
+  p <- p + ggplot2::scale_colour_manual(values = colors, name = group.name)
   if (fixed.aspect)
     p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
   if (has.groups) {
-    #p = p + scale_colour_manual(values = qColors, name = legend.title)
+    #p = p + scale_colour_manual(values = qColors, name = group.name)
     p = p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = legend.size))
   } else {
     p <- p + ggplot2::theme(legend.position = "none")

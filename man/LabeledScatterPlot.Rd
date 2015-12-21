@@ -3,24 +3,31 @@
 \name{LabeledScatterPlot}
 \alias{LabeledScatterPlot}
 \alias{LabeledScatterPlot.default}
-\title{Find better cootrdinates for text labels
-\code{LabeledScatterPlot} Scatterplot with Labeled Points.}
+\alias{LabeledScatterPlot.smacof}
+\alias{LabeledScatterPlot.smacofB}
+\alias{LabeledScatterPlot.smacofR}
+\title{\code{LabeledScatterPlot} Scatterplot with Labeled Points.}
 \usage{
 LabeledScatterPlot(coords, ...)
 
 \method{LabeledScatterPlot}{default}(coords, group = NULL,
-  row.labels = NULL, col.labels = NULL, title = "", legend.title = "",
-  fixed.aspect = TRUE, auto.tidy = TRUE, colors = q.colors,
-  auto.color = TRUE, general.color = "gray28", point.size = 2,
-  label.size = 10, legend.size = 10, axis.title.size = 12,
-  axis.label.size = 10, title.size = 12, overlap.fudge = 1,
-  space.substitute = "\\n", ...)
+  row.labels = NULL, col.labels = NULL, title = "", group.name = "",
+  space.substitute = "\\n", fixed.aspect = TRUE, auto.tidy = TRUE,
+  colors = q.colors, auto.color = TRUE, general.color = "gray28",
+  point.size = 2, label.size = 10, legend.size = 10,
+  axis.title.size = 12, axis.label.size = 10, title.size = 12,
+  tstep = 0.1, rstep = 0.1, overlap.fudge = 1, ...)
+
+\method{LabeledScatterPlot}{smacof}(object, ...)
+
+\method{LabeledScatterPlot}{smacofB}(object, ...)
+
+\method{LabeledScatterPlot}{smacofR}(object, ...)
 }
 \arguments{
 \item{coords}{The xy coordinates of the points.}
 
-\item{...}{Additional arguments.
-#}
+\item{...}{Additional arguments.}
 
 \item{group}{A factor indicating group membership for each point.}
 
@@ -30,7 +37,10 @@ LabeledScatterPlot(coords, ...)
 
 \item{title}{Title for the plot.}
 
-\item{legend.title}{Title for the legend (which only appears if group is not null).}
+\item{group.name}{Title for the legend (which only appears if group is not null).}
+
+\item{space.substitute}{Spaces in labels of points on plots are substituted with whatever is supplied.
+By default, a return character is used(i.e., \link{"\n"}). To replace with a period, use \link{"\\."}.}
 
 \item{fixed.aspect}{if true, forces the x and y dimensions to be on the same scale.}
 
@@ -52,29 +62,33 @@ LabeledScatterPlot(coords, ...)
 
 \item{title.size}{Font size of the chart title.}
 
+\item{tstep}{The angle (theta) step size as the algorithm spirals out.}
+
+\item{rstep}{The radius step size (in standard deviations) as the algorithm spirals out.}
+
 \item{overlap.fudge}{Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
 no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.}
-
-\item{space.substitute}{Spaces in labels of points on plots are substituted with whatever is supplied.
-By default, a return character is used(i.e., \link{"\n"}). To replace with a period, use \link{"\\."}.}
-
-\item{object}{An object to be plotted.
-#}
-
-\item{row.description}{A title for the rows.
-#}
-
-\item{column.description}{A title for the columns.}
 }
 \value{
 p A \code{\link[ggplot2]{ggplot}} plot.
 }
 \description{
-Find better cootrdinates for text labels
 \code{LabeledScatterPlot} Scatterplot with Labeled Points.
+
+
+
+
+
+
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{default}: Default labeled scatterplot
+
+\item \code{smacof}: Labeled scatterplot of smacof object
+
+\item \code{smacofB}: Labeled scatterplot of smacofB object
+
+\item \code{smacofR}: Labeled scatterplot of smacofR object
 }}
 
