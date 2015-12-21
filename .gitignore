@@ -13,6 +13,7 @@ src/gwt/tools/ace/
 src/gwt/tools/pdfjs/
 src/gwt/.ant-targets-build.xml
 /src/gwt/.gwt/.gwt-log
+.Rproj.user/
 .Rproj.user
 .Rhistory
 .RData
