@@ -24,10 +24,10 @@ ReadCsvTable <- function(file, as.is = TRUE, ...){
 
 
 
-dataset <- system.file("extdata", "Cola_perceptions.csv", package="flip")
-#colaPerceptions = ReadCsvTable("http://surveyanalysis.org/images/c/ca/Cola_perceptions.csv")
-colaPerceptions = ReadCsvTable(dataset)
-colaPerceptions = as.matrix(colaPerceptions)
-dimnames(colaPerceptions) = list("Brands" = dimnames(colaPerceptions)[[1]], "Attributes"
-                                 = dimnames(colaPerceptions)[[2]])
-devtools::use_data(colaPerceptions, internal = FALSE, overwrite = TRUE)
+#dataset <- system.file("extdata", "Cola_perceptions.csv", package="flip")
+#cola.perceptions = ReadCsvTable(dataset)
+cola.perceptions = ReadCsvTable("http://surveyanalysis.org/images/c/ca/Cola_perceptions.csv")
+cola.perceptions = as.matrix(colaPerceptions)
+dimnames(cola.perceptions) = list("Brands" = dimnames(cola.perceptions)[[1]], "Attributes"
+                                 = dimnames(cola.perceptions)[[2]])
+devtools::use_data(cola.perceptions, internal = FALSE, overwrite = TRUE)

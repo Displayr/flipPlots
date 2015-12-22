@@ -26,7 +26,7 @@ LabeledScatterPlot(coords, group = NULL, row.labels = NULL,
 \item{group.name}{Title for the legend (which only appears if group is not null).}
 
 \item{space.substitute}{Spaces in labels of points on plots are substituted with whatever is supplied.
-By default, a return character is used(i.e., \link{"\n"}). To replace with a period, use \link{"\\."}.}
+By default, a return character is used(i.e., \code{"\n"}). To replace with a period, use \code{"\\."}.}
 
 \item{fixed.aspect}{if true, forces the x and y dimensions to be on the same scale.}
 
