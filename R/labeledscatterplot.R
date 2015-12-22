@@ -74,51 +74,6 @@ DistanceToBox <- function(px, py, ax, ay, bx, by, cx, cy, dx, dy) {
   min(d.p.ab, d.p.bc, d.p.cd, d.p.da)
 }
 
-# #' Whether or not two boxes overlap
-# #' \code{BoxOverlap} Checks to see if two boxes overlap
-# #'
-# #' @param ax1 The x coordinate of the bottom-left of the first box.
-# #' @param ay1 The y coordinate of the bottom-left of the first box.
-# #' @param bx1 The x coordinate of the bottom-right of the first box.
-# #' @param by1 The y coordinate of the bottom-right of the first box.
-# #' @param cx1 The x coordinate of the top-right of the first box.
-# #' @param cy1 The y coordinate of the top-right of the first box.
-# #' @param dx1 The x coordinate of the top-left of the first box.
-# #' @param dy1 The y coordinate of the top-left of the first box.
-# #' @param ax2 The x coordinate of the bottom-left of the second box.
-# #' @param ay2 The y coordinate of the bottom-left of the second box.
-# #' @param bx2 The x coordinate of the bottom-right of the second box.
-# #' @param by2 The y coordinate of the bottom-right of the second box.
-# #' @param cx2 The x coordinate of the top-right of the second box.
-# #' @param cy2 The y coordinate of the top-right of the second box.
-# #' @param dx2 The x coordinate of the top-left of the second box.
-# #' @param dy2 The y coordinate of the top-left of the second box.
-# #' @return true if the boxes overlap and false otherwise.
-# BoxOverlap <- function(ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) {
-#   # Returns: boolean
-#   #
-# public boolean overlaps (rectangle r) {
-#     return x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y;
-# }
-# #   if (DistanceToBox(ax1, ay1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-# #     return(TRUE)
-# #   if (DistanceToBox(bx1, by1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-# #     return(TRUE)
-# #   if (DistanceToBox(cx1, cy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-# #     return(TRUE)
-# #   if (DistanceToBox(dx1, dy1, ax2, ay2, bx2, by2, cx2, cy2, dx2, dy2) == 0)
-# #     return(TRUE)
-# #   if (DistanceToBox(ax2, ay2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-# #     return(TRUE)
-# #   if (DistanceToBox(bx2, by2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-# #     return(TRUE)
-# #   if (DistanceToBox(cx2, cy2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-# #     return(TRUE)
-# #   if (DistanceToBox(dx2, dy2, ax1, ay1, bx1, by1, cx1, cy1, dx1, dy1) == 0)
-# #     return(TRUE)
-# #   FALSE
-# }
-
 #' \code{rectangleOverlap} Checks to see if two recangles.
 #'
 #' @param a The first rectangle.
@@ -146,11 +101,6 @@ rectangle = function(x, y, w, h)
   result
 }
 
-
-# print.rectangle <- function(r)
-# {
-#     cat(paste("x:", r$x, " y:", r$y, "width", r$width, "height", r$height, "\n"))
-# }
 
 #' Box coordinates
 #' \code{BoxOverlap} Computes the positions of the corner of a box.
@@ -218,81 +168,41 @@ GetYlim <- function(p) {
 #' @param overlap.fudge Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
 #' no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.
 #' @return dimensions Width and height of the text to be plotted in terms of the scale of x and y.
-ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed.aspect = FALSE, tstep = 0.1, rstep = 0.1, overlap.fudge = 1){
+ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed.aspect = FALSE, tstep = 0.1, rstep = 0.1, overlap.fudge = 1)
+{
     # Inspired by  wordlayout {wordcloud}
-    #
     # getting the coordinates
     labels <- p$data$labels
     label.coords <- point.coords <- p$data[,1:2]
     column.labels <- colnames(label.coords)
     n <- length(labels)
     # determining scale of the points and text relative to plot coordinates (dodgy hack)
-    #print( par()$pin)
-    #  print( p$data)
-    #  print(p$panel$ranges[[1]])
-    #  plot(p)
-    #  stop("dog")
-    #xlim <-
     rng.x <- diff(GetXlim(p)) * 1.1 #Adjustment to deal with space left outside of convex hull of points.
-#      print("rng.x")
-#      print(rng.x)
     rng.y <- diff(GetYlim(p)) * 1.1
-#      print("rng.y")
-#      print(rng.y)
     width.plotting.region <- par()$pin[1] * 25.4 * .8 # Hack due to inaccuracy of pin
-#      print("width.plotting.region")
-#      print(width.plotting.region)
     height.plotting.region <- par()$pin[2] * 25.4 * .96
-#      print("height.plotting.region")
-#      print(height.plotting.region)
-
-
     x.p.mm <- rng.x / width.plotting.region
     y.p.mm <- rng.y / height.plotting.region
-#      print("x.p.mm")
-#      print(x.p.mm)
-#      print("y.p.mm")
-#      print(y.p.mm)
-#      print(fixed.aspect)
      if (fixed.aspect)
         x.p.mm <- y.p.mm <- max(x.p.mm, y.p.mm)
-#      print("x.p.mm")
-#      print(x.p.mm)
-#      print("y.p.mm")
-#      print(y.p.mm)
-#
     inches.to.mm.fudge  <- label.size * 1.384615 * 1.8 / 1.95 / overlap.fudge
     character.height.mm <-  strheight("Jj", "inches") * inches.to.mm.fudge
-    #line.height.y.scale <- character.height.mm * y.p.mm * 1.02 # Adjustment for gaps between lines
     smallish.size <- character.height.mm * x.p.mm
     widths <- strwidth(labels, "inches") * inches.to.mm.fudge * x.p.mm# / initial.x.scale
     n.lines <- 1 + stringr::str_count(labels, "\n")
     heights <- strheight(labels, "inches") * inches.to.mm.fudge * y.p.mm
     dimensions <- matrix(c(widths,heights), n, 2, dimnames = list(labels, c("width", "height")))
-    # print(dimensions)
     sdx <- sd(label.coords[,1], na.rm = TRUE)
     sdy <- sd(label.coords[,2], na.rm = TRUE)
     if (sdx == 0)
-    sdx <- 1
+        sdx <- 1
     if (sdy == 0)
-    sdy <- 1
+        sdy <- 1
     # computing position of the points.
-    # preventing overlap of points
-#     for (i in 2:n)
-#         for (prev.i in 1:(i - 1))
-#             if (sum(point.coords[i,] == point.coords[prev.i,]) == 2)
-#             {
-#                 w <- widths[i]
-#                 h <- heights[i]
-#                 radian <- 2 * pi * (n + i) / (2 * n)
-#                 point.coords[i, 1] <- point.coords[i, 1] + w / 4 * cos(radian)
-#                 point.coords[i, 2] <- point.coords[i, 2] + h / 4 * sin(radian)
-#             }
     # getting the coordinates for the labels, with the initial labels positioned
     # above the points if they are single lines of text, and in the "middle" otherwise, trying
     # to prevent the point being within a letter.
     offset <- rep(0, n)
-#    offset[n.lines %% 2 == 1] <- 0.5
     offset[n.lines  == 1] <- 1
     offset[n.lines  == 2] <- 0.1
     offset[n.lines  == 3] <- 0.23
@@ -303,11 +213,7 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
         boxes[[i]] <- rectangle(label.coords[i,1], label.coords[i,2],
           widths[i], heights[i])
     names(boxes) <- labels
-    # print(boxes)
-#
     # Moving labels outwards in a spiral until they no longer overlap.
-    #
-    #box.coordinates <- vector("list", n)
     thetas <- 2 * pi * (1:n) / n
     if (!do.nothing)
     {
@@ -324,27 +230,21 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
             h <- heights[i]
             overlapped <- TRUE
             new.position.counter <- 0
-            while (overlapped)
-            {
-                this.box <- rectangle(x1, y1, w, h)
-                #this.box <- BoxCoordinates(x1, y1, w, h)
-                # print(paste("this.box", i))
+            iteration <- 0
 
-                #print(boxes[[i]])
-                #stop("dog")
+            while (overlapped & iteration < 1000)
+            {
+                iteration <- iteration + 1
+                this.box <- rectangle(x1, y1, w, h)
                 overlaps.with <- rectangleOverlapIndex(boxes, this.box, i)
                 if (overlaps.with == -1)
                 {
                     boxes[[i]] <- this.box
                     label.coords[i, ] <-  c(x1, y1)
                     overlapped <- FALSE
-#                     print("no overlap")
-#                     print(this.box)
                 }
                 else
                 {
-                    #
-                    # print(paste("Moving", i, " due to overlap with ", overlaps.with))
                     # Trying to position the label on a different side of the point.
                     new.position.counter <- new.position.counter + 1
                     if (new.position.counter == 1)
@@ -372,7 +272,6 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
             }
         }
     }
-    # print(boxes)
     list(label.coords = as.data.frame(label.coords), dimensions = dimensions)
 }
 
@@ -382,7 +281,7 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
 #' @param group A factor indicating group membership for each point.
 #' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
 #' @param column.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
-#' @param title Title for the plot.
+#' @param main Title for the plot.
 #' @param group.name Title for the legend (which only appears if group is not null).
 #' @param fixed.aspect if true, forces the x and y dimensions to be on the same scale.
 #' @param auto.tidy Move the labels around so that fewer overlap.
@@ -402,25 +301,12 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
 #' By default, a return character is used(i.e., \link{"\n"}). To replace with a period, use \link{"\\."}.
 #' @param ... Additional arguments.
 #' @return p A \code{\link[ggplot2]{ggplot}} plot.
-#'
-# # MDS - square
-# data(breakfastDissimilarities)
-#     type = "interval", eps = 1e-12, itmax = 100000)
-# LabeledScatterPlot(mdsInterval, title = "Interval-scale MDS of Breakfast Dissimilarities")
-#
-# data(colaPerceptions)
-# LabeledScatterPlot(colaPerceptions[,c(7,8)], title = "Scatterplot of perceptions data",
-#                           auto.tidy = TRUE, auto.color = 5, fixed.aspect = TRUE)
 #' @export
-LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot")
-
-#' @describeIn LabeledScatterPlot  Default labeled scatterplot
-#' @export
-LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, column.labels = NULL,
-                                      title = "",
+LabeledScatterPlot = function(coords,  group = NULL, row.labels = NULL, column.labels = NULL,
+                                      main = "",
                                       group.name = "",
                                       space.substitute = "\n",
-                                      fixed.aspect = TRUE,
+                                      fixed.aspect = FALSE,
                                       auto.tidy = TRUE,
                                       colors = q.colors,
                                       auto.color = TRUE,
@@ -430,7 +316,7 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
                                       legend.size = 10,
                                       axis.title.size = 12,
                                       axis.label.size = 10,
-                                      title.size = 12,
+                                      main.size = 12,
                                       tstep = 0.1,
                                       rstep = 0.1,
                                       overlap.fudge = 1,
@@ -449,7 +335,6 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
     ylab <- "col2"
     dimnames(coords)[[2]] <- c(xlab, ylab)
     # Setting the colors
-    #
     has.groups <- !is.null(group)
     if (!has.groups)
     {
@@ -463,122 +348,87 @@ LabeledScatterPlot.default = function(coords,  group = NULL, row.labels = NULL, 
         }
     }
     group <- factor(group)
-  #
-  # Setting limits to the axes so that they can easily accomodate the text
-  #
-  point.coords <- as.data.frame(coords)
-  point.coords$labels <- row.labels
-  # initial plot to get the coordinates
-   p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = "col1",
-                                                          y = "col2", label = "labels"))
-#   p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = column.labels[1],
-#                                                          y = column.labels[2], label = "labels"))
-  # p <- p + ggplot2::labs(x = column.labels[1], y = "big dog", label = "labels")
-  font.size.hack <- label.size * 25.4 / 72.77 # Converting from points to mm, only for geom_text
-  p <- p + ggplot2::geom_point()
-  if (fixed.aspect)
-    p <- p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
-  #
-  # moving points and labels to avoid overlap
-  #
-  new.coords <- ReducePointAndLabelOverlap(p, label.size, !auto.tidy, fixed.aspect = fixed.aspect, overlap.fudge = overlap.fudge)
-  label.dimensions <- new.coords$dimensions
-  label.coords <- new.coords$label.coords
-  point.coords$labels <- label.coords$labels <- row.labels
-  point.coords$group <- label.coords$group <- group
-  smallest.x <- min(point.coords[,1], label.coords[,1] - label.dimensions[,1] / 2)
-  biggest.x <- max(point.coords[,1], label.coords[,1] + label.dimensions[,1] / 2)
-  smallest.y <- min(point.coords[,2], label.coords[,2] - label.dimensions[,2] / 2)
-  biggest.y <- max(point.coords[,2], label.coords[,2] + label.dimensions[,2] / 2)
-
-#   # Replacing spaces with ~ to work around bugs in ggplot
-#   dimnames(label.coords)[[1]] <- gsub("\\.", " ", dimnames(label.coords)[[1]])
-  #
-  # creating the plot a second time
-  #
-  p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = xlab, y = ylab))#, colour = "labels")) #+  scale_fill_manual(values=c("#F8766D", "#00BA38"))
-  p <- p + ggplot2::theme_bw()
-  p <- p + ggplot2::geom_point(size = point.size, ggplot2::aes(colour = group))
-  p <- p + ggplot2::geom_text(data = label.coords,
-                              ggplot2::aes_string(x = "col1", y = "col2",
-          label = "labels", group = "group", colour = "group",
-          lineheight = 1.02),
-          size = font.size.hack, show_guide  = F )
-  p <- p + ggplot2::labs(title = title, x = column.labels[1], y = column.labels[2])#, label = "labels")
-#  p <- p + ggplot2::labs(title = title, x = column.labels[1], y = column.labels[2])#, label = "labels")
-  p <- p + ggplot2::xlim(smallest.x, biggest.x) + ggplot2::ylim(smallest.y, biggest.y)
-  p <- p + ggplot2::scale_colour_manual(values = colors, name = group.name)
-  if (fixed.aspect)
-    p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
-  if (has.groups) {
-    #p = p + scale_colour_manual(values = qColors, name = group.name)
-    p = p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = legend.size))
-  } else {
-    p <- p + ggplot2::theme(legend.position = "none")
-  }
-  p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(colour = general.color, size = axis.label.size))
-  p <- p + ggplot2::theme(axis.text.y = ggplot2::element_text(colour = general.color, size = axis.label.size))
-  p <- p + ggplot2::theme(axis.title.x = ggplot2::element_text(colour = general.color, size = axis.title.size))
-  p <- p + ggplot2::theme(axis.title.y = ggplot2::element_text(colour = general.color, size = axis.title.size))
-  p <- p + ggplot2::theme(axis.title = ggplot2::element_text(size = axis.title.size, face = "bold"))
-  p <- p + ggplot2::theme(plot.title = ggplot2::element_text(size = title.size, face="bold", vjust = 1.2))
-  #
-  # connecting points to text using lines
-  #
-  for (i in 1:n) {
-    x <- coords[i, 1]
-    y <- coords[i, 2]
-    x1 <- label.coords[i, 1]
-    y1 <- label.coords[i, 2]
-    w <- label.dimensions[i, 1]
-    h <- label.dimensions[i, 2]
-    cs <- BoxCoordinates(x1, y1, w, h)
-    abs.slope <- function(x1, y1, x2, y2) {
-      abs((y1 - y2) / (x1 - x2))
-    }
-    if (DistanceToBox(x, y, cs[1], cs[2], cs[3], cs[4], cs[5], cs[6], cs[7], cs[8]) > h) {
-      line.color = colors[group[i]]
-      if (abs.slope(x, y, x1, y1) < 0.5) {
-        if (x > x1) { # point to the righy of label
-          p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[3], y = y, yend = cs[2] + h / 2), colour = line.color, size = .5)#, size = 3)
-        } else  { # point to the left of label
-          p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1], y = y, yend = cs[2] + h / 2), colour = line.color, size = .5)#, colour = transparent.colors[i], size = 3)
-        }
-      } else {
-        if (y > y1) { # point above the label
-          p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[8]), colour = line.color, size = .5)##, colour = transparent.colors[i], size = 3)
-        } else  { # point below the label
-          p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[2]), colour = line.color, size = .5)##, colour = transparent.colors[i], size = 3)
+    #
+    # Setting limits to the axes so that they can easily accomodate the text
+    #
+    point.coords <- as.data.frame(coords)
+    point.coords$labels <- row.labels
+    # initial plot to get the coordinates
+    p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = "col1", y = "col2", label = "labels"))
+    font.size.hack <- label.size * 25.4 / 72.77 # Converting from points to mm, only for geom_text
+    p <- p + ggplot2::geom_point()
+    if (fixed.aspect)
+        p <- p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
+    #
+    # moving points and labels to avoid overlap
+    #
+    new.coords <- ReducePointAndLabelOverlap(p, label.size, !auto.tidy,
+        fixed.aspect = fixed.aspect, tstep = tstep,rstep = rstep, overlap.fudge = overlap.fudge)
+    label.dimensions <- new.coords$dimensions
+    label.coords <- new.coords$label.coords
+    point.coords$labels <- label.coords$labels <- row.labels
+    point.coords$group <- label.coords$group <- group
+    smallest.x <- min(point.coords[,1], label.coords[,1] - label.dimensions[,1] / 2)
+    biggest.x <- max(point.coords[,1], label.coords[,1] + label.dimensions[,1] / 2)
+    smallest.y <- min(point.coords[,2], label.coords[,2] - label.dimensions[,2] / 2)
+    biggest.y <- max(point.coords[,2], label.coords[,2] + label.dimensions[,2] / 2)
+    #
+    # creating the plot a second time
+    #
+    p <- ggplot2::ggplot(point.coords, ggplot2::aes_string(x = xlab, y = ylab))#, colour = "labels")) #+  scale_fill_manual(values=c("#F8766D", "#00BA38"))
+    p <- p + ggplot2::theme_bw()
+    p <- p + ggplot2::geom_point(size = point.size, ggplot2::aes(colour = group))
+    p <- p + ggplot2::geom_text(data = label.coords,
+        ggplot2::aes_string(x = "col1", y = "col2",
+            label = "labels", group = "group", colour = "group",
+            lineheight = 1.02),
+        size = font.size.hack, show.legend = F)
+    p <- p + ggplot2::labs(title = main, x = column.labels[1], y = column.labels[2])#, label = "labels")
+    p <- p + ggplot2::xlim(smallest.x, biggest.x) + ggplot2::ylim(smallest.y, biggest.y)
+    p <- p + ggplot2::scale_colour_manual(values = colors, name = group.name)
+    if (fixed.aspect)
+      p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
+    if (has.groups)
+        p = p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = legend.size))
+    else
+        p <- p + ggplot2::theme(legend.position = "none")
+    p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(colour = general.color, size = axis.label.size))
+    p <- p + ggplot2::theme(axis.text.y = ggplot2::element_text(colour = general.color, size = axis.label.size))
+    p <- p + ggplot2::theme(axis.title.x = ggplot2::element_text(colour = general.color, size = axis.title.size))
+    p <- p + ggplot2::theme(axis.title.y = ggplot2::element_text(colour = general.color, size = axis.title.size))
+    p <- p + ggplot2::theme(axis.title = ggplot2::element_text(size = axis.title.size, face = "bold"))
+    p <- p + ggplot2::theme(plot.title = ggplot2::element_text(size = main.size, face="bold", vjust = 1.2))
+    p <- p + ggplot2::geom_hline(yintercept = 0, colour = general.color, linetype="dashed")
+    p <- p + ggplot2::geom_vline(xintercept = 0, colour = general.color, linetype="dashed")
+    p <- p + ggplot2::theme(legend.key = ggplot2::element_rect(colour = "NA"))
+    #
+    # connecting points to text using lines
+    #
+    for (i in 1:n) {
+        x <- coords[i, 1]
+        y <- coords[i, 2]
+        x1 <- label.coords[i, 1]
+        y1 <- label.coords[i, 2]
+        w <- label.dimensions[i, 1]
+        h <- label.dimensions[i, 2]
+        cs <- BoxCoordinates(x1, y1, w, h)
+        .absSlope <- function(x1, y1, x2, y2) abs((y1 - y2) / (x1 - x2))
+        if (DistanceToBox(x, y, cs[1], cs[2], cs[3], cs[4], cs[5], cs[6], cs[7], cs[8]) > h) {
+            line.color = colors[group[i]]
+            if (.absSlope(x, y, x1, y1) < 0.5) {
+                if (x > x1) { # point to the righy of label
+                    p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[3], y = y, yend = cs[2] + h / 2), colour = line.color, size = .5)#, size = 3)
+            } else  { # point to the left of label
+              p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1], y = y, yend = cs[2] + h / 2), colour = line.color, size = .5)#, colour = transparent.colors[i], size = 3)
+            }
+          } else {
+            if (y > y1) { # point above the label
+              p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[8]), colour = line.color, size = .5)##, colour = transparent.colors[i], size = 3)
+            } else  { # point below the label
+              p <- p + ggplot2::geom_segment(ggplot2::aes_string(x = x, xend = cs[1] + w / 2, y = y, yend=cs[2]), colour = line.color, size = .5)##, colour = transparent.colors[i], size = 3)
+            }
+          }
         }
       }
-    }
-  }
-  p
+      p
 }
-
-
-#'  @describeIn LabeledScatterPlot  Labeled scatterplot of smacof object
-#'  @export
-LabeledScatterPlot.smacof = function(object, ...)
-{
-    LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
-}
-
-#'  @describeIn LabeledScatterPlot  Labeled scatterplot of smacofB object
-#'  @export
-LabeledScatterPlot.smacofB = function(object, ...)
-{
-    LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
-}
-
-
-#'  @describeIn LabeledScatterPlot  Labeled scatterplot of smacofR object
-#'  @export
-LabeledScatterPlot.smacofR = function(object, ...) # # row.description = "Rows", column.description = "Columns",  ...) {
-{
-    coords = rbind(object$conf.row, object$conf.col)
-    group = c(rep(row.description, length(object$spp.row)),rep(column.description, length(object$spp.col)))
-    LabeledScatterPlot.default(coords, fixed.aspect = TRUE, group = group, ...)
-}
-
-

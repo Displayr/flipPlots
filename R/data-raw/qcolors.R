@@ -10,7 +10,7 @@ grDevices::rgb(99, 99, 99, 255, max = 255), # dark grey
 grDevices::rgb(153, 115, 0, 255, max = 255), # brown
 grDevices::rgb(38, 68, 120, 255, max = 255), # very dark blue
 grDevices::rgb(67, 104, 43, 255, max = 255), # darker green
-grDevices::rgb(255, 255, 255, 255, max = 255), # black
+grDevices::rgb(0, 0, 0, 255, max = 255), # black
 grDevices::rgb(255, 35, 35, 255, max = 255)) # red
 
 devtools::use_data(q.colors, internal = FALSE, overwrite = TRUE)

@@ -1,36 +1,43 @@
-#' \code{createTooltips}
-#' @description Creates tooltips for \code{\link{CorrespondenceAnalysis}}.
-#' @param x The data that is being analzyed.
+#' \code{CreateInteractiveScatterplotTooltips}
+#' @description Creates tooltips for \code{\link{InteractiveLabeledScatterPlot}}.
+#' @param x The data that is being analzyed, where each row corresponds to a tooltip and
+#' and the cells in that row appear in the tooltip.
 #' @param row.labels A vector of the row labels.
-createCaTooltips <- function(x, row.labels, column.labels)
+#' @export
+CreateInteractiveScatterplotTooltips <- function(x)
 {
-    .createTooltips = function(x, row.labels, column.labels)
-    {
-        n.rows = length(row.labels)
-        x.neat = matrix(prettyNum(x, digits = 2), n.rows)
-        column.labels.repeated = matrix(column.labels,
-            n.rows, length(column.labels), byrow = TRUE)
-        cells = matrix(paste(x.neat, column.labels.repeated),n.rows)
-        rows = apply(cells, 1, function(x) {paste(x, collapse = "<br>")})
-        paste("<strong>", row.labels, "</strong><br>", rows, sep = "")
-    }
-    c(.createTooltips(x, row.labels, column.labels),
-        .createTooltips(t(x), column.labels, row.labels))
+    row.labels <- rownames(x)
+    column.labels <- colnames(x)
+    n.rows <- length(row.labels)
+    x.neat <- matrix(prettyNum(x, digits = 2), n.rows)
+    column.labels.repeated <- matrix(column.labels,
+        n.rows, length(column.labels), byrow = TRUE)
+    cells <- matrix(paste(x.neat, column.labels.repeated),n.rows)
+    rows <- apply(cells, 1, function(x) {paste(x, collapse = "<br>")})
+    paste("<strong>", row.labels, "</strong><br>", rows, sep = "")
 }
 
 #' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
 #' @param coords The xy coordinates of the points.
 #' @param group A factor indicating group membership for each point.
+#' @param group.name The title to appear above the legend, which indicates group membership.
+#' @param tooltip.text The text to appear on tooltips.
 #' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
 #' @param column.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
 #' @param group.name Title for the legend (which only appears if group is not null).
-#' @param fixed.aspect if true, forces the x and y dimensions to be on the same scale.
+#' @param fixed.aspect If true, forces the x and y dimensions to be on the same scale.
+#' @param colors Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.
+#' @param auto.color Automatically colors the points (if FALSE, the first color is used).
+#' @param legend.width Legend area width, in pixels.
+
 #' @export
 InteractiveLabeledScatterPlot <- function(coords,  group = NULL, row.labels = NULL, column.labels = NULL,
                                       group.name = "",
-                                      space.substitute = "\n",
-                                      fixed.aspect = TRUE,
-                                      colors = q.colors)
+                                      tooltip.text = NULL,
+                                      fixed.aspect = FALSE,
+                                      colors =  q.colors,
+                                      auto.color = TRUE,
+                                      legend.width = 150)
 {
     # Extracting the labels
     if (is.null(row.labels))
@@ -40,11 +47,27 @@ InteractiveLabeledScatterPlot <- function(coords,  group = NULL, row.labels = NU
         column.labels <- colnames(coords)
     if(is.null(column.labels))
         column.labels <- c("Dimension 1", "Dimension 2")
+    if (!is.null(group))
+    {
+        unique.groups <- unique(group)
+        n.groups <- length(unique.groups)
+        if(n.groups > length(colors))
+            colors <- rep(colors, n.groups)
+        #names(colors)[1:n.groups] <- unique.groups
+    }
+    else
+    {
+            legend.width <- 0
+            group <- flipU::IfThen(auto.color, 1:n, rep(1, n))
+    }
+#     print(colors)
+#     print(strtrim(colors, 7))
     scatterD3::scatterD3(x = coords[,1], y = coords[,2],
           lab = row.labels,
-          col_var = group,
+          col_var = group, colors = strtrim(colors, 7),
           xlab = column.labels[1], ylab = column.labels[2], col_lab = group.name,
-          tooltip_text = createCaTooltips(coords, row.labels), fixed = fixed.aspect)
+          legend_width = legend.width,
+          tooltip_text = tooltip.text, fixed = fixed.aspect)
 }
 
 

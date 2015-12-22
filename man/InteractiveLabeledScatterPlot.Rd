@@ -5,8 +5,9 @@
 \title{\code{LabeledScatterPlot} Scatterplot with Labeled Points.}
 \usage{
 InteractiveLabeledScatterPlot(coords, group = NULL, row.labels = NULL,
-  col.labels = NULL, group.name = "", space.substitute = "\\n",
-  fixed.aspect = TRUE, colors = q.colors)
+  column.labels = NULL, group.name = "", tooltip.text = NULL,
+  fixed.aspect = FALSE, colors = q.colors, auto.color = TRUE,
+  legend.width = 150)
 }
 \arguments{
 \item{coords}{The xy coordinates of the points.}
@@ -15,11 +16,21 @@ InteractiveLabeledScatterPlot(coords, group = NULL, row.labels = NULL,
 
 \item{row.labels}{A vector of labels which will, if supplied, over-ride the rownames of coodinates.}
 
-\item{col.labels}{A vector of labels which will, if supplied, over-ride the colnames of coodinates.}
+\item{column.labels}{A vector of labels which will, if supplied, over-ride the colnames of coodinates.}
+
+\item{group.name}{The title to appear above the legend, which indicates group membership.}
+
+\item{tooltip.text}{The text to appear on tooltips.}
+
+\item{fixed.aspect}{If true, forces the x and y dimensions to be on the same scale.}
+
+\item{colors}{Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.}
+
+\item{auto.color}{Automatically colors the points (if FALSE, the first color is used).}
+
+\item{legend.width}{Legend area width, in pixels.}
 
 \item{group.name}{Title for the legend (which only appears if group is not null).}
-
-\item{fixed.aspect}{if true, forces the x and y dimensions to be on the same scale.}
 }
 \description{
 \code{LabeledScatterPlot} Scatterplot with Labeled Points.
