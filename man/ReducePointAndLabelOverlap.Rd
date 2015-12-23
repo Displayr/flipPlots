@@ -5,8 +5,8 @@
 \title{Find better cootrdinates for text labels
 \code{GetYlim} Identifies a better set of coordinates to place labels in a labeled ggplot scatterplot.}
 \usage{
-ReducePointAndLabelOverlap(p, label.size, do.nothing = FALSE,
-  fixed.aspect = FALSE, tstep = 0.1, rstep = 0.1, overlap.fudge = 1)
+ReducePointAndLabelOverlap(p, label.size, do.nothing, fixed.aspect, tstep,
+  rstep, overlap.fudge, plot.width, plot.height)
 }
 \arguments{
 \item{p}{A \code{\link[ggplot2]{ggplot}} plot.}
@@ -21,6 +21,10 @@ ReducePointAndLabelOverlap(p, label.size, do.nothing = FALSE,
 
 \item{overlap.fudge}{Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
 no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.}
+
+\item{plot.width}{The width of the plotting area (in inches).}
+
+\item{plot.height}{The height of the plotting area (in inches).}
 }
 \value{
 dimensions Width and height of the text to be plotted in terms of the scale of x and y.

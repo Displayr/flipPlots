@@ -167,8 +167,15 @@ GetYlim <- function(p) {
 #' @param rstep The radius step size (in standard deviations) as the algorithm spirals out.
 #' @param overlap.fudge Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
 #' no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.
+#' @param plot.width The width of the plotting area (in inches).
+#' @param plot.height The height of the plotting area (in inches).
 #' @return dimensions Width and height of the text to be plotted in terms of the scale of x and y.
-ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed.aspect = FALSE, tstep = 0.1, rstep = 0.1, overlap.fudge = 1)
+ReducePointAndLabelOverlap <- function (p, label.size,
+                                        do.nothing,
+                                        fixed.aspect,
+                                        tstep,
+                                        rstep,
+                                        overlap.fudge)
 {
     # Inspired by  wordlayout {wordcloud}
     # getting the coordinates
@@ -179,8 +186,8 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
     # determining scale of the points and text relative to plot coordinates (dodgy hack)
     rng.x <- diff(GetXlim(p)) * 1.1 #Adjustment to deal with space left outside of convex hull of points.
     rng.y <- diff(GetYlim(p)) * 1.1
-    width.plotting.region <- par()$pin[1] * 25.4 * .8 # Hack due to inaccuracy of pin
-    height.plotting.region <- par()$pin[2] * 25.4 * .96
+    width.plotting.region <- ifelse(exists("QOutputSizeWidth"), QOutputSizeWidth, dev.size("cm")[1]) * 10 * .9 # Hack due to plotting margins
+    height.plotting.region <- ifelse(exists("QOutputSizeHeight"), QOutputSizeHeight, dev.size("cm")[2]) * 10 * .85
     x.p.mm <- rng.x / width.plotting.region
     y.p.mm <- rng.y / height.plotting.region
      if (fixed.aspect)
@@ -299,7 +306,6 @@ ReducePointAndLabelOverlap <- function (p, label.size, do.nothing = FALSE, fixed
 #' no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.
 #' @param space.substitute Spaces in labels of points on plots are substituted with whatever is supplied.
 #' By default, a return character is used(i.e., \code{"\n"}). To replace with a period, use \code{"\\."}.
-#' @param ... Additional arguments.
 #' @return p A \code{\link[ggplot2]{ggplot}} plot.
 #' @export
 LabeledScatterPlot = function(coords,  group = NULL, row.labels = NULL, column.labels = NULL,
@@ -311,7 +317,7 @@ LabeledScatterPlot = function(coords,  group = NULL, row.labels = NULL, column.l
                                       colors = q.colors,
                                       auto.color = TRUE,
                                       general.color = "gray28",
-                                      point.size = 2,
+                                      point.size = 1,
                                       label.size = 10,
                                       legend.size = 10,
                                       axis.title.size = 12,
@@ -319,8 +325,7 @@ LabeledScatterPlot = function(coords,  group = NULL, row.labels = NULL, column.l
                                       main.size = 12,
                                       tstep = 0.1,
                                       rstep = 0.1,
-                                      overlap.fudge = 1,
-                                      ...)
+                                      overlap.fudge = 1)
 {
     # Extracting the labels
     if (is.null(row.labels))

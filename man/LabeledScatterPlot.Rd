@@ -10,7 +10,7 @@ LabeledScatterPlot(coords, group = NULL, row.labels = NULL,
   colors = q.colors, auto.color = TRUE, general.color = "gray28",
   point.size = 2, label.size = 10, legend.size = 10,
   axis.title.size = 12, axis.label.size = 10, main.size = 12,
-  tstep = 0.1, rstep = 0.1, overlap.fudge = 1, ...)
+  tstep = 0.1, rstep = 0.1, overlap.fudge = 1)
 }
 \arguments{
 \item{coords}{The xy coordinates of the points.}
@@ -52,8 +52,6 @@ By default, a return character is used(i.e., \code{"\n"}). To replace with a per
 
 \item{overlap.fudge}{Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
 no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.}
-
-\item{...}{Additional arguments.}
 
 \item{title.size}{Font size of the chart title.}
 }
