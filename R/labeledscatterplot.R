@@ -179,6 +179,7 @@ ReducePointAndLabelOverlap <- function (p, label.size,
 {
     # Inspired by  wordlayout {wordcloud}
     # getting the coordinates
+    print("a")
     labels <- p$data$labels
     label.coords <- point.coords <- p$data[,1:2]
     column.labels <- colnames(label.coords)
@@ -186,13 +187,17 @@ ReducePointAndLabelOverlap <- function (p, label.size,
     # determining scale of the points and text relative to plot coordinates (dodgy hack)
     rng.x <- diff(GetXlim(p)) * 1.1 #Adjustment to deal with space left outside of convex hull of points.
     rng.y <- diff(GetYlim(p)) * 1.1
+    print("b")
     width.plotting.region <- ifelse(exists("QOutputSizeWidth"), QOutputSizeWidth, dev.size("in")[1]) * 25.4 * .9 # Hack due to plotting margins
-    height.plotting.region <- ifelse(exists("QOutputSizeHeight"), QOutputSizeHeight, dev.size("in")[2]) * 25.4 * .85
+    height.plotting.region <- ifelse(exists("QOutputSizeHeight"), QOutputSizeHeight, dev.size("in")[2]) * 25.4 * .80
+    print(width.plotting.region)
+    print(height.plotting.region)
     x.p.mm <- rng.x / width.plotting.region
     y.p.mm <- rng.y / height.plotting.region
      if (fixed.aspect)
         x.p.mm <- y.p.mm <- max(x.p.mm, y.p.mm)
     inches.to.mm.fudge  <- label.size * 1.384615 * 1.8 / 1.95 / overlap.fudge
+    print("c")
     character.height.mm <-  strheight("Jj", "inches") * inches.to.mm.fudge
     smallish.size <- character.height.mm * x.p.mm
     widths <- strwidth(labels, "inches") * inches.to.mm.fudge * x.p.mm# / initial.x.scale
@@ -200,6 +205,7 @@ ReducePointAndLabelOverlap <- function (p, label.size,
     heights <- strheight(labels, "inches") * inches.to.mm.fudge * y.p.mm
     dimensions <- matrix(c(widths,heights), n, 2, dimnames = list(labels, c("width", "height")))
     sdx <- sd(label.coords[,1], na.rm = TRUE)
+    print("d")
     sdy <- sd(label.coords[,2], na.rm = TRUE)
     if (sdx == 0)
         sdx <- 1
@@ -209,6 +215,7 @@ ReducePointAndLabelOverlap <- function (p, label.size,
     # getting the coordinates for the labels, with the initial labels positioned
     # above the points if they are single lines of text, and in the "middle" otherwise, trying
     # to prevent the point being within a letter.
+    print("e")
     offset <- rep(0, n)
     offset[n.lines  == 1] <- 1
     offset[n.lines  == 2] <- 0.1
@@ -220,6 +227,7 @@ ReducePointAndLabelOverlap <- function (p, label.size,
         boxes[[i]] <- rectangle(label.coords[i,1], label.coords[i,2],
           widths[i], heights[i])
     names(boxes) <- labels
+    print("f")
     # Moving labels outwards in a spiral until they no longer overlap.
     thetas <- 2 * pi * (1:n) / n
     if (!do.nothing)
