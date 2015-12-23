@@ -1,4 +1,4 @@
-globalVariables("map.coordinates")
+globalVariables(c("map.coordinates", "country.regions"))
 #' \code{GeographicRegionRowNames} Names of geographic regions.
 #' Returns the list of unique geographic names that
 #' can be used when creating a WorldMap.
@@ -12,7 +12,7 @@ GeographicRegionRowNames <- function(type)
 }
 
 #' \code{GeographicRegionTypes} Types of Geographic Regions
-#' The geographic region types that are available for refering
+#' The geographic region types that are available for referring
 #' in a map. E.g., \code{name}, \code{continent},
 #' @export
 GeographicRegionTypes <- function()
@@ -30,8 +30,8 @@ GeographicRegionTypes <- function()
 #'
 #' Creates a map with a table as an input, using shading to represent the values of
 #' countries on the map.
-#' @param table An matrix, two-dimensional array, table or vector, containing the data
-#' to be plotted. The \code{\link{rownames}} (or  \code{\link{rownames}} in the case
+#' @param table A matrix, two-dimensional array, table or vector, containing the data
+#' to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in the case
 #' of a vector) should contain the names of the geographic entities to be plotted (see
 #' \code{type}).
 #' @param type The type of geographic information to be plotted. By default, this is
@@ -47,142 +47,166 @@ GeographicRegionTypes <- function()
 #' resize the map.
 #' @param remove.last.column Deletes the last column of the table prior to creating the map
 #' , unless the table is a vector or only has one column.
-#' @param remove.last.row Deletes the bottom row  of the table prior to creating the map
+#' @param remove.last.row Deletes the bottom row of the table prior to creating the map
 #' , unless the table is a vector or only has one column.
 #' @param colors A vector of two colors, which are used as endpoints in interpolating colors.
 #' @param color.NA The color used to represent missing values. Not used when \code{treat.NA.as.0},
 #' is set to missing.
 #' @param legend.title The text to appear above the legend.
-#' @param remove.antarctica Automatically removes Antarctica from the ma. Defaults to TRUE.
+#' @param remove.antarctica Automatically removes Antarctica from the map. Defaults to TRUE.
 #' @details
 #' This function is based on the \code{leaflet} package. See
 #' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
 #' how to use it without using \code{WorldMap}.
 #' @export
-WorldMap = function(table,
-                    type = "name",
-                    treat.NA.as.0 = FALSE,
-                    only.show.regions.in.table = FALSE,
-                    add.detail = FALSE,
-                    remove.last.column = FALSE,
-                    remove.last.row = FALSE,
-                    colors = c("#CCF3FF","#23B0DB"),
-                    color.NA = "#808080",
-                    legend.title = "",
-                    remove.antarctica = TRUE){
-     # Correcting rowname errors for country names.
-    requireNamespace("rgdal")
+WorldMap <- function(table,
+                     type = "name",
+                     treat.NA.as.0 = FALSE,
+                     only.show.regions.in.table = FALSE,
+                     add.detail = FALSE,
+                     remove.last.column = FALSE,
+                     remove.last.row = FALSE,
+                     colors = c("#CCF3FF", "#23B0DB"),
+                     color.NA = "#808080",
+                     legend.title = "",
+                     remove.antarctica = TRUE)
+{
+    # Correcting rowname errors for country names.
     # Neatening the data.
-print("a")
     table.name <- deparse(substitute(table))
-    if(is.vector(table) | length(dim(table)) == 1)
+    if(is.vector(table) || length(dim(table)) == 1)
     {
         if(is.null(names(table)))
             stop(paste(table.name, "has no names."))
+
         table <- as.matrix(table)
     }
-print("b")
+
     if(length(dim(table)) != 2)
         stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
-print("c")
-    if (ncol(table) == 1 & is.null(dimnames(table)[[2]]))
+
+    if (ncol(table) == 1 && is.null(dimnames(table)[[2]]))
         dimnames(table)[[2]] = table.name
-print("d")
+
     if(is.null(colnames(table)))
         stop(paste(table.name, "has no column names"))
-print("e")
+
     if(is.null(rownames(table)))
         stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
-print("f")
-    if (remove.last.column & ncol(table) > 1)
+
+    if (remove.last.column && ncol(table) > 1)
         table <- table[, -ncol(table), drop = FALSE]
-print("g")
+
     if (remove.last.row)
         table <- table[-nrow(table), , drop = FALSE]
-print("h")
+
     table.names <- rownames(table)
-print("i")
+
     if (treat.NA.as.0)
         table[is.na(table)] <- 0
+
     # Tidying some names.
     if (type == "name")
     {
         correct.names <- c("United States", "United Kingdom")
         incorrect.names <- c("United States of America", "United Kingdom of Great Britain and Northern Ireland")
         rows.to.change <- match(incorrect.names, rownames(table))
+
         if(!is.na(rows.to.change[1]))
             rownames(table)[rows.to.change] <- correct.names
     }
+
     # Getting geographic boundaries
     data("map.coordinates", envir=environment())
     coords <- map.coordinates
     coords[[type]] <- as.character(coords[[type]])
+
     if (remove.antarctica)
-         coords <- coords[!coords$continent %in% "Antarctica",]
+         coords <- coords[!coords$continent %in% "Antarctica", ]
+
     coords.names <- coords[[type]]
+
     if (only.show.regions.in.table)
-        coords <- coords[coords.names %in% table.names,]
+        coords <- coords[coords.names %in% table.names, ]
+
     coords.names <- coords[[type]]
+
     # Checking to see if input data is OK.
     if (treat.NA.as.0)
     {
         table <- table[apply(table, 1, max, na.rm = TRUE) > 0, , drop = FALSE]
         table.names <- rownames(table)
     }
+
     incorrect.names <- !table.names %in% coords.names
+
     if (sum(incorrect.names) != 0)
-        stop(paste("Incorrect rowname:", paste(table.names[incorrect.names],collapse=",")))
+        stop(paste("Incorrect rowname:", paste(table.names[incorrect.names], collapse = ",")))
+
     # Splicing data onto coordinate data.frame.
-    country.lookup <- match(coords.names,table.names)
+    country.lookup <- match(coords.names, table.names)
     categories <- colnames(table)
     n.categories <- length(categories)
     for (i in 1:n.categories)
     {
         new.var <- table[country.lookup, i]
+
         if(treat.NA.as.0)
             new.var[is.na(new.var)] <- 0
+
         coords$table <- new.var
         names(coords)[ncol(coords)] <- paste("table", i, sep = "")
     }
+
     # Creating a variable for use in scaling the legend.
     min.value <- min(table, na.rm = TRUE)
-    if (treat.NA.as.0 & nrow(table) < nrow(map.coordinates))
+    if (treat.NA.as.0 && nrow(table) < nrow(map.coordinates))
         min.value <- min(0, min.value)
+
     coords$table.max <- apply(table, 1, max)[country.lookup]
-    if(treat.NA.as.0)
+    if (treat.NA.as.0)
         coords$table.max[is.na(coords$table.max)] <- 0
+
     min.in.table.max <- min(coords$table.max , na.rm = TRUE)
     if (min.value < min.in.table.max) #Replacing the minimum with the global minimum.
         coords$table.max[match(min.in.table.max, coords$table.max)] <- min.value
+
     # Creating the map
-    map = leaflet::leaflet(coords)
-    opacity = 1
-    if (add.detail) {
-        opacity = .2
-        map = leaflet::addTiles(map)
+    map <- leaflet::leaflet(coords)
+    opacity <- 1
+    if (add.detail)
+    {
+        opacity <- 0.2
+        map <- leaflet::addTiles(map)
     }
     max.range <- max(coords$table.max, na.rm = TRUE)
-    .pal <- leaflet::colorNumeric(palette = colors,domain = c(min.value, max.range),
+    .pal <- leaflet::colorNumeric(palette = colors, domain = c(min.value, max.range),
             na.color = color.NA)
     map <- leaflet::addLegend(map, "bottomright", pal = .pal, values = ~table.max,
                     title = legend.title,
                     labFormat = leaflet::labelFormat(prefix = ""),
                     opacity = opacity,
                     na.label = ifelse(treat.NA.as.0, "0", "NA"))
-    if (n.categories == 1) {
-        map = leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
-                          fillOpacity = opacity, color = ~.pal(table1))
-    } else {
-        for (i in 1:n.categories) {
-            cl = as.formula(paste("~.pal(table", i, ")", sep = ""))
-            map = leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
-                               fillOpacity = opacity,
-                              color = cl, group = categories[i])
+
+    if (n.categories == 1)
+    {
+        map <- leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
+            fillOpacity = opacity, color = ~.pal(table1))
+    }
+    else
+    {
+        for (i in 1:n.categories)
+        {
+            cl <- as.formula(paste("~.pal(table", i, ")", sep = ""))
+            map <- leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
+                fillOpacity = opacity, color = cl, group = categories[i])
         }
-        map = leaflet::addLayersControl(map, baseGroups = categories,
+        map <- leaflet::addLayersControl(map, baseGroups = categories,
             options = leaflet::layersControlOptions(collapsed = FALSE))
     }
-map}
+
+    map
+}
 
 #
 # #
@@ -226,3 +250,109 @@ map}
 # valid.country.names <- array(1:2, dim = 2, dimnames = list(c("Australia", "New Zealand")))
 # WorldMap(valid.country.names)
 # a
+
+#' World map based on \code{choroplethr}
+#'
+#' Similar to \code{\link{WorldMap}} but does the plotting using
+#' \code{choroplethr} rather than \code{leaflet}.
+#'
+#' @inheritParams WorldMap
+#' @export
+WorldChoropleth <- function(..., remove.regions = "antarctica")
+{
+    Choropleth(..., region = "world", remove.regions = remove.regions)
+}
+
+#' Base function for plotting a map
+#'
+#' @param df A matrix, two-dimensional array, table or vector, containing the
+#'   data to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in
+#'   the case of a vector) should contain the names of the geographic entities
+#'   to be plotted. If it is a matrix with more than 1 column, the first will be
+#'   used as the values on the map.
+#' @inheritParams WorldMap
+#' @export
+Choropleth <- function(df,
+    region,
+    treat.NA.as.0 = FALSE,
+    only.show.regions.in.table = FALSE,
+    remove.last.row = FALSE,
+    legend.title = "",
+    remove.regions = NULL)
+{
+    # Correcting rowname errors for country names.
+    # Neatening the data.
+    table.name <- deparse(substitute(df))
+    if (is.vector(df) || length(dim(df)) == 1)
+    {
+        if(is.null(names(df)))
+            stop(paste(table.name, "has no names."))
+
+        df <- as.matrix(df)
+    }
+
+    if (length(dim(df)) != 2)
+        stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
+
+    df <- data.frame(df)
+
+    # If we don't alreay have a "value" column, use the first column.
+    if (!("value" %in% names(df)))
+        names(df)[1] <- "value"
+
+    if (is.null(rownames(df)))
+        stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
+
+    df$region <- tolower(rownames(df))
+
+    # Could use RemoveRowsAndOrColumns() from flipU
+    if (remove.last.row)
+        df <- df[-nrow(df), , drop = FALSE]
+
+    # Tidying some names
+    df$region[df$region == "united states"] <- "united states of america"
+    df$region[df$region == "united kingdom of great britain and northern ireland"] <- "united kingdom"
+
+    if (region == "world")
+    {
+        data("country.regions", package = "choroplethrMaps", envir = environment())
+        all.regions <- country.regions$region
+    }
+    else
+    {
+        all.regions <- choroplethrAdmin1::get_admin1_regions(region)$region
+    }
+
+    zoom <- NULL
+    if (only.show.regions.in.table)
+        zoom <- df$region
+    else if (!is.null(remove.regions))
+        zoom <- all.regions[!(all.regions %in% remove.regions)]
+
+    # Checking to see if input data is OK.
+    if (treat.NA.as.0)
+    {
+        df <- merge(df, data.frame(region = all.regions), by = "region", all = TRUE)
+        df$value[is.na(df$value)] <- 0
+        df <- df[apply(df, 1, max, na.rm = TRUE) > 0, , drop = FALSE]
+    }
+
+    if (region == "world")
+    {
+        map <- choroplethr::country_choropleth(df, legend = legend.title, num_colors = 1, zoom = zoom)
+    }
+# Cannot use this because it does not render correctly in plotly
+#     else if (region == "united states of america")
+#     {
+#         require(choroplethrMaps)
+#         map <- choroplethr::state_choropleth(df, legend = legend.title, num_colors = 1, zoom = zoom)
+#     }
+    else
+    {
+        requireNamespace("choroplethrAdmin1")
+        map <- choroplethr::admin1_choropleth(region, df, legend = legend.title, num_colors = 1,
+            zoom = zoom)
+    }
+
+    map
+}

@@ -46,7 +46,6 @@ LabeledScatterPlot(zcoords)
 # no auto-tidy
 LabeledScatterPlot(zcoords, auto.tidy = FALSE)
 
-
 # row labels
 LabeledScatterPlot(zcoords, row.labels = c(LETTERS[1:26], 1:16))
 
