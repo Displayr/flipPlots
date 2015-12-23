@@ -8,7 +8,7 @@ LabeledScatterPlot(coords, group = NULL, row.labels = NULL,
   column.labels = NULL, main = "", group.name = "",
   space.substitute = "\\n", fixed.aspect = FALSE, auto.tidy = TRUE,
   colors = q.colors, auto.color = TRUE, general.color = "gray28",
-  point.size = 2, label.size = 10, legend.size = 10,
+  point.size = 1, label.size = 10, legend.size = 10,
   axis.title.size = 12, axis.label.size = 10, main.size = 12,
   tstep = 0.1, rstep = 0.1, overlap.fudge = 1)
 }

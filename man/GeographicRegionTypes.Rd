@@ -3,14 +3,14 @@
 \name{GeographicRegionTypes}
 \alias{GeographicRegionTypes}
 \title{\code{GeographicRegionTypes} Types of Geographic Regions
-The geographic region types that are available for refering
+The geographic region types that are available for referring
 in a map. E.g., \code{name}, \code{continent},}
 \usage{
 GeographicRegionTypes()
 }
 \description{
 \code{GeographicRegionTypes} Types of Geographic Regions
-The geographic region types that are available for refering
+The geographic region types that are available for referring
 in a map. E.g., \code{name}, \code{continent},
 }
 

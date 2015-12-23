@@ -186,8 +186,8 @@ ReducePointAndLabelOverlap <- function (p, label.size,
     # determining scale of the points and text relative to plot coordinates (dodgy hack)
     rng.x <- diff(GetXlim(p)) * 1.1 #Adjustment to deal with space left outside of convex hull of points.
     rng.y <- diff(GetYlim(p)) * 1.1
-    width.plotting.region <- ifelse(exists("QOutputSizeWidth"), QOutputSizeWidth, dev.size("cm")[1]) * 10 * .9 # Hack due to plotting margins
-    height.plotting.region <- ifelse(exists("QOutputSizeHeight"), QOutputSizeHeight, dev.size("cm")[2]) * 10 * .85
+    width.plotting.region <- ifelse(exists("QOutputSizeWidth"), QOutputSizeWidth, dev.size("in")[1]) * 25.4 * .9 # Hack due to plotting margins
+    height.plotting.region <- ifelse(exists("QOutputSizeHeight"), QOutputSizeHeight, dev.size("in")[2]) * 25.4 * .85
     x.p.mm <- rng.x / width.plotting.region
     y.p.mm <- rng.y / height.plotting.region
      if (fixed.aspect)

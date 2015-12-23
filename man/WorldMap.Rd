@@ -11,8 +11,8 @@ WorldMap(table, type = "name", treat.NA.as.0 = FALSE,
   legend.title = "", remove.antarctica = TRUE)
 }
 \arguments{
-\item{table}{An matrix, two-dimensional array, table or vector, containing the data
-to be plotted. The \code{\link{rownames}} (or  \code{\link{rownames}} in the case
+\item{table}{A matrix, two-dimensional array, table or vector, containing the data
+to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in the case
 of a vector) should contain the names of the geographic entities to be plotted (see
 \code{type}).}
 
@@ -34,7 +34,7 @@ resize the map.}
 \item{remove.last.column}{Deletes the last column of the table prior to creating the map
 , unless the table is a vector or only has one column.}
 
-\item{remove.last.row}{Deletes the bottom row  of the table prior to creating the map
+\item{remove.last.row}{Deletes the bottom row of the table prior to creating the map
 , unless the table is a vector or only has one column.}
 
 \item{colors}{A vector of two colors, which are used as endpoints in interpolating colors.}
@@ -44,7 +44,7 @@ is set to missing.}
 
 \item{legend.title}{The text to appear above the legend.}
 
-\item{remove.antarctica}{Automatically removes Antarctica from the ma. Defaults to TRUE.}
+\item{remove.antarctica}{Automatically removes Antarctica from the map. Defaults to TRUE.}
 }
 \description{
 Creates a map with a table as an input, using shading to represent the values of

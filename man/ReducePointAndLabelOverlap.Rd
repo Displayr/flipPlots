@@ -6,7 +6,7 @@
 \code{GetYlim} Identifies a better set of coordinates to place labels in a labeled ggplot scatterplot.}
 \usage{
 ReducePointAndLabelOverlap(p, label.size, do.nothing, fixed.aspect, tstep,
-  rstep, overlap.fudge, plot.width, plot.height)
+  rstep, overlap.fudge)
 }
 \arguments{
 \item{p}{A \code{\link[ggplot2]{ggplot}} plot.}
