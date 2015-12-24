@@ -35,7 +35,7 @@ InteractiveLabeledScatterPlot <- function(coords,  group = NULL, row.labels = NU
                                       group.name = "",
                                       tooltip.text = NULL,
                                       fixed.aspect = FALSE,
-                                      colors =  q.colors,
+                                      colors =  QColors,
                                       auto.color = TRUE,
                                       legend.width = 150)
 {
@@ -53,21 +53,21 @@ InteractiveLabeledScatterPlot <- function(coords,  group = NULL, row.labels = NU
         n.groups <- length(unique.groups)
         if(n.groups > length(colors))
             colors <- rep(colors, n.groups)
-        #names(colors)[1:n.groups] <- unique.groups
     }
     else
     {
             legend.width <- 0
             group <- flipU::IfThen(auto.color, 1:n, rep(1, n))
     }
-#     print(colors)
-#     print(strtrim(colors, 7))
+    .axisLimits <- function(lim) lim + c(-1, 1) * diff(lim) * 0.05
+    x.lim <- .axisLimits(range(coords[ ,1]))
+    y.lim <- .axisLimits(range(coords[ ,2]))
     scatterD3::scatterD3(x = coords[,1], y = coords[,2],
           lab = row.labels,
           col_var = group, colors = strtrim(colors, 7),
           xlab = column.labels[1], ylab = column.labels[2], col_lab = group.name,
           legend_width = legend.width,
-          tooltip_text = tooltip.text, fixed = fixed.aspect)
+          tooltip_text = tooltip.text, fixed = fixed.aspect,
+          xlim = x.lim, ylim = y.lim)
 }
-
 

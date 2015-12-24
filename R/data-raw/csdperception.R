@@ -19,7 +19,10 @@ z <- csd.perceptions[c(5:8, 1:4),3:4]
 #dimnames(z)[[1]] <- LETTERS[1:nrow(z)]
 
 #csd.perceptions[,3:4]
-LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = TRUE)
+LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, main.size = 12, auto.tidy = TRUE, fixed.aspect = TRUE, group = rep(1:2,4))
+
+InteractiveLabeledScatterPlot(z, fixed.aspect = FALSE)
+
 LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = TRUE)
 LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
 LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)

@@ -1,4 +1,6 @@
-q.colors <-  c(grDevices::rgb(91, 155, 213, 255, max = 255), # blue
+#' \code{QColors} Colors used in plots in Displayr and Q.
+#' @export
+QColors <-  c(grDevices::rgb(91, 155, 213, 255, max = 255), # blue
 grDevices::rgb(237, 125, 49, 255, max = 255), # orange
 grDevices::rgb(165, 165, 165, 255, max = 255), # grey
 grDevices::rgb(30, 192, 0, 255, max = 255), # yelow
@@ -12,5 +14,3 @@ grDevices::rgb(38, 68, 120, 255, max = 255), # very dark blue
 grDevices::rgb(67, 104, 43, 255, max = 255), # darker green
 grDevices::rgb(0, 0, 0, 255, max = 255), # black
 grDevices::rgb(255, 35, 35, 255, max = 255)) # red
-
-devtools::use_data(q.colors, internal = FALSE, overwrite = TRUE)

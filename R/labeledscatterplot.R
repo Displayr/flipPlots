@@ -1,4 +1,3 @@
-globalVariables("q.colors")
 #' Distance between points
 #' \code{Distance} A Euclidean distance between points
 #'
@@ -313,7 +312,7 @@ LabeledScatterPlot = function(coords,  group = NULL, row.labels = NULL, column.l
                                       space.substitute = "\n",
                                       fixed.aspect = FALSE,
                                       auto.tidy = TRUE,
-                                      colors = q.colors,
+                                      colors = QColors,
                                       auto.color = TRUE,
                                       general.color = "gray28",
                                       point.size = 1,
@@ -391,9 +390,12 @@ LabeledScatterPlot = function(coords,  group = NULL, row.labels = NULL, column.l
     p <- p + ggplot2::xlim(smallest.x, biggest.x) + ggplot2::ylim(smallest.y, biggest.y)
     p <- p + ggplot2::scale_colour_manual(values = colors, name = group.name)
     if (fixed.aspect)
-      p = p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
+      p <- p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
     if (has.groups)
-        p = p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = legend.size))
+    {
+        p <- p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = legend.size)) +
+            ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 4)))
+    }
     else
         p <- p + ggplot2::theme(legend.position = "none")
     p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(colour = general.color, size = axis.label.size))

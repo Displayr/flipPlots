@@ -7,7 +7,7 @@ Author: Numbers International Pty Ltd
 Maintainer: Tim Bock <tim.bock@numbers.net.au>
 Description: Wrappers for various plot types.
 License: MIT + file LICENSE
-LazyData: TRUE
+LazyData: no
 Depends: R (>= 2.10)
 Imports: leaflet, rgdal, ggplot2, sp, smacof, plotly, stringr, scatterD3, choroplethr, choroplethrAdmin1, flipU
 Suggests:
