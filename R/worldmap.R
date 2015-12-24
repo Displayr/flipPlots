@@ -1,4 +1,4 @@
-globalVariables(c("map.coordinates", "country.regions"))
+globalVariables(c("map.coordinates", "admin1.coordinates", "country.regions"))
 #' \code{GeographicRegionRowNames} Names of geographic regions.
 #' Returns the list of unique geographic names that
 #' can be used when creating a WorldMap.
@@ -8,7 +8,11 @@ globalVariables(c("map.coordinates", "country.regions"))
 GeographicRegionRowNames <- function(type)
 {
     data("map.coordinates", envir=environment())
-    unique(map.coordinates[[type]])
+    type.names <- map.coordinates[[type]]
+    if (is.factor(type.names))
+        levels(type.names)
+    else
+        unique(type.names)
 }
 
 #' \code{GeographicRegionTypes} Types of Geographic Regions
@@ -30,10 +34,83 @@ GeographicRegionTypes <- function()
 #'
 #' Creates a map with a table as an input, using shading to represent the values of
 #' countries on the map.
+#'
+#' @inheritParams BaseMap
+#' @param remove.antarctica Automatically removes Antarctica from the map. Defaults to TRUE.
+#'
+#' @describeIn BaseMap A map of the countries of the world.
+#' @export
+WorldMap <- function(table,
+                     type = "name",
+                     treat.NA.as.0 = FALSE,
+                     only.show.regions.in.table = FALSE,
+                     add.detail = FALSE,
+                     remove.last.column = FALSE,
+                     remove.last.row = FALSE,
+                     colors = c("#CCF3FF", "#23B0DB"),
+                     color.NA = "#808080",
+                     legend.title = "",
+                     remove.antarctica = TRUE)
+{
+    # Getting geographic boundaries
+    data("map.coordinates", envir = environment())
+    coords <- map.coordinates
+
+    remove.regions <- NULL
+    if (remove.antarctica)
+    {
+        coords <- coords[!(coords$continent %in% "Antarctica"), ]
+        remove.regions <- "Antarctica"
+    }
+
+    BaseMap(table = table,
+        coords = coords,
+        type = type,
+        treat.NA.as.0 = treat.NA.as.0,
+        only.show.regions.in.table = only.show.regions.in.table,
+        add.detail = add.detail,
+        remove.last.column = remove.last.column,
+        remove.last.row = remove.last.row,
+        colors = colors,
+        color.NA = color.NA,
+        legend.title = legend.title,
+        remove.regions = remove.regions)
+}
+
+#' State Map
+#'
+#' Creates a map with a table as an input, using shading to represent the values of
+#' states in countries on the map.
+#'
+#' @inheritParams BaseMap
+#' @param country The country the states come from.
+#' @param ... Other parameters to pass to \code{BaseMap}.
+#'
+#' @describeIn BaseMap A map of states within countries.
+#' @export
+StateMap <- function(table, country, ...)
+{
+    # Getting geographic boundaries
+    data("admin1.coordinates", envir = environment())
+
+    if (!(country %in% admin1.coordinates$admin))
+        stop("Country '", country, "' was not found.")
+
+    coords <- subset(admin1.coordinates, admin == country)
+
+    BaseMap(table = table, coords = coords, ...)
+}
+
+#' Base mapping function
+#'
+#' Creates a map with a table as an input, using shading to represent the values of
+#' regions on the map.
+#'
 #' @param table A matrix, two-dimensional array, table or vector, containing the data
 #' to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in the case
 #' of a vector) should contain the names of the geographic entities to be plotted (see
 #' \code{type}).
+#' @param coords The coordinates to be mapped.
 #' @param type The type of geographic information to be plotted. By default, this is
 #' \code{name}, which refers to the name of the country. To see a list of the available
 #' types, use \code{GeographicRegionTypes()}. To see a complete list of names within a type,
@@ -53,28 +130,31 @@ GeographicRegionTypes <- function()
 #' @param color.NA The color used to represent missing values. Not used when \code{treat.NA.as.0},
 #' is set to missing.
 #' @param legend.title The text to appear above the legend.
-#' @param remove.antarctica Automatically removes Antarctica from the map. Defaults to TRUE.
+#' @param remove.regions The regions to remove, even if they are in the table.
+#'
 #' @details
 #' This function is based on the \code{leaflet} package. See
 #' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
 #' how to use it without using \code{WorldMap}.
+#'
 #' @export
-WorldMap <- function(table,
-                     type = "name",
-                     treat.NA.as.0 = FALSE,
-                     only.show.regions.in.table = FALSE,
-                     add.detail = FALSE,
-                     remove.last.column = FALSE,
-                     remove.last.row = FALSE,
-                     colors = c("#CCF3FF", "#23B0DB"),
-                     color.NA = "#808080",
-                     legend.title = "",
-                     remove.antarctica = TRUE)
+BaseMap <- function(table,
+    coords,
+    type = "name",
+    treat.NA.as.0 = FALSE,
+    only.show.regions.in.table = FALSE,
+    add.detail = FALSE,
+    remove.last.column = FALSE,
+    remove.last.row = FALSE,
+    colors = c("#CCF3FF", "#23B0DB"),
+    color.NA = "#808080",
+    legend.title = "",
+    remove.regions = NULL)
 {
     # Correcting rowname errors for country names.
     # Neatening the data.
     table.name <- deparse(substitute(table))
-    if(is.vector(table) || length(dim(table)) == 1)
+    if (is.vector(table) || length(dim(table)) == 1)
     {
         if(is.null(names(table)))
             stop(paste(table.name, "has no names."))
@@ -82,16 +162,16 @@ WorldMap <- function(table,
         table <- as.matrix(table)
     }
 
-    if(length(dim(table)) != 2)
+    if (length(dim(table)) != 2)
         stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
 
     if (ncol(table) == 1 && is.null(dimnames(table)[[2]]))
         dimnames(table)[[2]] = table.name
 
-    if(is.null(colnames(table)))
+    if (is.null(colnames(table)))
         stop(paste(table.name, "has no column names"))
 
-    if(is.null(rownames(table)))
+    if (is.null(rownames(table)))
         stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
 
     if (remove.last.column && ncol(table) > 1)
@@ -99,8 +179,6 @@ WorldMap <- function(table,
 
     if (remove.last.row)
         table <- table[-nrow(table), , drop = FALSE]
-
-    table.names <- rownames(table)
 
     if (treat.NA.as.0)
         table[is.na(table)] <- 0
@@ -116,28 +194,25 @@ WorldMap <- function(table,
             rownames(table)[rows.to.change] <- correct.names
     }
 
-    # Getting geographic boundaries
-    data("map.coordinates", envir=environment())
-    coords <- map.coordinates
     coords[[type]] <- as.character(coords[[type]])
 
-    if (remove.antarctica)
-         coords <- coords[!coords$continent %in% "Antarctica", ]
-
-    coords.names <- coords[[type]]
+    if (!is.null(remove.regions))
+    {
+        coords <- coords[!(coords[[type]] %in% remove.regions), ]
+        table <- table[!(rownames(table) %in% remove.regions), , drop = FALSE]
+    }
 
     if (only.show.regions.in.table)
-        coords <- coords[coords.names %in% table.names, ]
-
-    coords.names <- coords[[type]]
+        coords <- coords[coords[[type]] %in% rownames(table), ]
 
     # Checking to see if input data is OK.
     if (treat.NA.as.0)
     {
         table <- table[apply(table, 1, max, na.rm = TRUE) > 0, , drop = FALSE]
-        table.names <- rownames(table)
     }
 
+    table.names <- rownames(table)
+    coords.names <- coords[[type]]
     incorrect.names <- !table.names %in% coords.names
 
     if (sum(incorrect.names) != 0)
@@ -256,7 +331,9 @@ WorldMap <- function(table,
 #' Similar to \code{\link{WorldMap}} but does the plotting using
 #' \code{choroplethr} rather than \code{leaflet}.
 #'
-#' @inheritParams WorldMap
+#' @inheritParams BaseMap
+#' @param ... Other parameters to pass to \code{Choropleth}.
+#' @describeIn Choropleth A choropleth of the countries of the world.
 #' @export
 WorldChoropleth <- function(..., remove.regions = "antarctica")
 {
@@ -270,7 +347,9 @@ WorldChoropleth <- function(..., remove.regions = "antarctica")
 #'   the case of a vector) should contain the names of the geographic entities
 #'   to be plotted. If it is a matrix with more than 1 column, the first will be
 #'   used as the values on the map.
-#' @inheritParams WorldMap
+#' @param region The region of the world to map. This can either be
+#'   \dQuote{world} or the name of a country.
+#' @inheritParams BaseMap
 #' @export
 Choropleth <- function(df,
     region,
