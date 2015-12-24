@@ -9,6 +9,7 @@ GeographicRegionRowNames <- function(type)
 {
     data("map.coordinates", envir=environment())
     type.names <- map.coordinates[[type]]
+
     if (is.factor(type.names))
         levels(type.names)
     else
@@ -29,6 +30,27 @@ GeographicRegionTypes <- function()
 # {
 #     return(rgdal::readOGR("https://raw.github.com/datasets/geo-boundaries-world-110m/master/countries.geojson", "OGRGeoJSON"))
 # }
+
+
+#' Get the states in a country
+#'
+#' When using \code{\link{StateMap}} you need to match the state names exactly.
+#' You can use this function to look up the correct names of the states for the
+#' country that you are interested in.
+#'
+#' @param country The country to look at
+#' @export
+#' @seealso \code{\link{GeographicRegionRowNames}}
+StatesInCountry <- function(country)
+{
+    data("admin1.coordinates")
+
+    if (!(country %in% levels(admin1.coordinates$admin)))
+        stop("Country '", country, "' not found.")
+
+    levels(droplevels(subset(admin1.coordinates, admin == country)$name))
+}
+
 
 #' \code{WorldMap} World Map
 #'
