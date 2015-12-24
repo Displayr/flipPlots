@@ -6,7 +6,7 @@
 \usage{
 InteractiveLabeledScatterPlot(coords, group = NULL, row.labels = NULL,
   column.labels = NULL, group.name = "", tooltip.text = NULL,
-  fixed.aspect = FALSE, colors = q.colors, auto.color = TRUE,
+  fixed.aspect = FALSE, colors = QColors, auto.color = TRUE,
   legend.width = 150)
 }
 \arguments{
