@@ -80,7 +80,10 @@ WorldMap <- function(table,
     # Getting geographic boundaries
     # data("map.coordinates", package = packageName(), envir = environment())
     data("map.coordinates", package = "flipPlots", envir = environment())
+    invisible(map.coordinates)
     coords <- map.coordinates
+
+    message(class(coords))
 
     remove.regions <- NULL
     if (remove.antarctica)
@@ -88,6 +91,8 @@ WorldMap <- function(table,
         coords <- coords[!(coords$continent %in% "Antarctica"), ]
         remove.regions <- "Antarctica"
     }
+
+    message(class(coords))
 
     BaseMap(table = table,
         coords = coords,
@@ -220,6 +225,7 @@ BaseMap <- function(table,
             rownames(table)[rows.to.change] <- correct.names
     }
 
+    message(class(coords))
     coords[[type]] <- as.character(coords[[type]])
 
     if (!is.null(remove.regions))
@@ -241,8 +247,8 @@ BaseMap <- function(table,
     coords.names <- coords[[type]]
     incorrect.names <- !table.names %in% coords.names
 
-    if (sum(incorrect.names) != 0)
-        stop(paste("Incorrect rowname:", paste(table.names[incorrect.names], collapse = ",")))
+    if (any(incorrect.names))
+        warning(paste("Incorrect region names:", paste(table.names[incorrect.names], collapse = ", ")))
 
     # Splicing data onto coordinate data.frame.
     country.lookup <- match(coords.names, table.names)
