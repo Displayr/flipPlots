@@ -78,12 +78,8 @@ WorldMap <- function(table,
                      remove.antarctica = TRUE)
 {
     # Getting geographic boundaries
-    # data("map.coordinates", package = packageName(), envir = environment())
-    data("map.coordinates", package = "flipPlots", envir = environment())
-    invisible(map.coordinates)
+    data("map.coordinates", package = packageName(), envir = environment())
     coords <- map.coordinates
-
-    message(class(coords))
 
     remove.regions <- NULL
     if (remove.antarctica)
@@ -91,8 +87,6 @@ WorldMap <- function(table,
         coords <- coords[!(coords$continent %in% "Antarctica"), ]
         remove.regions <- "Antarctica"
     }
-
-    message(class(coords))
 
     BaseMap(table = table,
         coords = coords,
@@ -225,7 +219,6 @@ BaseMap <- function(table,
             rownames(table)[rows.to.change] <- correct.names
     }
 
-    message(class(coords))
     coords[[type]] <- as.character(coords[[type]])
 
     if (!is.null(remove.regions))

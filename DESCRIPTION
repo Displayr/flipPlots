@@ -9,12 +9,12 @@ Description: Wrappers for various plot types.
 License: MIT + file LICENSE
 LazyData: TRUE
 Depends:
-    R (>= 2.10)
+    R (>= 2.10),
+    sp
 Imports:
     leaflet,
     rgdal,
     ggplot2,
-    sp,
     smacof,
     plotly,
     stringr,
