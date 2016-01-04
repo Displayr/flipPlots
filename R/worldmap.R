@@ -7,7 +7,10 @@ globalVariables(c("map.coordinates", "admin1.coordinates", "country.regions"))
 #' @export
 GeographicRegionRowNames <- function(type)
 {
-    data("map.coordinates", envir=environment())
+    data("map.coordinates", package = packageName(), envir = environment())
+    # Make sure the dataset gets loaded
+    invisible(map.coordinates)
+
     type.names <- map.coordinates[[type]]
 
     if (is.factor(type.names))
@@ -22,7 +25,7 @@ GeographicRegionRowNames <- function(type)
 #' @export
 GeographicRegionTypes <- function()
 {
-    data("map.coordinates", envir=environment())
+    data("map.coordinates", package = packageName(), envir = environment())
     names(map.coordinates)
 }
 # # Reading the coordinates.
@@ -43,7 +46,7 @@ GeographicRegionTypes <- function()
 #' @seealso \code{\link{GeographicRegionRowNames}}
 StatesInCountry <- function(country)
 {
-    data("admin1.coordinates")
+    data("admin1.coordinates", package = packageName(), envir = environment())
 
     if (!(country %in% levels(admin1.coordinates$admin)))
         stop("Country '", country, "' not found.")
@@ -75,7 +78,7 @@ WorldMap <- function(table,
                      remove.antarctica = TRUE)
 {
     # Getting geographic boundaries
-    data("map.coordinates", envir = environment())
+    data("map.coordinates", package = packageName(), envir = environment())
     coords <- map.coordinates
 
     remove.regions <- NULL
@@ -113,7 +116,7 @@ WorldMap <- function(table,
 StateMap <- function(table, country, ...)
 {
     # Getting geographic boundaries
-    data("admin1.coordinates", envir = environment())
+    data("admin1.coordinates", package = packageName(), envir = environment())
 
     if (!(country %in% admin1.coordinates$admin))
         stop("Country '", country, "' was not found.")
@@ -257,7 +260,7 @@ BaseMap <- function(table,
 
     # Creating a variable for use in scaling the legend.
     min.value <- min(table, na.rm = TRUE)
-    if (treat.NA.as.0 && nrow(table) < nrow(map.coordinates))
+    if (treat.NA.as.0 && nrow(table) < nrow(coords))
         min.value <- min(0, min.value)
 
     coords$table.max <- apply(table, 1, max)[country.lookup]
