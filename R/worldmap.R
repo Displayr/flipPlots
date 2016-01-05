@@ -7,6 +7,7 @@ globalVariables(c("map.coordinates", "admin1.coordinates", "country.regions"))
 #' @export
 GeographicRegionRowNames <- function(type)
 {
+    requireNamespace("sp")
     data("map.coordinates", package = packageName(), envir = environment())
     # Make sure the dataset gets loaded
     invisible(map.coordinates)
@@ -25,6 +26,7 @@ GeographicRegionRowNames <- function(type)
 #' @export
 GeographicRegionTypes <- function()
 {
+    requireNamespace("sp")
     data("map.coordinates", package = packageName(), envir = environment())
     names(map.coordinates)
 }
@@ -46,6 +48,7 @@ GeographicRegionTypes <- function()
 #' @seealso \code{\link{GeographicRegionRowNames}}
 StatesInCountry <- function(country)
 {
+    requireNamespace("sp")
     data("admin1.coordinates", package = packageName(), envir = environment())
 
     if (!(country %in% levels(admin1.coordinates$admin)))
@@ -77,6 +80,7 @@ WorldMap <- function(table,
                      legend.title = "",
                      remove.antarctica = TRUE)
 {
+    requireNamespace("sp")
     # Getting geographic boundaries
     data("map.coordinates", package = packageName(), envir = environment())
     coords <- map.coordinates
@@ -115,6 +119,7 @@ WorldMap <- function(table,
 #' @export
 StateMap <- function(table, country, ...)
 {
+    requireNamespace("sp")
     # Getting geographic boundaries
     data("admin1.coordinates", package = packageName(), envir = environment())
 
