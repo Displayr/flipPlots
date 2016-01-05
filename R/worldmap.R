@@ -64,46 +64,27 @@ StatesInCountry <- function(country)
 #' countries on the map.
 #'
 #' @inheritParams BaseMap
+#' @param ... Parameters to pass to \code{BaseMap}.
 #' @param remove.antarctica Automatically removes Antarctica from the map. Defaults to TRUE.
 #'
 #' @describeIn BaseMap A map of the countries of the world.
 #' @export
-WorldMap <- function(table,
-                     type = "name",
-                     treat.NA.as.0 = FALSE,
-                     only.show.regions.in.table = FALSE,
-                     add.detail = FALSE,
-                     remove.last.column = FALSE,
-                     remove.last.row = FALSE,
-                     colors = c("#CCF3FF", "#23B0DB"),
-                     color.NA = "#808080",
-                     legend.title = "",
-                     remove.antarctica = TRUE)
+WorldMap <- function(...,
+    remove.antarctica = TRUE,
+    remove.regions = NULL)
 {
     requireNamespace("sp")
     # Getting geographic boundaries
     data("map.coordinates", package = packageName(), envir = environment())
     coords <- map.coordinates
 
-    remove.regions <- NULL
     if (remove.antarctica)
     {
         coords <- coords[!(coords$continent %in% "Antarctica"), ]
-        remove.regions <- "Antarctica"
+        remove.regions <- c(remove.regions, "Antarctica")
     }
 
-    BaseMap(table = table,
-        coords = coords,
-        type = type,
-        treat.NA.as.0 = treat.NA.as.0,
-        only.show.regions.in.table = only.show.regions.in.table,
-        add.detail = add.detail,
-        remove.last.column = remove.last.column,
-        remove.last.row = remove.last.row,
-        colors = colors,
-        color.NA = color.NA,
-        legend.title = legend.title,
-        remove.regions = remove.regions)
+    BaseMap(..., remove.regions = remove.regions)
 }
 
 #' State Map
@@ -133,37 +114,41 @@ StateMap <- function(table, country, ...)
 
 #' Base mapping function
 #'
-#' Creates a map with a table as an input, using shading to represent the values of
-#' regions on the map.
+#' Creates a map with a table as an input, using shading to represent the values
+#' of regions on the map.
 #'
-#' @param table A matrix, two-dimensional array, table or vector, containing the data
-#' to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in the case
-#' of a vector) should contain the names of the geographic entities to be plotted (see
-#' \code{type}).
+#' @param table A matrix, two-dimensional array, table or vector, containing the
+#'   data to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in
+#'   the case of a vector) should contain the names of the geographic entities
+#'   to be plotted (see \code{type}).
 #' @param coords The coordinates to be mapped.
-#' @param type The type of geographic information to be plotted. By default, this is
-#' \code{name}, which refers to the name of the country. To see a list of the available
-#' types, use \code{GeographicRegionTypes()}. To see a complete list of names within a type,
-#' use \code{GeographicRegionRowNames("type")}.
-#' @param treat.NA.as.0 Plots any \code{NA} values in the data and any geographical entities
-#' without data with as having a 0 value.
-#' @param only.show.regions.in.table When TRUE, only geographic entities that are included in
-#' the table are shown on the table.
-#' @param add.detail Display names of geographical entities on the map. When TRUE, it also changes
-#' the appearance of the map, making the map wrap around. The only way to prevent this is to
-#' resize the map.
-#' @param remove.last.column Deletes the last column of the table prior to creating the map
-#' , unless the table is a vector or only has one column.
-#' @param remove.last.row Deletes the bottom row of the table prior to creating the map
-#' , unless the table is a vector or only has one column.
-#' @param colors A vector of two colors, which are used as endpoints in interpolating colors.
-#' @param color.NA The color used to represent missing values. Not used when \code{treat.NA.as.0},
-#' is set to missing.
+#' @param type The type of geographic information to be plotted. By default,
+#'   this is \code{name}, which refers to the name of the country. To see a list
+#'   of the available types, use \code{GeographicRegionTypes()}. To see a
+#'   complete list of names within a type, use
+#'   \code{GeographicRegionRowNames("type")}.
+#' @param treat.NA.as.0 Plots any \code{NA} values in the data and any
+#'   geographical entities without data with as having a 0 value.
+#' @param only.show.regions.in.table When TRUE, only geographic entities that
+#'   are included in the table are shown on the table.
+#' @param add.detail Display names of geographical entities on the map. When
+#'   TRUE, it also changes the appearance of the map, making the map wrap
+#'   around. The only way to prevent this is to resize the map.
+#' @param remove.last.column Deletes the last column of the table prior to
+#'   creating the map , unless the table is a vector or only has one column.
+#' @param remove.last.row Deletes the bottom row of the table prior to creating
+#'   the map , unless the table is a vector or only has one column.
+#' @param colors A vector of two colors, which are used as endpoints in
+#'   interpolating colors.
+#' @param color.NA The color used to represent missing values. Not used when
+#'   \code{treat.NA.as.0}, is set to missing.
 #' @param legend.title The text to appear above the legend.
 #' @param remove.regions The regions to remove, even if they are in the table.
+#' @param unmatched.regions.is.error If there are regions in \code{table} that
+#'   are not found in \code{coords}, if this is \code{TRUE} it will cause an
+#'   error, otherwise just print a message.
 #'
-#' @details
-#' This function is based on the \code{leaflet} package. See
+#' @details This function is based on the \code{leaflet} package. See
 #' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
 #' how to use it without using \code{WorldMap}.
 #'
@@ -179,7 +164,8 @@ BaseMap <- function(table,
     colors = c("#CCF3FF", "#23B0DB"),
     color.NA = "#808080",
     legend.title = "",
-    remove.regions = NULL)
+    remove.regions = NULL,
+    unmatched.regions.is.error = TRUE)
 {
     # Correcting rowname errors for country names.
     # Neatening the data.
@@ -246,7 +232,13 @@ BaseMap <- function(table,
     incorrect.names <- !table.names %in% coords.names
 
     if (any(incorrect.names))
-        warning(paste("Incorrect region names:", paste(table.names[incorrect.names], collapse = ", ")))
+    {
+        msg <- paste("Unmatched region names:", paste(table.names[incorrect.names], collapse = ", "))
+        if (unmatched.regions.is.error)
+            stop(msg)
+        else
+            message(msg)
+    }
 
     # Splicing data onto coordinate data.frame.
     country.lookup <- match(coords.names, table.names)
