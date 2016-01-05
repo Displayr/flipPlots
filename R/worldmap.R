@@ -84,7 +84,7 @@ WorldMap <- function(...,
         remove.regions <- c(remove.regions, "Antarctica")
     }
 
-    BaseMap(..., remove.regions = remove.regions)
+    BaseMap(..., coords = coords, remove.regions = remove.regions)
 }
 
 #' State Map
