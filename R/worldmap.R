@@ -150,7 +150,7 @@ StateMap <- function(table, country, ...)
 #'
 #' @details This function is based on the \code{leaflet} package. See
 #' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
-#' how to use it without using \code{WorldMap}.
+#' how to use it without using these functions.
 #'
 #' @export
 BaseMap <- function(table,

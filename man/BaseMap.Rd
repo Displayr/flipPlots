@@ -24,42 +24,48 @@ BaseMap(table, coords, type = "name", treat.NA.as.0 = FALSE,
 
 \item{remove.regions}{The regions to remove, even if they are in the table.}
 
-\item{table}{A matrix, two-dimensional array, table or vector, containing the data
-to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in the case
-of a vector) should contain the names of the geographic entities to be plotted (see
-\code{type}).}
+\item{table}{A matrix, two-dimensional array, table or vector, containing the
+data to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in
+the case of a vector) should contain the names of the geographic entities
+to be plotted (see \code{type}).}
 
 \item{country}{The country the states come from.}
 
 \item{coords}{The coordinates to be mapped.}
 
-\item{type}{The type of geographic information to be plotted. By default, this is
-\code{name}, which refers to the name of the country. To see a list of the available
-types, use \code{GeographicRegionTypes()}. To see a complete list of names within a type,
-use \code{GeographicRegionRowNames("type")}.}
+\item{type}{The type of geographic information to be plotted. By default,
+this is \code{name}, which refers to the name of the country. To see a list
+of the available types, use \code{GeographicRegionTypes()}. To see a
+complete list of names within a type, use
+\code{GeographicRegionRowNames("type")}.}
 
-\item{treat.NA.as.0}{Plots any \code{NA} values in the data and any geographical entities
-without data with as having a 0 value.}
+\item{treat.NA.as.0}{Plots any \code{NA} values in the data and any
+geographical entities without data with as having a 0 value.}
 
-\item{only.show.regions.in.table}{When TRUE, only geographic entities that are included in
-the table are shown on the table.}
+\item{only.show.regions.in.table}{When TRUE, only geographic entities that
+are included in the table are shown on the table.}
 
-\item{add.detail}{Display names of geographical entities on the map. When TRUE, it also changes
-the appearance of the map, making the map wrap around. The only way to prevent this is to
-resize the map.}
+\item{add.detail}{Display names of geographical entities on the map. When
+TRUE, it also changes the appearance of the map, making the map wrap
+around. The only way to prevent this is to resize the map.}
 
-\item{remove.last.column}{Deletes the last column of the table prior to creating the map
-, unless the table is a vector or only has one column.}
+\item{remove.last.column}{Deletes the last column of the table prior to
+creating the map , unless the table is a vector or only has one column.}
 
-\item{remove.last.row}{Deletes the bottom row of the table prior to creating the map
-, unless the table is a vector or only has one column.}
+\item{remove.last.row}{Deletes the bottom row of the table prior to creating
+the map , unless the table is a vector or only has one column.}
 
-\item{colors}{A vector of two colors, which are used as endpoints in interpolating colors.}
+\item{colors}{A vector of two colors, which are used as endpoints in
+interpolating colors.}
 
-\item{color.NA}{The color used to represent missing values. Not used when \code{treat.NA.as.0},
-is set to missing.}
+\item{color.NA}{The color used to represent missing values. Not used when
+\code{treat.NA.as.0}, is set to missing.}
 
 \item{legend.title}{The text to appear above the legend.}
+
+\item{unmatched.regions.is.error}{If there are regions in \code{table} that
+are not found in \code{coords}, if this is \code{TRUE} it will cause an
+error, otherwise just print a message.}
 
 \item{...}{Other parameters to pass to \code{BaseMap}.}
 }
@@ -70,13 +76,13 @@ countries on the map.
 Creates a map with a table as an input, using shading to represent the values of
 states in countries on the map.
 
-Creates a map with a table as an input, using shading to represent the values of
-regions on the map.
+Creates a map with a table as an input, using shading to represent the values
+of regions on the map.
 }
 \details{
 This function is based on the \code{leaflet} package. See
 \url{https://rstudio.github.io/leaflet/} for an overview of this package and
-how to use it without using \code{WorldMap}.
+how to use it without using these functions.
 }
 \section{Functions}{
 \itemize{
