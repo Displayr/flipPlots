@@ -1,8 +1,15 @@
 globalVariables(c("map.coordinates", "admin1.coordinates", "country.regions"))
 #' \code{GeographicRegionRowNames} Names of geographic regions.
-#' Returns the list of unique geographic names that
-#' can be used when creating a WorldMap.
-#' @param type The name of the geographic region type. See \code{\link{GeographicRegionTypes}}
+#'
+#' Returns the list of unique geographic names that can be used when creating a
+#' WorldMap.
+#'
+#' @param type The name of the geographic region type. See
+#'   \code{\link{GeographicRegionTypes}}
+#'
+#' @examples
+#' GeographicRegionRowNames("name")
+#' GeographicRegionRowNames("continent")
 #'
 #' @export
 GeographicRegionRowNames <- function(type)
@@ -21,8 +28,13 @@ GeographicRegionRowNames <- function(type)
 }
 
 #' \code{GeographicRegionTypes} Types of Geographic Regions
-#' The geographic region types that are available for referring
-#' in a map. E.g., \code{name}, \code{continent},
+#'
+#' The geographic region types that are available for referring in a map. E.g.,
+#' \code{name}, \code{continent}
+#'
+#' @examples
+#' GeographicRegionTypes()
+#'
 #' @export
 GeographicRegionTypes <- function()
 {
@@ -54,7 +66,7 @@ StatesInCountry <- function(country)
     if (!(country %in% levels(admin1.coordinates$admin)))
         stop("Country '", country, "' not found.")
 
-    levels(droplevels(subset(admin1.coordinates, admin == country)$name))
+    levels(droplevels(subset(admin1.coordinates, "admin" == country)$name))
 }
 
 
@@ -64,7 +76,6 @@ StatesInCountry <- function(country)
 #' countries on the map.
 #'
 #' @inheritParams BaseMap
-#' @param ... Parameters to pass to \code{BaseMap}.
 #' @param remove.antarctica Automatically removes Antarctica from the map. Defaults to TRUE.
 #'
 #' @describeIn BaseMap A map of the countries of the world.
@@ -84,7 +95,12 @@ WorldMap <- function(...,
         remove.regions <- c(remove.regions, "Antarctica")
     }
 
-    BaseMap(..., coords = coords, remove.regions = remove.regions)
+    name.map <- list(
+        "United States" = "United States of America",
+        "United Kingdom" = "United Kingdom of Great Britain and Northern Ireland"
+    )
+
+    BaseMap(..., coords = coords, remove.regions = remove.regions, name.map = name.map)
 }
 
 #' State Map
@@ -107,9 +123,30 @@ StateMap <- function(table, country, ...)
     if (!(country %in% admin1.coordinates$admin))
         stop("Country '", country, "' was not found.")
 
-    coords <- subset(admin1.coordinates, admin == country)
+    coords <- subset(admin1.coordinates, "admin" == country)
 
-    BaseMap(table = table, coords = coords, ...)
+    name.map <- NULL
+    if (country == "Australia")
+    {
+        name.map <- list(
+            "Australian Capital Territory" = "ACT",
+            "New South Wales" = "NSW",
+            "Northern Territory" = "NT",
+            "Queensland" = "QLD",
+            "South Australia" = "SA",
+            "Tasmania" = "TAS",
+            "Victoria" = "VIC",
+            "Western Australia" = "WA"
+        )
+    }
+    else if (country == "United States of America")
+    {
+        name.map <- list("District of Columbia" = "DC")
+        for (i in seq(along = state.name))
+            name.map[[state.name[i]]] <- state.abb[i]
+    }
+
+    BaseMap(table = table, coords = coords, ..., name.map = name.map)
 }
 
 #' Base mapping function
@@ -147,10 +184,14 @@ StateMap <- function(table, country, ...)
 #' @param unmatched.regions.is.error If there are regions in \code{table} that
 #'   are not found in \code{coords}, if this is \code{TRUE} it will cause an
 #'   error, otherwise just print a message.
+#' @param name.map A mapping between incorrect and correct names, useful for
+#'   automatically fixing names that a commonly misspecified. Should be a list
+#'   where the keys are the correct names and the values are vectors of
+#'   incorrect names that should be changed.
 #'
 #' @details This function is based on the \code{leaflet} package. See
-#' \url{https://rstudio.github.io/leaflet/} for an overview of this package and
-#' how to use it without using these functions.
+#'   \url{https://rstudio.github.io/leaflet/} for an overview of this package
+#'   and how to use it without using these functions.
 #'
 #' @export
 BaseMap <- function(table,
@@ -165,7 +206,8 @@ BaseMap <- function(table,
     color.NA = "#808080",
     legend.title = "",
     remove.regions = NULL,
-    unmatched.regions.is.error = TRUE)
+    unmatched.regions.is.error = TRUE,
+    name.map = NULL)
 {
     # Correcting rowname errors for country names.
     # Neatening the data.
@@ -200,14 +242,16 @@ BaseMap <- function(table,
         table[is.na(table)] <- 0
 
     # Tidying some names.
-    if (type == "name")
+    if (type == "name" && !is.null(name.map))
     {
-        correct.names <- c("United States", "United Kingdom")
-        incorrect.names <- c("United States of America", "United Kingdom of Great Britain and Northern Ireland")
-        rows.to.change <- match(incorrect.names, rownames(table))
+        for (correct in names(name.map))
+        {
+            incorrect <- name.map[[correct]]
+            matches <- match(incorrect, rownames(table))
 
-        if(!is.na(rows.to.change[1]))
-            rownames(table)[rows.to.change] <- correct.names
+            if (!is.na(matches))
+                rownames(table)[matches] <- correct
+        }
     }
 
     coords[[type]] <- as.character(coords[[type]])

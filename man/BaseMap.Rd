@@ -15,10 +15,10 @@ BaseMap(table, coords, type = "name", treat.NA.as.0 = FALSE,
   remove.last.column = FALSE, remove.last.row = FALSE,
   colors = c("#CCF3FF", "#23B0DB"), color.NA = "#808080",
   legend.title = "", remove.regions = NULL,
-  unmatched.regions.is.error = TRUE)
+  unmatched.regions.is.error = TRUE, name.map = NULL)
 }
 \arguments{
-\item{...}{Parameters to pass to \code{BaseMap}.}
+\item{...}{Other parameters to pass to \code{BaseMap}.}
 
 \item{remove.antarctica}{Automatically removes Antarctica from the map. Defaults to TRUE.}
 
@@ -67,7 +67,10 @@ interpolating colors.}
 are not found in \code{coords}, if this is \code{TRUE} it will cause an
 error, otherwise just print a message.}
 
-\item{...}{Other parameters to pass to \code{BaseMap}.}
+\item{name.map}{A mapping between incorrect and correct names, useful for
+automatically fixing names that a commonly misspecified. Should be a list
+where the keys are the correct names and the values are vectors of
+incorrect names that should be changed.}
 }
 \description{
 Creates a map with a table as an input, using shading to represent the values of
@@ -81,8 +84,8 @@ of regions on the map.
 }
 \details{
 This function is based on the \code{leaflet} package. See
-\url{https://rstudio.github.io/leaflet/} for an overview of this package and
-how to use it without using these functions.
+  \url{https://rstudio.github.io/leaflet/} for an overview of this package
+  and how to use it without using these functions.
 }
 \section{Functions}{
 \itemize{
