@@ -21,6 +21,7 @@ Imports:
     scatterD3,
     choroplethr,
     choroplethrAdmin1,
-    flipU
+    flipU,
+    ISOcodes
 Suggests:
     testthat
