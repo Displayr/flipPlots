@@ -66,7 +66,7 @@ StatesInCountry <- function(country)
     if (!(country %in% levels(admin1.coordinates$admin)))
         stop("Country '", country, "' not found.")
 
-    levels(droplevels(subset(admin1.coordinates, "admin" == country)$name))
+    levels(droplevels(subset(admin1.coordinates, admin == country)$name))
 }
 
 
@@ -127,12 +127,13 @@ StateMap <- function(table, country, ...)
                 break
             }
         }
+        rm(admin)
     }
 
     if (!(country %in% admin1.coordinates[["admin"]]))
         stop("Country '", country, "' was not found.")
 
-    coords <- admin1.coordinates[admin1.coordinates[["admin"]] == country, ]
+    coords <- subset(admin1.coordinates, admin == country)
 
     name.map <- admin1.name.map[[country]]
 
