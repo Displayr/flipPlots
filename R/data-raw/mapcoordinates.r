@@ -17,5 +17,14 @@ download.file(file.path('http://www.naturalearthdata.com/http/',
     'ne_10m_admin_1_states_provinces.zip'), f)
 d <- tempdir()
 unzip(f, exdir = d)
-admin1.coordinates <- rgdal::readOGR(d, 'ne_10m_admin_1_states_provinces', encoding = 'UTF-8')
+admin1.coordinates <- rgdal::readOGR(d, 'ne_10m_admin_1_states_provinces')
+
+admin1.coordinates.df <- data.frame(admin1.coordinates)
+column.class <- sapply(admin1.coordinates.df, class)
+column.class <- column.class[column.class == "factor"]
+rm(admin1.coordinates.df)
+
+for (column in names(column.class))
+    Encoding(levels(admin1.coordinates[[column]])) <- "UTF-8"
+
 devtools::use_data(admin1.coordinates, internal = FALSE, overwrite = TRUE)

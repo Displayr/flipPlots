@@ -95,12 +95,7 @@ WorldMap <- function(...,
         remove.regions <- c(remove.regions, "Antarctica")
     }
 
-    name.map <- list(
-        "United States" = "United States of America",
-        "United Kingdom" = "United Kingdom of Great Britain and Northern Ireland"
-    )
-
-    BaseMap(..., coords = coords, remove.regions = remove.regions, name.map = name.map)
+    BaseMap(..., coords = coords, remove.regions = remove.regions, name.map = admin0.name.map.by.name)
 }
 
 #' State Map
@@ -120,31 +115,26 @@ StateMap <- function(table, country, ...)
     # Getting geographic boundaries
     data("admin1.coordinates", package = packageName(), envir = environment())
 
-    if (!(country %in% admin1.coordinates$admin))
+    # If the country is not an exact match, search wider for it
+    if (!(country %in% names(admin0.name.map.by.admin)))
+    {
+        for (admin in names(admin0.name.map.by.admin))
+        {
+            alt <- admin0.name.map.by.admin[[admin]]
+            if (country %in% alt)
+            {
+                country <- admin
+                break
+            }
+        }
+    }
+
+    if (!(country %in% admin1.coordinates[["admin"]]))
         stop("Country '", country, "' was not found.")
 
-    coords <- subset(admin1.coordinates, "admin" == country)
+    coords <- admin1.coordinates[admin1.coordinates[["admin"]] == country, ]
 
-    name.map <- NULL
-    if (country == "Australia")
-    {
-        name.map <- list(
-            "Australian Capital Territory" = "ACT",
-            "New South Wales" = "NSW",
-            "Northern Territory" = "NT",
-            "Queensland" = "QLD",
-            "South Australia" = "SA",
-            "Tasmania" = "TAS",
-            "Victoria" = "VIC",
-            "Western Australia" = "WA"
-        )
-    }
-    else if (country == "United States of America")
-    {
-        name.map <- list("District of Columbia" = "DC")
-        for (i in seq(along = state.name))
-            name.map[[state.name[i]]] <- state.abb[i]
-    }
+    name.map <- admin1.name.map[[country]]
 
     BaseMap(table = table, coords = coords, ..., name.map = name.map)
 }
@@ -249,8 +239,8 @@ BaseMap <- function(table,
             incorrect <- name.map[[correct]]
             matches <- match(incorrect, rownames(table))
 
-            if (!is.na(matches))
-                rownames(table)[matches] <- correct
+            if (!all(is.na(matches)))
+                rownames(table)[matches[!is.na(matches)]] <- correct
         }
     }
 
