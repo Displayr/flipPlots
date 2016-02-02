@@ -163,9 +163,9 @@ StateMap <- function(table, country, ...)
 #'   TRUE, it also changes the appearance of the map, making the map wrap
 #'   around. The only way to prevent this is to resize the map.
 #' @param remove.last.column Deletes the last column of the table prior to
-#'   creating the map , unless the table is a vector or only has one column.
+#'   creating the map, unless the table is a vector or only has one column.
 #' @param remove.last.row Deletes the bottom row of the table prior to creating
-#'   the map , unless the table is a vector or only has one column.
+#'   the map, unless the table is a vector or only has one row.
 #' @param colors A vector of two colors, which are used as endpoints in
 #'   interpolating colors.
 #' @param color.NA The color used to represent missing values. Not used when
