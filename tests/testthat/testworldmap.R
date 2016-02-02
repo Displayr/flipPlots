@@ -70,3 +70,14 @@ test_that("US State maps with automatic renaming",
 
     expect_that(StateMap(us.data, country = "United States of America"), not(throws_error()))
 })
+
+test_that("Asking for states in a country",
+{
+    country <- "Australia"
+    aus.states <- c("Australian Capital Territory", "Jervis Bay Territory", "Macquarie Island",
+        "New South Wales", "Norfolk Island", "Northern Territory", "Queensland",
+        "South Australia", "Tasmania", "Victoria", "Western Australia")
+    expect_equal(StatesInCountry(country), aus.states)
+
+    expect_error(StatesInCountry("Hello World"), "Country 'Hello World' not found.")
+})
