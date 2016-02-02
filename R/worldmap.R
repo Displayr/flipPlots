@@ -247,7 +247,7 @@ BaseMap <- function(table,
 
     coords[[type]] <- as.character(coords[[type]])
 
-    if (!is.null(remove.regions))
+    if (!is.null(remove.regions) && remove.regions != "")
     {
         remove.regions <- stringr::str_trim(unlist(strsplit(remove.regions, ",", fixed = TRUE)))
         if (type == "name" && !is.null(name.map))
