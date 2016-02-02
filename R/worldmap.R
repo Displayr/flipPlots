@@ -249,6 +249,19 @@ BaseMap <- function(table,
 
     if (!is.null(remove.regions))
     {
+        remove.regions <- stringr::str_trim(unlist(strsplit(remove.regions, ",", fixed = TRUE)))
+        if (type == "name" && !is.null(name.map))
+        {
+            for (region in names(name.map))
+            {
+                alt <- name.map[[region]]
+                matches <- match(alt, remove.regions)
+
+                if (!all(is.na(matches)))
+                    remove.regions[matches[!is.na(matches)]] <- region
+            }
+        }
+
         coords <- coords[!(coords[[type]] %in% remove.regions), ]
         table <- table[!(rownames(table) %in% remove.regions), , drop = FALSE]
     }
