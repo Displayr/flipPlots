@@ -63,6 +63,21 @@ StatesInCountry <- function(country)
     requireNamespace("sp")
     data("admin1.coordinates", package = packageName(), envir = environment())
 
+    # If the country is not an exact match, search wider for it
+    if (!(country %in% names(admin0.name.map.by.admin)))
+    {
+        for (admin in names(admin0.name.map.by.admin))
+        {
+            alt <- admin0.name.map.by.admin[[admin]]
+            if (country %in% alt)
+            {
+                country <- admin
+                break
+            }
+        }
+        rm(admin)
+    }
+
     if (!(country %in% levels(admin1.coordinates$admin)))
         stop("Country '", country, "' not found.")
 
