@@ -130,6 +130,34 @@ StateMap <- function(table, country, ...)
     # Getting geographic boundaries
     data("admin1.coordinates", package = packageName(), envir = environment())
 
+    table <- cleanMapInput(table, ...)
+
+    # Attempt to guess the country from the rownames
+    if (missing(country))
+    {
+        states <- rownames(table)
+        if (is.null(states) || all(!is.na(suppressWarnings(as.numeric(states)))))
+            stop("Cannot guess country without useful rownames.")
+
+        country.matches <- list()
+        for (current in names(admin1.name.map))
+        {
+            all.states <- admin1.name.map[[current]]
+            all.states <- c(names(all.states), unique(unlist(all.states)))
+            matches <- sum(states %in% all.states)
+            if (matches > 0)
+                country.matches[[current]] <- matches
+        }
+
+        if (length(country.matches) == 0)
+            stop("Could not guess country from rownames.")
+
+        # In the case of ties this will choose the first one.
+        max.match <- which.max(country.matches)
+        country <- names(max.match)
+        message("Country '", country, "' was automatically chosen from the rownames.")
+    }
+
     # If the country is not an exact match, search wider for it
     if (!(country %in% names(admin0.name.map.by.admin)))
     {
@@ -215,44 +243,12 @@ BaseMap <- function(table,
     unmatched.regions.is.error = TRUE,
     name.map = NULL)
 {
-    # Correcting rowname errors for country names.
-    # Neatening the data.
+    table <- cleanMapInput(table, treat.NA.as.0 = treat.NA.as.0,
+        remove.last.column = remove.last.column, remove.last.row = remove.last.row)
+
     statistic <- attr(table, "statistic", exact = TRUE)
     if (is.null(statistic))
         statistic <- ""
-
-    table.name <- deparse(substitute(table))
-    if (is.vector(table) || length(dim(table)) == 1)
-    {
-        if(is.null(names(table)))
-            stop(paste(table.name, "has no names."))
-
-        table <- as.matrix(table)
-    }
-
-    if (length(dim(table)) != 2)
-        stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
-
-    if (ncol(table) == 1 && is.null(dimnames(table)[[2]]))
-        dimnames(table)[[2]] = table.name
-
-    if (is.null(colnames(table)))
-        stop(paste(table.name, "has no column names"))
-
-    if (is.null(rownames(table)))
-        stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
-
-    if (all(!is.na(as.numeric(rownames(table)))) && statistic == "Text")
-        stop(paste(table.name, "contains text and has numeric row names. Did you mean to convert this table to percentages?"))
-
-    if (remove.last.column && ncol(table) > 1)
-        table <- table[, -ncol(table), drop = FALSE]
-
-    if (remove.last.row)
-        table <- table[-nrow(table), , drop = FALSE]
-
-    if (treat.NA.as.0)
-        table[is.na(table)] <- 0
 
     # Tidying some names.
     if (type == "name" && !is.null(name.map))
@@ -373,6 +369,57 @@ BaseMap <- function(table,
     }
 
     map
+}
+
+
+cleanMapInput <- function(
+    table,
+    treat.NA.as.0 = FALSE,
+    remove.last.column = FALSE,
+    remove.last.row = FALSE,
+    ...)
+{
+    # Correcting rowname errors for country names.
+    # Neatening the data.
+    statistic <- attr(table, "statistic", exact = TRUE)
+
+    table.name <- deparse(substitute(table))
+    if (is.vector(table) || length(dim(table)) == 1)
+    {
+        if(is.null(names(table)))
+            stop(paste(table.name, "has no names."))
+
+        table <- as.matrix(table)
+    }
+
+    if (length(dim(table)) != 2)
+        stop(paste("Tables must contain one or more columns of data, and may not have three or more dimensions."))
+
+    if (ncol(table) == 1 && is.null(dimnames(table)[[2]]))
+        dimnames(table)[[2]] = table.name
+
+    if (is.null(colnames(table)))
+        stop(paste(table.name, "has no column names"))
+
+    if (is.null(rownames(table)))
+        stop(paste(table.name, "has no row names. The row names are required to match known geographic entitites."))
+
+    if (all(!is.na(suppressWarnings(as.numeric(rownames(table))))) && statistic == "Text")
+        stop(paste(table.name, "contains text and has numeric row names. Did you mean to convert this table to percentages?"))
+
+    if (remove.last.column && ncol(table) > 1)
+        table <- table[, -ncol(table), drop = FALSE]
+
+    if (remove.last.row)
+        table <- table[-nrow(table), , drop = FALSE]
+
+    if (treat.NA.as.0)
+        table[is.na(table)] <- 0
+
+    if (is.null(statistic))
+        attr(table, "statistic") <- statistic
+
+    table
 }
 
 #
