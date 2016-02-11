@@ -32,7 +32,7 @@ geographical entities without data with as having a 0 value.}
 are included in the table are shown on the table.}
 
 \item{remove.last.row}{Deletes the bottom row of the table prior to creating
-the map , unless the table is a vector or only has one column.}
+the map, unless the table is a vector or only has one row.}
 
 \item{legend.title}{The text to appear above the legend.}
 }
