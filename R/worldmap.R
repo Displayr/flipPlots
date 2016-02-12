@@ -130,7 +130,7 @@ StateMap <- function(table, country, ...)
     # Getting geographic boundaries
     data("admin1.coordinates", package = packageName(), envir = environment())
 
-    table <- cleanMapInput(table, ...)
+    table <- cleanMapInput(table)
 
     # Attempt to guess the country from the rownames
     if (missing(country))
@@ -243,8 +243,16 @@ BaseMap <- function(table,
     unmatched.regions.is.error = TRUE,
     name.map = NULL)
 {
-    table <- cleanMapInput(table, treat.NA.as.0 = treat.NA.as.0,
-        remove.last.column = remove.last.column, remove.last.row = remove.last.row)
+    table <- cleanMapInput(table)
+
+    if (remove.last.column && ncol(table) > 1)
+        table <- table[, -ncol(table), drop = FALSE]
+
+    if (remove.last.row)
+        table <- table[-nrow(table), , drop = FALSE]
+
+    if (treat.NA.as.0)
+        table[is.na(table)] <- 0
 
     statistic <- attr(table, "statistic", exact = TRUE)
     if (is.null(statistic))
@@ -372,12 +380,7 @@ BaseMap <- function(table,
 }
 
 
-cleanMapInput <- function(
-    table,
-    treat.NA.as.0 = FALSE,
-    remove.last.column = FALSE,
-    remove.last.row = FALSE,
-    ...)
+cleanMapInput <- function(table)
 {
     # Correcting rowname errors for country names.
     # Neatening the data.
@@ -406,15 +409,6 @@ cleanMapInput <- function(
 
     if (all(!is.na(suppressWarnings(as.numeric(rownames(table))))) && statistic == "Text")
         stop(paste(table.name, "contains text and has numeric row names. Did you mean to convert this table to percentages?"))
-
-    if (remove.last.column && ncol(table) > 1)
-        table <- table[, -ncol(table), drop = FALSE]
-
-    if (remove.last.row)
-        table <- table[-nrow(table), , drop = FALSE]
-
-    if (treat.NA.as.0)
-        table[is.na(table)] <- 0
 
     if (is.null(statistic))
         attr(table, "statistic") <- statistic
