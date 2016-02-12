@@ -2,7 +2,6 @@
 #' @description Creates tooltips for \code{\link{InteractiveLabeledScatterPlot}}.
 #' @param x The data that is being analzyed, where each row corresponds to a tooltip and
 #' and the cells in that row appear in the tooltip.
-#' @param row.labels A vector of the row labels.
 #' @export
 CreateInteractiveScatterplotTooltips <- function(x)
 {
@@ -20,11 +19,10 @@ CreateInteractiveScatterplotTooltips <- function(x)
 #' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
 #' @param coords The xy coordinates of the points.
 #' @param group A factor indicating group membership for each point.
-#' @param group.name The title to appear above the legend, which indicates group membership.
-#' @param tooltip.text The text to appear on tooltips.
 #' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
 #' @param column.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
-#' @param group.name Title for the legend (which only appears if group is not null).
+#' @param group.name The title to appear above the legend, which indicates group membership.
+#' @param tooltip.text The text to appear on tooltips.
 #' @param fixed.aspect If true, forces the x and y dimensions to be on the same scale.
 #' @param colors Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.
 #' @param auto.color Automatically colors the points (if FALSE, the first color is used).

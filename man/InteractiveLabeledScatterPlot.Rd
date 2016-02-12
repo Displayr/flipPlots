@@ -29,8 +29,6 @@ InteractiveLabeledScatterPlot(coords, group = NULL, row.labels = NULL,
 \item{auto.color}{Automatically colors the points (if FALSE, the first color is used).}
 
 \item{legend.width}{Legend area width, in pixels.}
-
-\item{group.name}{Title for the legend (which only appears if group is not null).}
 }
 \description{
 \code{LabeledScatterPlot} Scatterplot with Labeled Points.

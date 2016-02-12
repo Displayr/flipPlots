@@ -1,3 +1,5 @@
+globalVariables(c("QOutputSizeWidth", "QOutputSizeHeight"))
+
 #' Distance between points
 #' \code{Distance} A Euclidean distance between points
 #'
@@ -160,14 +162,13 @@ GetYlim <- function(p) {
 #' \code{GetYlim} Identifies a better set of coordinates to place labels in a labeled ggplot scatterplot.
 #'
 #' @param p A \code{\link[ggplot2]{ggplot}} plot.
+#' @param label.size Font size of the text labels on the plot.
 #' @param do.nothing If TRUE, the algorithm does nothing, other than return values.
 #' @param fixed.aspect If TRUE, forces the x and y dimensions to be on the same scale.
 #' @param tstep The angle (theta) step size as the algorithm spirals out.
 #' @param rstep The radius step size (in standard deviations) as the algorithm spirals out.
 #' @param overlap.fudge Determines the amount of space required between labels. A value of 1 corresponds to a best guess of
 #' no overlap. The guess can be wrong, so the plot can be improved by modifying this value, which has a muliplier effect.
-#' @param plot.width The width of the plotting area (in inches).
-#' @param plot.height The height of the plotting area (in inches).
 #' @return dimensions Width and height of the text to be plotted in terms of the scale of x and y.
 ReducePointAndLabelOverlap <- function (p, label.size,
                                         do.nothing,
@@ -295,8 +296,10 @@ ReducePointAndLabelOverlap <- function (p, label.size,
 #' @param general.color The color to be used in axes and titles.
 #' @param point.size Size of the dot representing the poing (i.e., the glyph).
 #' @param label.size Font size of the text labels on the plot.
+#' @param legend.size Size of the legend.
 #' @param axis.title.size Font size of the axis titles.
 #' @param axis.label.size Font size of the axis labels.
+#' @param main.size Font size of the main title.
 #' @param tstep The angle (theta) step size as the algorithm spirals out.
 #' @param rstep The radius step size (in standard deviations) as the algorithm spirals out.
 #' @param title.size Font size of the chart title.

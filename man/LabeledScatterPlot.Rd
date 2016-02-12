@@ -42,9 +42,13 @@ By default, a return character is used(i.e., \code{"\n"}). To replace with a per
 
 \item{label.size}{Font size of the text labels on the plot.}
 
+\item{legend.size}{Size of the legend.}
+
 \item{axis.title.size}{Font size of the axis titles.}
 
 \item{axis.label.size}{Font size of the axis labels.}
+
+\item{main.size}{Font size of the main title.}
 
 \item{tstep}{The angle (theta) step size as the algorithm spirals out.}
 
