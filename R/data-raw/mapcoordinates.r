@@ -1,13 +1,33 @@
-library(rgdal)
-#https://raw.github.com/datasets/geo-boundaries-world-110m/master/countries.geojson
-#country.coordinates <- readOGR("c://delete//countries.geojson.txt", "OGRGeoJSON")
+base.url <- "https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson"
+download.file(base.url, f <- tempfile())
+country.coordinates <- rgdal::readOGR(f, "OGRGeoJSON")
+
+country.coordinates.df <- data.frame(country.coordinates)
+column.class <- sapply(country.coordinates.df, class)
+column.class <- column.class[column.class == "factor"]
+rm(country.coordinates.df)
+
+for (column in names(column.class))
+    Encoding(levels(country.coordinates[[column]])) <- "UTF-8"
+
+devtools::use_data(country.coordinates, internal = FALSE, overwrite = TRUE)
+
+
 # Code source: http://stackoverflow.com/questions/29118059/display-spatialpolygonsdataframe-on-leaflet-map-with-r
 download.file(file.path('http://www.naturalearthdata.com/http/',
                         'www.naturalearthdata.com/download/50m/cultural',
                         'ne_50m_admin_0_countries.zip'), f <- tempfile())
 unzip(f, exdir=tempdir())
-library(rgdal)
-map.coordinates <- readOGR(tempdir(), 'ne_50m_admin_0_countries', encoding='UTF-8')
+map.coordinates <- rgdal::readOGR(tempdir(), 'ne_50m_admin_0_countries', encoding='UTF-8')
+
+map.coordinates.df <- data.frame(map.coordinates)
+column.class <- sapply(map.coordinates.df, class)
+column.class <- column.class[column.class == "factor"]
+rm(map.coordinates.df)
+
+for (column in names(column.class))
+    Encoding(levels(map.coordinates[[column]])) <- "UTF-8"
+
 devtools::use_data(map.coordinates, internal = FALSE, overwrite = TRUE)
 
 

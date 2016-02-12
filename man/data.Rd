@@ -3,23 +3,63 @@
 \docType{data}
 \name{map.coordinates}
 \alias{admin1.coordinates}
+\alias{brand.associations}
+\alias{cola.perceptions}
+\alias{country.coordinates}
+\alias{csd.perceptions}
+\alias{german.state.gdp}
 \alias{map.coordinates}
+\alias{q.colors}
 \title{Admin-0 level coordinates for the world}
-\format{A SpatialPolygonsDataFrame with data frame with 177 rows and 63 columns:}
+\format{A SpatialPolygonsDataFrame with data frame with 241 rows and 63 columns.}
 \source{
 \url{http://www.naturalearthdata.com/downloads/50m-cultural-vectors/}
 
+\url{https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson}
+
 \url{http://www.naturalearthdata.com/downloads/10m-cultural-vectors/}
+
+\url{https://en.wikipedia.org/wiki/List_of_German_states_by_GDP}
+
+Q example data
+
+Q example data
+
+Q example data
 }
 \usage{
 map.coordinates
 
+country.coordinates
+
 admin1.coordinates
+
+german.state.gdp
+
+brand.associations
+
+cola.perceptions
+
+csd.perceptions
+
+q.colors
 }
 \description{
 Admin-0 level coordinates for the world
 
+Use \code{map.coordinates} rather than this.
+
 Admin-1 level coordinates for the world
+
+GDP of German states for 2008 to 2013
+
+Brand associations
+
+Cola perceptions
+
+CSD perceptions
+
+Q default color scheme
 }
 \keyword{datasets}
 
