@@ -4,9 +4,10 @@
 \alias{BaseMap}
 \alias{StateMap}
 \alias{WorldMap}
-\title{\code{WorldMap} World Map}
+\title{World Map}
 \usage{
-WorldMap(..., remove.antarctica = TRUE, remove.regions = NULL)
+WorldMap(table, ..., remove.antarctica = TRUE, remove.regions = NULL,
+  high.resolution = FALSE)
 
 StateMap(table, country, ...)
 
@@ -18,16 +19,21 @@ BaseMap(table, coords, type = "name", treat.NA.as.0 = FALSE,
   unmatched.regions.is.error = TRUE, name.map = NULL)
 }
 \arguments{
-\item{...}{Other parameters to pass to \code{BaseMap}.}
-
-\item{remove.antarctica}{Automatically removes Antarctica from the map. Defaults to TRUE.}
-
-\item{remove.regions}{The regions to remove, even if they are in the table.}
-
 \item{table}{A matrix, two-dimensional array, table or vector, containing the
 data to be plotted. The \code{\link{rownames}} (or \code{\link{names}} in
 the case of a vector) should contain the names of the geographic entities
 to be plotted (see \code{type}).}
+
+\item{...}{Other parameters to pass to \code{BaseMap}.}
+
+\item{remove.antarctica}{Automatically removes Antarctica from the map.
+Defaults to TRUE.}
+
+\item{remove.regions}{The regions to remove, even if they are in the table.}
+
+\item{high.resolution}{Specifically request a high resolution map. Otherwise
+the resolution of the map is chosen automatically based on the requested
+countries.}
 
 \item{country}{The country the states come from.}
 
@@ -73,8 +79,8 @@ where the keys are the correct names and the values are vectors of
 incorrect names that should be changed.}
 }
 \description{
-Creates a map with a table as an input, using shading to represent the values of
-countries on the map.
+Creates a map with a table as an input, using shading to represent the values
+of countries on the map.
 
 Creates a map with a table as an input, using shading to represent the values of
 states in countries on the map.

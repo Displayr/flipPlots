@@ -1,9 +1,16 @@
-#' Admin-0 level coordinates for the world
+#' Admin-0 level coordinates for the world at 1:50m resolution
 #'
 #' @format A SpatialPolygonsDataFrame with data frame with 241 rows and 63 columns.
 #' @source \url{http://www.naturalearthdata.com/downloads/50m-cultural-vectors/}
 #' @rdname data
-"map.coordinates"
+"map.coordinates.50"
+
+#' Admin-0 level coordinates for the world at 1:110m resolution
+#'
+#' @format A SpatialPolygonsDataFrame with data frame with 177 rows and 63 columns.
+#' @source \url{http://www.naturalearthdata.com/downloads/110m-cultural-vectors/}
+#' @rdname data
+"map.coordinates.110"
 
 #' Obsolete Admin-0 level coordinates for the world.
 #'

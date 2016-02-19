@@ -32,3 +32,16 @@ test_that("Checking accuracy of row names",
     expect_error(WorldMap(invalid.country.names))
     rm(invalid.country.names)
 })
+
+test_that("Checking accuracy of country names",
+{
+    # Should use low resolution map - I don't know how to test this
+    valid.names <- 1:6
+    names(valid.names) <- c("Australia", "New Zealand", "USA", "Canada", "United Kingdom", "Japan")
+    expect_that(WorldMap(valid.names, type = "name"), not(throws_error()))
+
+    # Should use high resolution map
+    valid.names <- 1:7
+    names(valid.names) <- c("Australia", "New Zealand", "USA", "Canada", "United Kingdom", "Japan", "Singapore")
+    expect_that(WorldMap(valid.names, type = "name"), not(throws_error()))
+})

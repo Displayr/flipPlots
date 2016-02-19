@@ -1,4 +1,5 @@
-globalVariables(c("map.coordinates", "admin1.coordinates", "ISO_3166_1", "ISO_3166_2"))
+globalVariables(c("map.coordinates.50", "map.coordinates.110", "admin1.coordinates",
+    "ISO_3166_1", "ISO_3166_2"))
 
 #' Make a list mapping between alternative names of countries
 #'
@@ -13,8 +14,8 @@ globalVariables(c("map.coordinates", "admin1.coordinates", "ISO_3166_1", "ISO_31
 makeNameMap <- function(column)
 {
     data("ISO_3166_1", package = "ISOcodes", envir = environment())
-    data("map.coordinates", package = packageName(), envir = environment())
-    map.coordinates <- data.frame(map.coordinates)
+    data("map.coordinates.50", package = packageName(), envir = environment())
+    map.coordinates <- data.frame(map.coordinates.50)
 
     name.map <- list()
     for (i in seq_len(nrow(map.coordinates)))
@@ -134,4 +135,15 @@ admin1.name.map <- local(
     }
 
     name.map
+})
+
+# The file at 1:110m is missing a few small countries compared to the 1:50m data,
+# notably Singapore and Hong Kong
+missing110 <- local({
+    data("map.coordinates.50", "map.coordinates.110", package = packageName(), envir = environment())
+    missing.countries <- setdiff(levels(map.coordinates.50[["name"]]),
+        levels(map.coordinates.110[["name"]]))
+    alt.names <- admin0.name.map.by.name[missing.countries]
+    alt.names <- c(names(alt.names), unname(unlist(alt.names)))
+    alt.names
 })

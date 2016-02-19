@@ -1,4 +1,4 @@
-globalVariables(c("map.coordinates", "admin1.coordinates", "country.regions"))
+globalVariables(c("map.coordinates.50", "map.coordinates.110", "admin1.coordinates", "country.regions"))
 #' \code{GeographicRegionRowNames} Names of geographic regions.
 #'
 #' Returns the list of unique geographic names that can be used when creating a
@@ -15,11 +15,11 @@ globalVariables(c("map.coordinates", "admin1.coordinates", "country.regions"))
 GeographicRegionRowNames <- function(type)
 {
     requireNamespace("sp")
-    data("map.coordinates", package = packageName(), envir = environment())
+    data("map.coordinates.50", package = packageName(), envir = environment())
     # Make sure the dataset gets loaded
-    invisible(map.coordinates)
+    invisible(map.coordinates.50)
 
-    type.names <- map.coordinates[[type]]
+    type.names <- map.coordinates.50[[type]]
 
     if (is.factor(type.names))
         levels(type.names)
@@ -39,8 +39,8 @@ GeographicRegionRowNames <- function(type)
 GeographicRegionTypes <- function()
 {
     requireNamespace("sp")
-    data("map.coordinates", package = packageName(), envir = environment())
-    names(map.coordinates)
+    data("map.coordinates.50", package = packageName(), envir = environment())
+    names(map.coordinates.50)
 }
 # # Reading the coordinates.
 # getCoordinates <- function()
@@ -85,24 +85,46 @@ StatesInCountry <- function(country)
 }
 
 
-#' \code{WorldMap} World Map
+#' World Map
 #'
-#' Creates a map with a table as an input, using shading to represent the values of
-#' countries on the map.
+#' Creates a map with a table as an input, using shading to represent the values
+#' of countries on the map.
 #'
 #' @inheritParams BaseMap
-#' @param remove.antarctica Automatically removes Antarctica from the map. Defaults to TRUE.
+#' @param remove.antarctica Automatically removes Antarctica from the map.
+#'   Defaults to TRUE.
+#' @param high.resolution Specifically request a high resolution map. Otherwise
+#'   the resolution of the map is chosen automatically based on the requested
+#'   countries.
 #'
 #' @describeIn BaseMap A map of the countries of the world.
 #' @export
-WorldMap <- function(...,
+WorldMap <- function(table, ...,
     remove.antarctica = TRUE,
-    remove.regions = NULL)
+    remove.regions = NULL,
+    high.resolution = FALSE)
 {
     requireNamespace("sp")
-    # Getting geographic boundaries
-    data("map.coordinates", package = packageName(), envir = environment())
-    coords <- map.coordinates
+
+    table <- cleanMapInput(table)
+
+    # Getting geographic boundaries. If the user asks for high resolution maps
+    # or any of the requested regions are missing in the low resolution map, use
+    # the 1:50m map, otherwise use the 1:110m map.
+    req.names <- rownames(table)
+    if (!is.null(remove.regions))
+        req.names <- req.names[!(remove.regions %in% req.names)]
+
+    if (high.resolution || any(req.names %in% missing110))
+    {
+        data("map.coordinates.50", package = packageName(), envir = environment())
+        coords <- map.coordinates.50
+    }
+    else
+    {
+        data("map.coordinates.110", package = packageName(), envir = environment())
+        coords <- map.coordinates.110
+    }
 
     if (remove.antarctica)
     {
@@ -110,7 +132,8 @@ WorldMap <- function(...,
         remove.regions <- c(remove.regions, "Antarctica")
     }
 
-    BaseMap(..., coords = coords, remove.regions = remove.regions, name.map = admin0.name.map.by.name)
+    BaseMap(table = table, ..., coords = coords, remove.regions = remove.regions,
+        name.map = admin0.name.map.by.name)
 }
 
 #' State Map

@@ -18,17 +18,37 @@ download.file(file.path('http://www.naturalearthdata.com/http/',
                         'www.naturalearthdata.com/download/50m/cultural',
                         'ne_50m_admin_0_countries.zip'), f <- tempfile())
 unzip(f, exdir=tempdir())
-map.coordinates <- rgdal::readOGR(tempdir(), 'ne_50m_admin_0_countries', encoding='UTF-8')
+map.coordinates.50 <- rgdal::readOGR(tempdir(), 'ne_50m_admin_0_countries', encoding='UTF-8')
 
-map.coordinates.df <- data.frame(map.coordinates)
+map.coordinates.df <- data.frame(map.coordinates.50)
 column.class <- sapply(map.coordinates.df, class)
 column.class <- column.class[column.class == "factor"]
 rm(map.coordinates.df)
 
 for (column in names(column.class))
-    Encoding(levels(map.coordinates[[column]])) <- "UTF-8"
+    # Encoding(levels(map.coordinates.50[[column]])) <- "UTF-8"
+    levels(map.coordinates.50[[column]]) <- enc2utf8(levels(map.coordinates.50[[column]]))
 
-devtools::use_data(map.coordinates, internal = FALSE, overwrite = TRUE)
+devtools::use_data(map.coordinates.50, internal = FALSE, overwrite = TRUE)
+
+
+#http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip
+download.file(file.path('http://www.naturalearthdata.com/http/',
+    'www.naturalearthdata.com/download/110m/cultural',
+    'ne_110m_admin_0_countries.zip'), f <- tempfile())
+unzip(f, exdir=tempdir())
+map.coordinates.110 <- rgdal::readOGR(tempdir(), 'ne_110m_admin_0_countries', encoding='UTF-8')
+
+map.coordinates.df <- data.frame(map.coordinates.110)
+column.class <- sapply(map.coordinates.df, class)
+column.class <- column.class[column.class == "factor"]
+rm(map.coordinates.df)
+
+for (column in names(column.class))
+    # Encoding(levels(map.coordinates.110[[column]])) <- "UTF-8"
+    levels(map.coordinates.110[[column]]) <- enc2utf8(levels(map.coordinates.110[[column]]))
+
+devtools::use_data(map.coordinates.110, internal = FALSE, overwrite = TRUE)
 
 
 f <- tempfile()
