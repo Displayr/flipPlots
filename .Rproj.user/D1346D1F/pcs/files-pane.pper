@@ -1,9 +1,0 @@
-{
-    "path" : "~/GitHub/flipPlots/R/data-raw",
-    "sortOrder" : [
-        {
-            "ascending" : true,
-            "columnIndex" : 2
-        }
-    ]
-}
