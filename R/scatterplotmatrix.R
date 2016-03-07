@@ -11,7 +11,7 @@ ScatterplotMatrix <- function(...)
 {
     arg.names <- as.character(match.call()[-1])
     dots <- list(...)
-    names(dots) <- gsub("`", "", arg.names)
+    names(dots) <- gsub("^`(.+)`$", "\\1", arg.names)
 
     all.names <- NULL
     for (counter in seq(along = dots))
