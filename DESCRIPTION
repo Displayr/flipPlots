@@ -16,6 +16,7 @@ Imports:
     smacof,
     sp,
     plotly,
+    psych,
     stringr,
     scatterD3,
     choroplethr,
