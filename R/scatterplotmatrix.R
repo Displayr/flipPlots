@@ -11,6 +11,11 @@ ScatterplotMatrix <- function(...)
 {
     arg.names <- as.character(match.call()[-1])
     dots <- list(...)
+    named.args <- names(dots) != ""
+
+    if (any(named.args))
+        arg.names[named.args] <- names(dots)[named.args]
+
     names(dots) <- gsub("^`(.+)`$", "\\1", arg.names)
 
     all.names <- NULL
