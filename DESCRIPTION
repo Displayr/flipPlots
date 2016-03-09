@@ -11,18 +11,19 @@ LazyData: TRUE
 Depends:
     R (>= 2.10)
 Imports:
-    leaflet,
-    ggplot2,
-    smacof,
-    sp,
-    plotly,
-    psych,
-    stringr,
-    scatterD3,
     choroplethr,
     choroplethrAdmin1,
+    flipMultivariates,
     flipU,
-    ISOcodes
+    ggplot2,
+    ISOcodes,
+    leaflet,
+    plotly,
+    psych,
+    scatterD3,
+    smacof,
+    sp,
+    stringr
 Suggests:
     rgdal,
     testthat

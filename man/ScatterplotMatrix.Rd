@@ -4,11 +4,15 @@
 \alias{ScatterplotMatrix}
 \title{Scatterplot matrix}
 \usage{
-ScatterplotMatrix(...)
+ScatterplotMatrix(..., .subset = NULL, .weights = NULL)
 }
 \arguments{
 \item{...}{The variables to plot. Can be data frames or vectors, but should
 all be the same length as they will be bound together.}
+
+\item{.subset}{Used to subset the data.}
+
+\item{.weights}{Weights.}
 }
 \description{
 Wrapper around the function \code{\link[psych]{pairs.panels}} from the

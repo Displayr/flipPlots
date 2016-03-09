@@ -6,18 +6,25 @@
 #'
 #' @param ... The variables to plot. Can be data frames or vectors, but should
 #'   all be the same length as they will be bound together.
+#' @param .subset Used to subset the data.
+#' @param .weights Weights.
 #' @export
-ScatterplotMatrix <- function(...)
+ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL)
 {
-    arg.names <- as.character(match.call()[-1])
+    arg.val.names <- as.character(match.call()[-1])
+    arg.names <- names(as.list(match.call()[-1]))
+
+    to.drop <- arg.names %in% c(".subset", ".weights")
+    if (any(to.drop))
+        arg.val.names <- arg.val.names[!to.drop]
+
     dots <- list(...)
     named.args <- names(dots) != ""
 
     if (any(named.args))
-        arg.names[named.args] <- names(dots)[named.args]
+        arg.val.names[named.args] <- names(dots)[named.args]
 
-    names(dots) <- gsub("^`(.+)`$", "\\1", arg.names)
-
+    names(dots) <- gsub("^`(.+)`$", "\\1", arg.val.names)
     all.names <- NULL
     for (counter in seq(along = dots))
     {
@@ -31,6 +38,18 @@ ScatterplotMatrix <- function(...)
     }
 
     x <- data.frame(dots)
+
+    if (!is.null(.subset))
+        x$.subset <- .subset
+
+    if (!is.null(.weights))
+        x <- flipMultivariates::AdjustDataToReflectWeights(x, .weights)
+
+    if (!is.null(.subset))
+    {
+        x <- x[x$.subset, ]
+        x$.subset <- NULL
+    }
 
     if (ncol(x) < 2)
         stop("You need at least 2 columns to display a scatterplot matrix.")
