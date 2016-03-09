@@ -4,7 +4,10 @@
 \alias{ScatterplotMatrix}
 \title{Scatterplot matrix}
 \usage{
-ScatterplotMatrix(..., .subset = NULL, .weights = NULL)
+ScatterplotMatrix(..., .subset = NULL, .weights = NULL,
+  .missing = c("Exclude cases with missing data",
+  "Error if missing data found",
+  "Imputation (replace missing values with estimates)"))
 }
 \arguments{
 \item{...}{The variables to plot. Can be data frames or vectors, but should
@@ -13,6 +16,8 @@ all be the same length as they will be bound together.}
 \item{.subset}{Used to subset the data.}
 
 \item{.weights}{Weights.}
+
+\item{.missing}{How to handle missing values.}
 }
 \description{
 Wrapper around the function \code{\link[psych]{pairs.panels}} from the

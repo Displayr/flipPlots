@@ -15,4 +15,13 @@ test_that("Scatterplot matrix",
     expect_that(ScatterplotMatrix(x, y, .subset = filter), not(throws_error()))
     expect_that(ScatterplotMatrix(x, y, .weights = weights), not(throws_error()))
     expect_that(ScatterplotMatrix(x, y, .subset = filter, .weights = weights), not(throws_error()))
+
+    expect_that(ScatterplotMatrix(x, y, .missing = "Error"), not(throws_error()))
+    expect_warning(ScatterplotMatrix(x, y, .missing = "Imputation"), "Imputation has been selected")
+
+
+    x[sample.int(100, 20)] <- NA
+    expect_that(ScatterplotMatrix(x, y), not(throws_error()))
+    expect_error(ScatterplotMatrix(x, y, .missing = "Error"), "missing values in object")
+    expect_that(ScatterplotMatrix(x, y, .missing = "Imputation"), not(throws_error()))
 })

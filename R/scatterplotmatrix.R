@@ -8,13 +8,19 @@
 #'   all be the same length as they will be bound together.
 #' @param .subset Used to subset the data.
 #' @param .weights Weights.
+#' @param .missing How to handle missing values.
 #' @export
-ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL)
+ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
+    .missing = c("Exclude cases with missing data",
+        "Error if missing data found",
+        "Imputation (replace missing values with estimates)"))
 {
+    .missing <- match.arg(.missing)
+
     arg.val.names <- as.character(match.call()[-1])
     arg.names <- names(as.list(match.call()[-1]))
 
-    to.drop <- arg.names %in% c(".subset", ".weights")
+    to.drop <- arg.names %in% c(".subset", ".weights", ".missing")
     if (any(to.drop))
         arg.val.names <- arg.val.names[!to.drop]
 
@@ -38,6 +44,13 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL)
     }
 
     x <- data.frame(dots)
+
+    if (.missing == "Exclude cases with missing data")
+        x <- na.exclude(x)
+    else if (.missing == "Error if missing data found")
+        x <- na.fail(x)
+    else if (.missing == "Imputation (replace missing values with estimates)")
+        x <- flipMultivariates::SingleImputation(x)
 
     if (!is.null(.subset))
         x$.subset <- .subset
