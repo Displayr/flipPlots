@@ -45,13 +45,6 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
 
     x <- data.frame(dots)
 
-    if (.missing == "Exclude cases with missing data")
-        x <- na.exclude(x)
-    else if (.missing == "Error if missing data found")
-        x <- na.fail(x)
-    else if (.missing == "Imputation (replace missing values with estimates)")
-        x <- flipMultivariates::SingleImputation(x)
-
     if (!is.null(.subset))
         x$.subset <- .subset
 
@@ -63,6 +56,14 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
         x <- x[x$.subset, ]
         x$.subset <- NULL
     }
+
+    # Put this after the subsetting in case that removes the missing values
+    if (.missing == "Exclude cases with missing data")
+        x <- na.exclude(x)
+    else if (.missing == "Error if missing data found")
+        x <- na.fail(x)
+    else if (.missing == "Imputation (replace missing values with estimates)")
+        x <- flipMultivariates::SingleImputation(x)
 
     if (ncol(x) < 2)
         stop("You need at least 2 columns to display a scatterplot matrix.")
