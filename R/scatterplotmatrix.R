@@ -61,7 +61,7 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
     if (.missing == "Exclude cases with missing data")
         x <- na.exclude(x)
     else if (.missing == "Error if missing data found")
-        x <- na.fail(x)
+        x <- tryCatch(na.fail(x), error = function(e) stop("The data contains missing values."))
     else if (.missing == "Imputation (replace missing values with estimates)")
         x <- flipMultivariates::SingleImputation(x)
 
