@@ -6,8 +6,7 @@
 \usage{
 ScatterplotMatrix(..., .subset = NULL, .weights = NULL,
   .missing = c("Exclude cases with missing data",
-  "Error if missing data found",
-  "Imputation (replace missing values with estimates)"))
+  "Error if missing data found"))
 }
 \arguments{
 \item{...}{The variables to plot. Can be data frames or vectors, but should

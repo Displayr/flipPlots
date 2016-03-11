@@ -13,7 +13,6 @@ Depends:
 Imports:
     choroplethr,
     choroplethrAdmin1,
-    flipMultivariates,
     flipU,
     ggplot2,
     ISOcodes,

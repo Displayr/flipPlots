@@ -12,8 +12,7 @@
 #' @export
 ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
     .missing = c("Exclude cases with missing data",
-        "Error if missing data found",
-        "Imputation (replace missing values with estimates)"))
+        "Error if missing data found"))
 {
     .missing <- match.arg(.missing)
 
@@ -49,7 +48,7 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
         x$.subset <- .subset
 
     if (!is.null(.weights))
-        x <- flipMultivariates::AdjustDataToReflectWeights(x, .weights)
+        x <- flipU::AdjustDataToReflectWeights(x, .weights)
 
     if (!is.null(.subset))
     {
@@ -62,11 +61,12 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
         x <- na.exclude(x)
     else if (.missing == "Error if missing data found")
         x <- tryCatch(na.fail(x), error = function(e) stop("The data contains missing values."))
-    else if (.missing == "Imputation (replace missing values with estimates)")
-        x <- flipMultivariates::SingleImputation(x)
 
     if (ncol(x) < 2)
         stop("You need at least 2 columns to display a scatterplot matrix.")
 
-    psych::pairs.panels(x, labels = all.names)
+    # From the docs for psych::pairs.panels
+    pch <- ifelse(nrow(x) > 100, ".", 20)
+
+    psych::pairs.panels(x, pch = pch, labels = all.names)
 }
