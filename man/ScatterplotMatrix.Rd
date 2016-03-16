@@ -19,7 +19,7 @@ all be the same length as they will be bound together.}
 \item{.missing}{How to handle missing values.}
 }
 \description{
-Wrapper around the function \code{\link[psych]{pairs.panels}} from the
+Wrapper around the function \code{pairs.panels}, originally from the
 \code{psych} package. Ensures that the variable names come through nicely
 from Displayr.
 }

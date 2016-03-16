@@ -18,11 +18,11 @@ Imports:
     ISOcodes,
     leaflet,
     plotly,
-    psych,
     scatterD3,
     smacof,
     sp,
-    stringr
+    stringr,
+    weights
 Suggests:
     rgdal,
     testthat

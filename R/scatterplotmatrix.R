@@ -1,6 +1,6 @@
 #' Scatterplot matrix
 #'
-#' Wrapper around the function \code{\link[psych]{pairs.panels}} from the
+#' Wrapper around the function \code{pairs.panels}, originally from the
 #' \code{psych} package. Ensures that the variable names come through nicely
 #' from Displayr.
 #'
@@ -45,15 +45,9 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
     x <- data.frame(dots)
 
     if (!is.null(.subset))
-        x$.subset <- .subset
-
-    if (!is.null(.weights))
-        x <- flipU::AdjustDataToReflectWeights(x, .weights)
-
-    if (!is.null(.subset))
     {
-        x <- x[x$.subset, ]
-        x$.subset <- NULL
+        x <- x[.subset, ]
+        .weights <- .weights[.subset]
     }
 
     # Put this after the subsetting in case that removes the missing values
@@ -66,7 +60,7 @@ ScatterplotMatrix <- function(..., .subset = NULL, .weights = NULL,
         stop("You need at least 2 columns to display a scatterplot matrix.")
 
     # From the docs for psych::pairs.panels
-    pch <- ifelse(nrow(x) > 100, ".", 20)
+    pch <- ifelse(nrow(x) > 200, ".", 20)
 
-    psych::pairs.panels(x, pch = pch, labels = all.names)
+    pairs.panels(x, pch = pch, labels = all.names, weights = .weights)
 }
