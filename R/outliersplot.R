@@ -53,3 +53,11 @@
 #   plot(object, plot.type = "bubbleplot")
 #   mtext("The larger the bubbles, the better the fit")
 # }
+#'
+#'
+#'
+#' #OutliersPlot(mdsInterval)
+#' #' @export
+#' OutliersPlot <- function(object) {
+#'   UseMethod("OutliersPlot")
+#' }
