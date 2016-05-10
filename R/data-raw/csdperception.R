@@ -19,26 +19,26 @@ z <- csd.perceptions[c(5:8, 1:4),3:4]
 #dimnames(z)[[1]] <- LETTERS[1:nrow(z)]
 
 #csd.perceptions[,3:4]
-LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, main.size = 12, auto.tidy = TRUE, fixed.aspect = TRUE, group = rep(1:2,4))
+LabeledScatterPlot(z, label.font.size = 10, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = TRUE, fixed.aspect = TRUE, group = rep(1:2,4))
 
 InteractiveLabeledScatterPlot(z, fixed.aspect = FALSE)
 
-LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = TRUE)
-LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
-LabeledScatterPlot(z, point.size = 3, label.size = 10, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 10, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = FALSE, fixed.aspect = TRUE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 10, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 10, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
 
-LabeledScatterPlot(z, auto.tidy = TRUE, fixed.aspect = FALSE, label.size = 20, point.size = 3, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12)
-LabeledScatterPlot(z, auto.tidy = FALSE, fixed.aspect = FALSE, label.size = 20, point.size = 3, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12)
+LabeledScatterPlot(z, auto.tidy = TRUE, fixed.aspect = FALSE, label.font.size = 20, font.size = 3, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12)
+LabeledScatterPlot(z, auto.tidy = FALSE, fixed.aspect = FALSE, label.font.size = 20, font.size = 3, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12)
 
-LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 20, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = TRUE)
 
 
 
-LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10, axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 20, legend.font.size = 10, axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = FALSE)
 
 
 z = matrix(c(1:10,1:10), 10, dimnames = list(c(rep("jJ", 3), rep("Big Dog", 3), rep("Stupendeously, Stupendeously big-canine", 4)), c("a1", "a2")))
-LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
-LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
-LabeledScatterPlot(z, point.size = 3, label.size = 20, legend.size = 10,   axis.title.size = 12, axis.label.size = 10, title.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 20, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 20, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = TRUE, fixed.aspect = FALSE)
+LabeledScatterPlot(z, font.size = 3, label.font.size = 20, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, auto.tidy = FALSE, fixed.aspect = FALSE)
 
