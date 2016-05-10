@@ -19,10 +19,10 @@ CreateInteractiveScatterplotTooltips <- function(x)
 #' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
 #' @param coords The xy coordinates of the points.
 #' @param group A factor indicating group membership for each point.
-#' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
-#' @param column.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
 #' @param group.name The title to appear above the legend, which indicates group membership.
 #' @param tooltip.text The text to appear on tooltips.
+#' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
+#' @param column.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
 #' @param fixed.aspect If true, forces the x and y dimensions to be on the same scale.
 #' @param colors Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.
 #' @param auto.color Automatically colors the points (if FALSE, the first color is used).
@@ -55,7 +55,7 @@ InteractiveLabeledScatterPlot <- function(coords,  group = NULL, row.labels = NU
     else
     {
             legend.width <- 0
-            group <- flipU::IfThen(auto.color, 1:n, rep(1, n))
+            group <- if (auto.color) 1:n else rep(1, n)
     }
     .axisLimits <- function(lim) lim + c(-1, 1) * diff(lim) * 0.05
     x.lim <- .axisLimits(range(coords[ ,1]))
