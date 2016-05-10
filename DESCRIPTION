@@ -14,6 +14,7 @@ Imports:
     choroplethr,
     choroplethrAdmin1,
     flipU,
+    ggrepel,
     ggplot2,
     ISOcodes,
     leaflet,
@@ -26,3 +27,4 @@ Imports:
 Suggests:
     rgdal,
     testthat
+RoxygenNote: 5.0.1
