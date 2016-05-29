@@ -24,10 +24,11 @@ LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot", coor
 #' @param axis.label.font.size Font size of the axis labels.
 #' @param title.font.size Font size of the chart title.
 #' @param legend.font.size Font size of the for the plot.
+#' @param ... Other plotting arguments.
 #' @return A \code{\link[ggplot2]{ggplot}} plot.
 #' @rdname LabeledScatterPlot
 #' @method LabeledScatterPlot default
-#' @S3method LabeledScatterPlot default
+#' @export LabeledScatterPlot
 LabeledScatterPlot.default = function(coords,
                             group = NULL,
                             row.labels = NULL,
@@ -179,7 +180,7 @@ LabeledScatterPlot.default = function(coords,
 
 #' @rdname LabeledScatterPlot
 #' @method LabeledScatterPlot smacof
-#' @S3method LabeledScatterPlot smacof
+#' @export
 LabeledScatterPlot.smacof = function(object, ...)
 {
     LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
@@ -187,7 +188,7 @@ LabeledScatterPlot.smacof = function(object, ...)
 
 #' @rdname LabeledScatterPlot
 #' @method LabeledScatterPlot smacofB
-#' @S3method LabeledScatterPlot smacofB
+#' @export
 LabeledScatterPlot.smacofB = function(object, ...)
 {
     LabeledScatterPlot.default(object$conf, fixed.aspect = TRUE, ...)
@@ -196,7 +197,7 @@ LabeledScatterPlot.smacofB = function(object, ...)
 
 #' @rdname LabeledScatterPlot
 #' @method LabeledScatterPlot smacofR
-#' @S3method LabeledScatterPlot smacofR
+#' @export
 LabeledScatterPlot.smacofR = function(object, ...) # # row.description = "Rows", column.description = "Columns",  ...) {
 {
     coords = rbind(object$conf.row, object$conf.col)

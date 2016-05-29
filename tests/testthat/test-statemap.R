@@ -1,4 +1,3 @@
-library(flipPlots)
 library(testthat)
 context("State Map")
 
@@ -9,17 +8,17 @@ test_that("Australian State maps with automatic renaming",
     # State and country names as they are in the source data
     names(states) <- c("New South Wales", "Victoria", "Queensland", "South Australia",
         "Tasmania", "Northern Territory", "Western Australia", "Australian Capital Territory")
-    expect_that(StateMap(states, country = "Australia"), not(throws_error()))
+    expect_error(StateMap(states, country = "Australia"), NA)
     # Guess country from state names
-    expect_that(StateMap(states), not(throws_error()))
+    expect_error(StateMap(states), NA)
 
     # Normal abbreviations of the states
     names(states) <- c("NSW", "VIC", "QLD", "SA", "TAS", "NT", "WA", "ACT")
-    expect_that(StateMap(states, country = "Australia"), not(throws_error()))
-    expect_that(StateMap(states), not(throws_error()))
+    expect_error(StateMap(states, country = "Australia"), NA)
+    expect_error(StateMap(states), NA)
 
     # Long name of Australia is Commonwealth of Australia
-    expect_that(StateMap(states, country = "Commonwealth of Australia"), not(throws_error()))
+    expect_error(StateMap(states, country = "Commonwealth of Australia"), NA)
 
     # These aren't states in Austria
     expect_error(StateMap(states, country = "Austria"))
@@ -34,14 +33,14 @@ test_that("US State maps with automatic renaming",
 {
     # Row names are the full state names
     us.data <- state.x77
-    expect_that(StateMap(us.data, country = "United States"), not(throws_error()))
-    expect_that(StateMap(us.data), not(throws_error()))
+    expect_error(StateMap(us.data, country = "United States"), NA)
+    expect_error(StateMap(us.data),NA)
 
     row.names(us.data) <- state.abb
-    expect_that(StateMap(us.data, country = "United States"), not(throws_error()))
-    expect_that(StateMap(us.data), not(throws_error()))
+    expect_error(StateMap(us.data, country = "United States"), NA)
+    expect_error(StateMap(us.data), NA)
 
-    expect_that(StateMap(us.data, country = "United States of America"), not(throws_error()))
+    expect_error(StateMap(us.data, country = "United States of America"), NA)
 })
 
 test_that("Asking for states in a country",

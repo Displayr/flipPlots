@@ -2,7 +2,7 @@
 % Please edit documentation in R/interactivelabeledscatterplot.R
 \name{InteractiveLabeledScatterPlot}
 \alias{InteractiveLabeledScatterPlot}
-\title{\code{LabeledScatterPlot} Scatterplot with Labeled Points.}
+\title{\code{InteractiveLabeledScatterPlot} Scatterplot with Labeled Points.}
 \usage{
 InteractiveLabeledScatterPlot(coords, group = NULL, row.labels = NULL,
   column.labels = NULL, group.name = "", tooltip.text = NULL,
@@ -31,6 +31,6 @@ InteractiveLabeledScatterPlot(coords, group = NULL, row.labels = NULL,
 \item{legend.width}{Legend area width, in pixels.}
 }
 \description{
-\code{LabeledScatterPlot} Scatterplot with Labeled Points.
+\code{InteractiveLabeledScatterPlot} Scatterplot with Labeled Points.
 }
 

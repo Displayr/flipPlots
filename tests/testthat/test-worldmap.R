@@ -23,7 +23,7 @@ test_that("Checking accuracy of row names",
 {
     valid.continent.names <- 1:6
     names(valid.continent.names) <- c("Asia", "Africa", "Europe", "South America", "Oceania", "North America")
-    expect_that(WorldMap(valid.continent.names, type = "continent"), not(throws_error()))
+    expect_error(WorldMap(valid.continent.names, type = "continent"), NA)
     rm(valid.continent.names)
     invalid.continent.names <- 1:6
     names(invalid.continent.names) <- c("Asia", "Africag", "Europe", "South America", "Oceania", "North America")
@@ -38,10 +38,10 @@ test_that("Checking accuracy of country names",
     # Should use low resolution map - I don't know how to test this
     valid.names <- 1:6
     names(valid.names) <- c("Australia", "New Zealand", "USA", "Canada", "United Kingdom", "Japan")
-    expect_that(WorldMap(valid.names, type = "name"), not(throws_error()))
+    expect_error(WorldMap(valid.names, type = "name"), NA)
 
     # Should use high resolution map
     valid.names <- 1:7
     names(valid.names) <- c("Australia", "New Zealand", "USA", "Canada", "United Kingdom", "Japan", "Singapore")
-    expect_that(WorldMap(valid.names, type = "name"), not(throws_error()))
+    expect_error(WorldMap(valid.names, type = "name"),NA)
 })

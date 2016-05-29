@@ -16,7 +16,7 @@ CreateInteractiveScatterplotTooltips <- function(x)
     paste("<strong>", row.labels, "</strong><br>", rows, sep = "")
 }
 
-#' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
+#' \code{InteractiveLabeledScatterPlot} Scatterplot with Labeled Points.
 #' @param coords The xy coordinates of the points.
 #' @param group A factor indicating group membership for each point.
 #' @param group.name The title to appear above the legend, which indicates group membership.
@@ -27,7 +27,7 @@ CreateInteractiveScatterplotTooltips <- function(x)
 #' @param colors Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.
 #' @param auto.color Automatically colors the points (if FALSE, the first color is used).
 #' @param legend.width Legend area width, in pixels.
-
+#' @importFrom scatterD3 scatterD3
 #' @export
 InteractiveLabeledScatterPlot <- function(coords,  group = NULL, row.labels = NULL, column.labels = NULL,
                                       group.name = "",

@@ -12,9 +12,9 @@ LabeledScatterPlot(coords, ...)
 
 \method{LabeledScatterPlot}{default}(coords, group = NULL,
   row.labels = NULL, column.labels = NULL, title = "", group.name = "",
-  fixed.aspect = FALSE, auto.tidy = TRUE, colors = QColors,
-  auto.color = TRUE, general.color = "gray28", point.size = 1,
-  label.font.size = 10, legend.font.size = 10, axis.title.font.size = 12,
+  fixed.aspect = FALSE, colors = QColors, auto.color = TRUE,
+  general.color = "gray28", point.size = 1, label.font.size = 10,
+  legend.font.size = 10, axis.title.font.size = 12,
   axis.label.font.size = 10, title.font.size = 12)
 
 \method{LabeledScatterPlot}{smacof}(object, ...)
@@ -25,6 +25,8 @@ LabeledScatterPlot(coords, ...)
 }
 \arguments{
 \item{coords}{The xy coordinates of the points.}
+
+\item{...}{Other plotting arguments.}
 
 \item{group}{A factor indicating group membership for each point.}
 
@@ -37,8 +39,6 @@ LabeledScatterPlot(coords, ...)
 \item{group.name}{Title for the legend (which only appears if group is not null).}
 
 \item{fixed.aspect}{if true, forces the x and y dimensions to be on the same scale.}
-
-\item{auto.tidy}{Move the labels around so that fewer overlap.}
 
 \item{colors}{Colors that are cycled through where there is only one series, or, used to demarkate series where there are multiple series.}
 

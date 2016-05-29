@@ -15,7 +15,7 @@ globalVariables(c("map.coordinates.50", "map.coordinates.110", "admin1.coordinat
 GeographicRegionRowNames <- function(type)
 {
     requireNamespace("sp")
-    data("map.coordinates.50", package = packageName(), envir = environment())
+    data("map.coordinates.50", package = "flipGeographicCoordinates")
     # Make sure the dataset gets loaded
     invisible(map.coordinates.50)
 
@@ -39,7 +39,7 @@ GeographicRegionRowNames <- function(type)
 GeographicRegionTypes <- function()
 {
     requireNamespace("sp")
-    data("map.coordinates.50", package = packageName(), envir = environment())
+    data("map.coordinates.50", package = "flipGeographicCoordinates")
     names(map.coordinates.50)
 }
 # # Reading the coordinates.
@@ -61,7 +61,7 @@ GeographicRegionTypes <- function()
 StatesInCountry <- function(country)
 {
     requireNamespace("sp")
-    data("admin1.coordinates", package = packageName(), envir = environment())
+    data("admin1.coordinates", package = "flipGeographicCoordinates")
 
     # If the country is not an exact match, search wider for it
     if (!(country %in% names(admin0.name.map.by.admin)))
@@ -117,12 +117,12 @@ WorldMap <- function(table, ...,
 
     if (high.resolution || any(req.names %in% missing110))
     {
-        data("map.coordinates.50", package = packageName(), envir = environment())
+        data("map.coordinates.50", package = "flipGeographicCoordinates")
         coords <- map.coordinates.50
     }
     else
     {
-        data("map.coordinates.110", package = packageName(), envir = environment())
+        data("map.coordinates.110", package = "flipGeographicCoordinates")
         coords <- map.coordinates.110
     }
 
@@ -151,7 +151,7 @@ StateMap <- function(table, country, ...)
 {
     requireNamespace("sp")
     # Getting geographic boundaries
-    data("admin1.coordinates", package = packageName(), envir = environment())
+    data("admin1.coordinates", package = "flipGeographicCoordinates")
 
     table <- cleanMapInput(table)
 
@@ -249,7 +249,10 @@ StateMap <- function(table, country, ...)
 #' @details This function is based on the \code{leaflet} package. See
 #'   \url{https://rstudio.github.io/leaflet/} for an overview of this package
 #'   and how to use it without using these functions.
-#'
+#' @importFrom stringr str_trim
+#' @importFrom stats as.formula
+#' @importFrom utils data
+#' @importFrom leaflet addPolygons leaflet addLayersControl layersControlOptions addTiles colorNumeric addLegend labelFormat
 #' @export
 BaseMap <- function(table,
     coords,
@@ -298,7 +301,7 @@ BaseMap <- function(table,
 
     if (!is.null(remove.regions) && remove.regions != "")
     {
-        remove.regions <- stringr::str_trim(unlist(strsplit(remove.regions, ",", fixed = TRUE)))
+        remove.regions <- str_trim(unlist(strsplit(remove.regions, ",", fixed = TRUE)))
         if (type == "name" && !is.null(name.map))
         {
             for (region in names(name.map))
@@ -366,25 +369,25 @@ BaseMap <- function(table,
         coords$table.max[match(min.in.table.max, coords$table.max)] <- min.value
 
     # Creating the map
-    map <- leaflet::leaflet(coords)
+    map <- leaflet(coords)
     opacity <- 1
     if (add.detail)
     {
         opacity <- 0.2
-        map <- leaflet::addTiles(map)
+        map <- addTiles(map)
     }
     max.range <- max(coords$table.max, na.rm = TRUE)
-    .pal <- leaflet::colorNumeric(palette = colors, domain = c(min.value, max.range),
+    .pal <- colorNumeric(palette = colors, domain = c(min.value, max.range),
             na.color = color.NA)
-    map <- leaflet::addLegend(map, "bottomright", pal = .pal, values = ~table.max,
+    map <- addLegend(map, "bottomright", pal = .pal, values = ~table.max,
                     title = legend.title,
-                    labFormat = leaflet::labelFormat(prefix = ""),
+                    labFormat = labelFormat(prefix = ""),
                     opacity = opacity,
                     na.label = ifelse(treat.NA.as.0, "0", "NA"))
 
     if (n.categories == 1)
     {
-        map <- leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
+        map <- addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
             fillOpacity = opacity, color = ~.pal(table1))
     }
     else
@@ -392,15 +395,16 @@ BaseMap <- function(table,
         for (i in 1:n.categories)
         {
             cl <- as.formula(paste("~.pal(table", i, ")", sep = ""))
-            map <- leaflet::addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
+            map <- addPolygons(map, stroke = FALSE, smoothFactor = 0.2,
                 fillOpacity = opacity, color = cl, group = categories[i])
         }
-        map <- leaflet::addLayersControl(map, baseGroups = categories,
-            options = leaflet::layersControlOptions(collapsed = FALSE))
+        map <- addLayersControl(map, baseGroups = categories,
+            options = layersControlOptions(collapsed = FALSE))
     }
 
     map
 }
+
 
 
 cleanMapInput <- function(table)
@@ -506,6 +510,9 @@ WorldChoropleth <- function(..., remove.regions = "antarctica")
 #' @param region The region of the world to map. This can either be
 #'   \dQuote{world} or the name of a country.
 #' @inheritParams BaseMap
+#' @importFrom choroplethrAdmin1 get_admin1_regions
+#' @importFrom choroplethr country_choropleth
+
 #' @export
 Choropleth <- function(df,
     region,
@@ -555,7 +562,7 @@ Choropleth <- function(df,
     }
     else
     {
-        all.regions <- choroplethrAdmin1::get_admin1_regions(region)$region
+        all.regions <- get_admin1_regions(region)$region
     }
 
     zoom <- NULL
@@ -574,8 +581,9 @@ Choropleth <- function(df,
 
     if (region == "world")
     {
-        map <- choroplethr::country_choropleth(df, legend = legend.title, num_colors = 1, zoom = zoom)
+        map <- country_choropleth(df, legend = legend.title, num_colors = 1, zoom = zoom)
     }
+
 # Cannot use this because it does not render correctly in plotly
 #     else if (region == "united states of america")
 #     {
@@ -585,7 +593,7 @@ Choropleth <- function(df,
     else
     {
         requireNamespace("choroplethrAdmin1")
-        map <- choroplethr::admin1_choropleth(region, df, legend = legend.title, num_colors = 1,
+        map <- admin1_choropleth(region, df, legend = legend.title, num_colors = 1,
             zoom = zoom)
     }
 
