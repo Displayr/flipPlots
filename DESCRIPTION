@@ -27,7 +27,7 @@ Imports:
     weights,
     utils
 Suggests:
-    flipExampleDat,
+    flipExampleData,
     rgdal,
     testthat
 RoxygenNote: 5.0.1

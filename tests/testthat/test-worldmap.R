@@ -2,8 +2,6 @@ library(flipPlots)
 library(testthat)
 context("World Map")
 
-
-
 test_that("Checking inputs",
 {
     invalid.continent.names <- 1:6
@@ -17,7 +15,6 @@ test_that("Checking inputs",
     expect_error(WorldMap(array(1, dim = c(2,2,2),
         dimnames = list(LETTERS[1:2], LETTERS[1:2], LETTERS[1:2]))))
 })
-
 
 test_that("Checking accuracy of row names",
 {

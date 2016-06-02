@@ -2,13 +2,13 @@
 #'
 #' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
 #' @rdname LabeledScatterPlot
-#' @export LabeledScatterPlot
-LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot", coords)
+#' @export
+LabeledScatterPlot <- function(object, ...) UseMethod("LabeledScatterPlot", object)
 
 #' Scatterplot with Labeled Points.
 #'
-#' \code{LabeledScatterPlot} Scatterplot with Labeled Points.
-#' @param coords The xy coordinates of the points.
+#' \code{LabeledScatterPlot.default} Scatterplot with Labeled Points.
+#' @param object The xy coordinates of the points.
 #' @param group A factor indicating group membership for each point.
 #' @param row.labels A vector of labels which will, if supplied, over-ride the rownames of coodinates.
 #' @param column.labels A vector of labels which will, if supplied, over-ride the colnames of coodinates.
@@ -28,8 +28,8 @@ LabeledScatterPlot <- function(coords, ...) UseMethod("LabeledScatterPlot", coor
 #' @return A \code{\link[ggplot2]{ggplot}} plot.
 #' @rdname LabeledScatterPlot
 #' @method LabeledScatterPlot default
-#' @export LabeledScatterPlot
-LabeledScatterPlot.default = function(coords,
+#' @export
+LabeledScatterPlot.default = function(object,
                             group = NULL,
                             row.labels = NULL,
                             column.labels = NULL,
@@ -47,6 +47,7 @@ LabeledScatterPlot.default = function(coords,
                             axis.label.font.size = 10,
                             title.font.size = 12)
 {
+    coords <- object
     # Extracting the labels
     if (is.null(row.labels))
         row.labels <- rownames(coords)
@@ -198,7 +199,7 @@ LabeledScatterPlot.smacofB = function(object, ...)
 #' @rdname LabeledScatterPlot
 #' @method LabeledScatterPlot smacofR
 #' @export
-LabeledScatterPlot.smacofR = function(object, ...) # # row.description = "Rows", column.description = "Columns",  ...) {
+LabeledScatterPlot.smacofR = function(object, row.description = NULL, column.description = NULL, ...)
 {
     coords = rbind(object$conf.row, object$conf.col)
     group = c(rep(row.description, length(object$spp.row)),rep(column.description, length(object$spp.col)))

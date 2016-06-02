@@ -8,9 +8,9 @@
 \alias{LabeledScatterPlot.smacofR}
 \title{Scatterplot with Labeled Points.}
 \usage{
-LabeledScatterPlot(coords, ...)
+LabeledScatterPlot(object, ...)
 
-\method{LabeledScatterPlot}{default}(coords, group = NULL,
+\method{LabeledScatterPlot}{default}(object, group = NULL,
   row.labels = NULL, column.labels = NULL, title = "", group.name = "",
   fixed.aspect = FALSE, colors = QColors, auto.color = TRUE,
   general.color = "gray28", point.size = 1, label.font.size = 10,
@@ -21,10 +21,11 @@ LabeledScatterPlot(coords, ...)
 
 \method{LabeledScatterPlot}{smacofB}(object, ...)
 
-\method{LabeledScatterPlot}{smacofR}(object, ...)
+\method{LabeledScatterPlot}{smacofR}(object, row.description = NULL,
+  column.description = NULL, ...)
 }
 \arguments{
-\item{coords}{The xy coordinates of the points.}
+\item{object}{The xy coordinates of the points.}
 
 \item{...}{Other plotting arguments.}
 
@@ -64,6 +65,6 @@ A \code{\link[ggplot2]{ggplot}} plot.
 \description{
 \code{LabeledScatterPlot} Scatterplot with Labeled Points.
 
-\code{LabeledScatterPlot} Scatterplot with Labeled Points.
+\code{LabeledScatterPlot.default} Scatterplot with Labeled Points.
 }
 
