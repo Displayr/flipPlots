@@ -2,6 +2,10 @@
 context("Labeledscatterplot")
 
 data("brand.associations", package = "flipExampleData")
+
+library(flipDimensionReduction)
+CorrespondenceAnalysis(brand.associations, output = "ggplot2")
+
 brand.correlations <- cor(t(brand.associations))
 brand.sim <- 1 - brand.correlations
 zcoords <- as.data.frame(MASS::isoMDS(brand.sim)$points)
@@ -52,5 +56,10 @@ z = matrix(c(1:10,1:10), 10, dimnames = list(c(rep("jJ", 3), rep("Big Dog", 3), 
 suppressWarnings(LabeledScatterPlot(z, point.size = 3, label.font.size = 20, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, fixed.aspect = FALSE))
 suppressWarnings(LabeledScatterPlot(z, point.size = 3, label.font.size = 20, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, fixed.aspect = FALSE))
 suppressWarnings(LabeledScatterPlot(z, point.size = 3, label.font.size = 20, legend.font.size = 10,   axis.title.font.size = 12, axis.label.font.size = 10, title.font.size = 12, fixed.aspect = FALSE))
+
+
+
+
+
 
 

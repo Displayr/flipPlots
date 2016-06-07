@@ -131,7 +131,7 @@ LabeledScatterPlot.default = function(object,
       p <- p + ggplot2::coord_fixed(ratio = 1)#, xlim = NULL, ylim = NULL, wise = NULL)
     if (has.groups)
     {
-        p <- p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = legend.font.size * 5 / 14)) +
+        p <- p + ggplot2::theme(legend.text = ggplot2::element_text(colour = general.color, size = legend.font.size)) + # * 5 / 14)) +
             ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 4)))
     }
     else
