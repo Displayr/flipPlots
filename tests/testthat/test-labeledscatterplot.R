@@ -3,8 +3,8 @@ context("Labeledscatterplot")
 
 data("brand.associations", package = "flipExampleData")
 
-library(flipDimensionReduction)
-CorrespondenceAnalysis(brand.associations, output = "ggplot2")
+# library(flipDimensionReduction)
+# CorrespondenceAnalysis(brand.associations, output = "ggplot2")
 
 brand.correlations <- cor(t(brand.associations))
 brand.sim <- 1 - brand.correlations

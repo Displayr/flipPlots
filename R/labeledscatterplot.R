@@ -198,6 +198,8 @@ LabeledScatterPlot.smacofB = function(object, ...)
 
 #' @rdname LabeledScatterPlot
 #' @method LabeledScatterPlot smacofR
+#' @param  row.description A label describing the rows.
+#' @param  column.description A label describing the columns
 #' @export
 LabeledScatterPlot.smacofR = function(object, row.description = NULL, column.description = NULL, ...)
 {

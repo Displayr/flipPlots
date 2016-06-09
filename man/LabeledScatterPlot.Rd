@@ -58,6 +58,10 @@ LabeledScatterPlot(object, ...)
 \item{axis.label.font.size}{Font size of the axis labels.}
 
 \item{title.font.size}{Font size of the chart title.}
+
+\item{row.description}{A label describing the rows.}
+
+\item{column.description}{A label describing the columns}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} plot.
