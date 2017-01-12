@@ -30,4 +30,6 @@ Suggests:
     flipExampleData,
     rgdal,
     testthat
+Remotes:
+    NumbersInternational/flipGeographicCoordinates
 RoxygenNote: 5.0.1
