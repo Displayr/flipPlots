@@ -31,5 +31,6 @@ Suggests:
     rgdal,
     testthat
 Remotes:
-    NumbersInternational/flipGeographicCoordinates
+    NumbersInternational/flipGeographicCoordinates,
+    NumbersInternational/flipExampleData
 RoxygenNote: 5.0.1
