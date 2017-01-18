@@ -32,5 +32,6 @@ Suggests:
     testthat
 Remotes:
     NumbersInternational/flipGeographicCoordinates,
-    NumbersInternational/flipExampleData
+    NumbersInternational/flipExampleData,
+    juba/scatterD3
 RoxygenNote: 5.0.1
