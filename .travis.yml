@@ -1,12 +1,14 @@
 language: R
 dist: trusty  # ubuntu 14.04 has additional libraries available
-sudo: false
+sudo: required
 cache: packages
 warnings_are_errors: false
 
 # update pre-installed packages to latest versions
 before_install:
-  Rscript -e 'update.packages(ask = FALSE)'
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libgdal-dev libproj-dev
+  - Rscript -e 'update.packages(ask = FALSE)'
 
 # last stable version of devtools does not support private depositories
 r_github_packages: hadley/devtools#1263
