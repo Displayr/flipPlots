@@ -18,7 +18,7 @@ script:
   - sudo Rscript -e 'require(devtools); install_github("NumbersInternational/flipExampleData")'
   - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
   - sudo Rscript -e 'install.packages("roxygen2")'
-  - if [ -d tests/testthat ]; then echo 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")' > run_test.R; R CMD BATCH --vanilla run_test.R; cat run_test.Rout; fi
+  - if [ -d tests/testthat ]; then Rscript -e 'library(methods); res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")'; fi
 
 notifications:
   slack:
