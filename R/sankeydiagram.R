@@ -95,6 +95,7 @@ data}
 #' @param max.categories When the number of unique values
 #' @param var.name The name of the variable.
 #' of numeric data exceeds this value, the variable is quantized.
+#' @importFrom flipTransformations Factor
 categorizeVariable <- function(x, max.categories, var.name)
 {
     n.unique <- length(unique(x))
@@ -116,5 +117,5 @@ categorizeVariable <- function(x, max.categories, var.name)
        valid <- as.character(x)
     }
     valid <- paste(var.name, valid,sep = "\n")
-    as.factor(valid)
+    Factor(valid)
 }

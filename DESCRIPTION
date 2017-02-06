@@ -9,10 +9,12 @@ Description: Wrappers for various plot types.
 License: GPL-3
 LazyData: FALSE
 Imports:
+    flipTransformations,
     networkD3
 Suggests:
     flipExampleData,
     testthat
 Remotes:
     NumbersInternational/flipExampleData,
+    NumbersInternational/flipTransformations
 RoxygenNote: 5.0.1
