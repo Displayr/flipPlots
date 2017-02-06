@@ -6,32 +6,13 @@ Date: 2015-11-07
 Author: Numbers International Pty Ltd
 Maintainer: Tim Bock <tim.bock@numbers.net.au>
 Description: Wrappers for various plot types.
-License: MIT + file LICENSE
-LazyData: TRUE
-Depends:
-    R (>= 2.10)
+License: GPL-3
+LazyData: FALSE
 Imports:
-    choroplethr,
-    choroplethrAdmin1,
-    flipGeographicCoordinates,
-    ggrepel,
-    ggplot2,
-    ISOcodes,
-    leaflet,
-    plotly,
-    scatterD3,
-    smacof,
-    sp,
-    stats,
-    stringr,
-    weights,
-    utils
+    networkD3
 Suggests:
     flipExampleData,
-    rgdal,
     testthat
 Remotes:
-    NumbersInternational/flipGeographicCoordinates,
     NumbersInternational/flipExampleData,
-    juba/scatterD3
 RoxygenNote: 5.0.1
