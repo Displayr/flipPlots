@@ -26,4 +26,6 @@ test_that("Sankey diagrame",
               p$d2 <- ordered(p$d2)
               for (i in 2:20)
                 expect_error(print(SankeyDiagram(p, max.categories = i)), NA)
+              flipPlots:::categorizeVariable(p$d1, max.categories = 2, var.name = "age")
+              SankeyDiagram(p, max.categories = 2)
 })

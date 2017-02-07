@@ -112,8 +112,6 @@ categorizeVariable <- function(x, max.categories, var.name)
     if (max.categories < 2)
         stop("'max.categories must be more than 1.")
     n.unique <- length(unique(x))
-    missing <- as.integer(any(is.na(x)))
-    n.unique <- n.unique + missing
     n <- length(x)
     if (n.unique > max.categories)
     {
@@ -126,21 +124,15 @@ categorizeVariable <- function(x, max.categories, var.name)
                 if (!is.ordered(x))
                     counts <- sort(counts)
                 smallest.cat <- match(min(counts), counts)[1]
-                #print(counts)
-                #print(smallest.cat)
-                #print("smallest.cat")
-
                 if (smallest.cat == 1)
                     smallest.cat <- 2
                 merge <- c(-1:0) + smallest.cat
                 merge <- match(names(counts)[merge], levels(x))
                 levels(x)[merge] <- paste(levels(x)[merge], collapse = ",")
-                #print(levels(x)[merge])
             }
             valid <- x
         } else if (is.numeric(x)) {
-            n.cat <- max.categories - ifelse(sum(is.na(x)) == 0, 0, 1)
-            valid <- as.character(cut(x, n.cat))
+            valid <- cut(x, n.cat)
         } else {
             valid <- rep( "Text", n)
             valid[x == ""] <- "BLANK"
@@ -148,6 +140,7 @@ categorizeVariable <- function(x, max.categories, var.name)
     } else {
        valid <- Factor(x)
     }
-    levels(valid) <- paste(var.name, levels(valid), sep = "\n")
+    valid <- addNA(valid)
+    levels(valid) <- paste(var.name, levels(valid), sep = ": ")
     valid
 }
