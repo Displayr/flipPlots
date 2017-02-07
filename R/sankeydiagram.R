@@ -1,7 +1,7 @@
 #' Sankey Diagram
 #'
 #' Creates a sankey diagram of the relationship between different variables.
-#' @param data A \code{\link{data.frame}} or \code{\link{list}} of variables.
+#' @param data A \code{\link{data.frame}} of variables.
 #' @param max.categories When the number of unique values
 #' of numeric data exceeds this value, the variable is quantized.
 #' @importFrom networkD3 sankeyNetwork
@@ -12,6 +12,10 @@
 #' @export
 SankeyDiagram <- function(data, max.categories = 8)
 {
+    if (!is.data.frame(data))
+        data <- as.data.frame(data)
+    if (nrow(data) < 2)
+        stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
     variables <- categorizeData(data, max.categories)
     links <- computeLinks(variables)
     nodes <- nodeDictionary(variables)
@@ -82,7 +86,8 @@ categorizeData <- function(data, max.categories)
     nodes <- NULL
     for (i in 1:n)
     {
-        data[[i]] <- vr <- categorizeVariable(data[[i]], max.categories, var.names[i])
+        vr <- categorizeVariable(data[[i]], max.categories, var.names[i])
+        data[[i]] <- vr
         for (r in levels(vr))
             nodes <- c(nodes, r)
     }

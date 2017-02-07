@@ -7,7 +7,7 @@
 SankeyDiagram(data, max.categories = 8)
 }
 \arguments{
-\item{data}{A \code{\link{data.frame}} or \code{\link{list}} of variables.}
+\item{data}{A \code{\link{data.frame}} of variables.}
 
 \item{max.categories}{When the number of unique values
 of numeric data exceeds this value, the variable is quantized.}
