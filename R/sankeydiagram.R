@@ -97,11 +97,12 @@ data}
 #'
 #' Quantizes a numeric variable.
 #' @param x A variable.
-#' @param max.categories When the number of unique values. With numeric
-#' variables, \code{\link{cut}} is used. With factors, the two smallest
+#' @param max.categories With numeric
+#' variables, \code{\link{cut}} is used, unless \code{max.categories} has a value of
+#' 2 and there are missing values, in which case the data is turned into a factor
+#' with levels of "Data" and "NA"). With factors, the two smallest
 #' categories are merged (based on unweighted data). With ordered factors, the
-#' smallest category is merged with the category immediately prior (unless the
-#' smallest is the first category, in which case it is merged with the category above it).
+#' smallest category is merged with the smallest adjacent category.
 #' Missing values are not merged. With character variables, the data is merged into missing
 #' versus non-missing data.
 #' @param var.name The name of the variable.
@@ -116,24 +117,37 @@ categorizeVariable <- function(x, max.categories, var.name)
     n <- length(x)
     if (n.unique > max.categories)
     {
-        if(is.factor(x) | is.ordered(x))
+        if(is.factor(x) | (ordered <- is.ordered(x)))
         {
+            x <- Factor(x)
             n.to.merge <- n.unique - max.categories
             for (i in 1:n.to.merge)
             {
                 counts <- table(x)
-                if (!is.ordered(x))
+                if (!ordered)
                     counts <- sort(counts)
-                smallest.cat <- match(min(counts), counts)[1]
-                if (smallest.cat == 1)
-                    smallest.cat <- 2
-                merge <- c(-1:0) + smallest.cat
+                if (!ordered | length(counts) == 2)
+                    merge <- 1:2
+                else
+                {
+                    merge <- match(min(counts), counts)[1]
+                    if (merge == 1)
+                        merge <- 2
+                    else if (merge == length(counts) & ordered)
+                        merge <- merge - 1
+                    merge <- c(merge, if(counts[merge - 1] < counts[merge + 1]) merge - 1 else merge + 1)
+                    merge <- sort(merge)
+                }
                 merge <- match(names(counts)[merge], levels(x))
                 levels(x)[merge] <- paste(levels(x)[merge], collapse = ",")
             }
             valid <- x
         } else if (is.numeric(x)) {
-            valid <- cut(x, max.categories - if(any(is.na(uniques))) 1 else 0)
+            n.cuts <- max.categories - if(any(is.na(uniques))) 1 else 0
+            if (n.cuts == 1)
+                valid <- factor(as.integer(!is.na(x)), 1:2, c("Data", "NA"))
+            else
+                valid <- cut(x, n.cuts)
         } else {
             valid <- rep( "Text", n)
             valid[x == ""] <- "BLANK"
@@ -141,7 +155,8 @@ categorizeVariable <- function(x, max.categories, var.name)
     } else {
        valid <- Factor(x)
     }
-    valid <- addNA(valid)
+    valid <- addNA(valid, ifany = TRUE)
     levels(valid) <- paste(var.name, levels(valid), sep = ": ")
     valid
 }
+

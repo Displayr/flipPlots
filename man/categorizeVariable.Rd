@@ -9,11 +9,12 @@ categorizeVariable(x, max.categories, var.name)
 \arguments{
 \item{x}{A variable.}
 
-\item{max.categories}{When the number of unique values. With numeric
-variables, \code{\link{cut}} is used. With factors, the two smallest
+\item{max.categories}{With numeric
+variables, \code{\link{cut}} is used, unless \code{max.categories} has a value of
+2 and there are missing values, in which case the data is turned into a factor
+with levels of "Data" and "NA"). With factors, the two smallest
 categories are merged (based on unweighted data). With ordered factors, the
-smallest category is merged with the category immediately prior (unless the
-smallest is the first category, in which case it is merged with the category above it).
+smallest category is merged with the smallest adjacent category.
 Missing values are not merged. With character variables, the data is merged into missing
 versus non-missing data.}
 
