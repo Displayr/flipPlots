@@ -111,7 +111,8 @@ categorizeVariable <- function(x, max.categories, var.name)
 {
     if (max.categories < 2)
         stop("'max.categories must be more than 1.")
-    n.unique <- length(unique(x))
+    uniques <- unique(x)
+    n.unique <- length(uniques)
     n <- length(x)
     if (n.unique > max.categories)
     {
@@ -132,7 +133,7 @@ categorizeVariable <- function(x, max.categories, var.name)
             }
             valid <- x
         } else if (is.numeric(x)) {
-            valid <- cut(x, n.cat)
+            valid <- cut(x, max.categories - if(any(is.na(uniques))) 1 else 0)
         } else {
             valid <- rep( "Text", n)
             valid[x == ""] <- "BLANK"
