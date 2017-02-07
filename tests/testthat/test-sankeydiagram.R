@@ -18,4 +18,12 @@ test_that("Sankey diagrame",
               expect_error(print(SankeyDiagram(p1)))
               p <- p[p$d3 == "Female", ]
               expect_error(print(SankeyDiagram(p)), NA)
+              p <- colas[, c("d1", "d2")]
+              p <- data.frame(p)
+              expect_error(print(SankeyDiagram(p, max.categories = 1)))
+              for (i in 2:20)
+                expect_error(print(SankeyDiagram(p, max.categories = i)), NA)
+              p$d2 <- ordered(p$d2)
+              for (i in 2:20)
+                expect_error(print(SankeyDiagram(p, max.categories = i)), NA)
 })

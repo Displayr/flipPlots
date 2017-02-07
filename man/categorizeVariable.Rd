@@ -9,7 +9,13 @@ categorizeVariable(x, max.categories, var.name)
 \arguments{
 \item{x}{A variable.}
 
-\item{max.categories}{When the number of unique values}
+\item{max.categories}{When the number of unique values. With numeric
+variables, \code{\link{cut}} is used. With factors, the two smallest
+categories are merged (based on unweighted data). With ordered factors, the
+smallest category is merged with the category immediately prior (unless the
+smallest is the first category, in which case it is merged with the category above it).
+Missing values are not merged. With character variables, the data is merged into missing
+versus non-missing data.}
 
 \item{var.name}{The name of the variable.
 of numeric data exceeds this value, the variable is quantized.}

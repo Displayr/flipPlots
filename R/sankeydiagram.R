@@ -97,20 +97,47 @@ data}
 #'
 #' Quantizes a numeric variable.
 #' @param x A variable.
-#' @param max.categories When the number of unique values
+#' @param max.categories When the number of unique values. With numeric
+#' variables, \code{\link{cut}} is used. With factors, the two smallest
+#' categories are merged (based on unweighted data). With ordered factors, the
+#' smallest category is merged with the category immediately prior (unless the
+#' smallest is the first category, in which case it is merged with the category above it).
+#' Missing values are not merged. With character variables, the data is merged into missing
+#' versus non-missing data.
 #' @param var.name The name of the variable.
 #' of numeric data exceeds this value, the variable is quantized.
 #' @importFrom flipTransformations Factor
 categorizeVariable <- function(x, max.categories, var.name)
 {
+    if (max.categories < 2)
+        stop("'max.categories must be more than 1.")
     n.unique <- length(unique(x))
+    missing <- as.integer(any(is.na(x)))
+    n.unique <- n.unique + missing
     n <- length(x)
     if (n.unique > max.categories)
     {
         if(is.factor(x) | is.ordered(x))
         {
-            valid <- rep( "Categories", n)
-            valid[is.na(x)] <- "Missing"
+            n.to.merge <- n.unique - max.categories
+            for (i in 1:n.to.merge)
+            {
+                counts <- table(x)
+                if (!is.ordered(x))
+                    counts <- sort(counts)
+                smallest.cat <- match(min(counts), counts)[1]
+                #print(counts)
+                #print(smallest.cat)
+                #print("smallest.cat")
+
+                if (smallest.cat == 1)
+                    smallest.cat <- 2
+                merge <- c(-1:0) + smallest.cat
+                merge <- match(names(counts)[merge], levels(x))
+                levels(x)[merge] <- paste(levels(x)[merge], collapse = ",")
+                #print(levels(x)[merge])
+            }
+            valid <- x
         } else if (is.numeric(x)) {
             n.cat <- max.categories - ifelse(sum(is.na(x)) == 0, 0, 1)
             valid <- as.character(cut(x, n.cat))
@@ -119,8 +146,8 @@ categorizeVariable <- function(x, max.categories, var.name)
             valid[x == ""] <- "BLANK"
         }
     } else {
-       valid <- as.character(x)
+       valid <- Factor(x)
     }
-    valid <- paste(var.name, valid,sep = "\n")
-    Factor(valid)
+    levels(valid) <- paste(var.name, levels(valid), sep = "\n")
+    valid
 }
