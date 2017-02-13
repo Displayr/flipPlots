@@ -15,5 +15,5 @@ Suggests:
     flipExampleData,
     testthat
 Remotes:
-    NumbersInternational/flipTransformations
+    Displayr/flipTransformations
 RoxygenNote: 5.0.1
