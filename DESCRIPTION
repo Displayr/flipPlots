@@ -2,9 +2,8 @@ Package: flipPlots
 Type: Package
 Title: Creates Plots
 Version: 0.1
-Date: 2015-11-07
-Author: Numbers International Pty Ltd
-Maintainer: Tim Bock <tim.bock@numbers.net.au>
+Author: Displayr
+Maintainer: Displayr <opensource@displayr.com>
 Description: Wrappers for various plot types.
 License: GPL-3
 LazyData: FALSE
