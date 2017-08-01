@@ -4,19 +4,43 @@
 #' @param data A \code{\link{data.frame}} of variables.
 #' @param max.categories When the number of unique values
 #' of numeric data exceeds this value, the variable is quantized.
+#' @param subset An optional vector specifying a subset of observations to be
+#'   used in the fitting process.
+#' @param weights An optional vector of sampling weights.
 #' @importFrom networkD3 sankeyNetwork
+#' @importFrom flipTransformations AdjustDataToReflectWeights
 #' @return A sankey diagram (HTMLwidget).
 #' @details Text variables are grouped as having text or not having text.
 #' To see patterns with text variables, they should first be turned into
 #' factors.
 #' @export
-SankeyDiagram <- function(data, max.categories = 8)
+SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NULL)
 {
     if (!is.data.frame(data))
         data <- as.data.frame(data)
     if (nrow(data) < 2)
         stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
-    variables <- categorizeData(data, max.categories)
+
+    if (!is.null(weights) & length(weights) != nrow(data))
+        stop("'weights' and 'data' are required to have the same number of observations. They do not.")
+    if (!is.null(subset) & length(subset) > 1 & length(subset) != nrow(data))
+        stop("'subset' and 'data' are required to have the same number of observations. They do not.")
+
+    # Take subset and resample to generate a weighted sample, if necessary.
+    if (is.null(subset))
+        subset.data <- data
+    else {
+        subset.data <- data[subset, , drop = FALSE]
+        weights <- weights[subset]
+    }
+
+    weight.subset.data <- if (is.null(weights))
+        subset.data
+    else
+        suppressWarnings(AdjustDataToReflectWeights(subset.data, weights))
+
+
+    variables <- categorizeData(weight.subset.data, max.categories)
     links <- computeLinks(variables)
     nodes <- nodeDictionary(variables)
     sankeyNetwork(Links = links, Nodes = nodes,

@@ -16,4 +16,3 @@ of numeric data exceeds this value, the variable is quantized.}
 Creates a dictionary of the nodes.
 Quantizes numeric variables.
 }
-

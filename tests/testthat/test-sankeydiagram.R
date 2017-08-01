@@ -1,3 +1,5 @@
+library(stats)
+
 context("Sankey Diagram")
 test_that("categorizeVariables",
           {
@@ -88,4 +90,27 @@ test_that("Sankey diagrams",
               SankeyDiagram(p, max.categories = 2)
               p <- colas[, c("d3", "d1")]
               SankeyDiagram(p, max.categories = 2)
+})
+
+
+test_that("Sankey diagrams: weights and filter",
+          {
+              data(phone, package = "flipExampleData")
+              p <- phone[, c("q1", "q8", "q9", "q27")]
+              subset <- rep(TRUE, nrow(p))
+              subset[phone$q20h3 == "No"] <- FALSE
+              expect_error(print(SankeyDiagram(p, subset = subset)), NA)
+              weights <- sample(3, nrow(p), replace = TRUE)
+              expect_error(print(SankeyDiagram(p, weights = weights)), NA)
+              expect_error(print(SankeyDiagram(p, subset = subset, weights = weights)), NA)
+
+              data(colas, package = "flipExampleData")
+              p <- colas[, c("d1", "d2")]
+              subset <- rep(TRUE, nrow(p))
+              subset[colas$Q5_5_7 == "No"] <- FALSE
+              expect_error(print(SankeyDiagram(p, subset = subset)), NA)
+              weights <- rnorm(nrow(p))
+              weights[weights < 0] <- 0
+              expect_error(print(SankeyDiagram(p, weights = weights)), NA)
+              expect_error(print(SankeyDiagram(p, subset = subset, weights = weights)), NA)
 })

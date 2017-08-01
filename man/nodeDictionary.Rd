@@ -12,4 +12,3 @@ nodeDictionary(list.of.factors)
 \description{
 Creates a dictionary of the nodes.
 }
-

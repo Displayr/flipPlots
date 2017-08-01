@@ -12,7 +12,8 @@ Imports:
     networkD3
 Suggests:
     flipExampleData,
+    stats,
     testthat
 Remotes:
     Displayr/flipTransformations
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

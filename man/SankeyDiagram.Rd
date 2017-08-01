@@ -4,13 +4,18 @@
 \alias{SankeyDiagram}
 \title{Sankey Diagram}
 \usage{
-SankeyDiagram(data, max.categories = 8)
+SankeyDiagram(data, max.categories = 8, subset = NULL, weights = NULL)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
 
 \item{max.categories}{When the number of unique values
 of numeric data exceeds this value, the variable is quantized.}
+
+\item{subset}{An optional vector specifying a subset of observations to be
+used in the fitting process.}
+
+\item{weights}{An optional vector of sampling weights.}
 }
 \value{
 A sankey diagram (HTMLwidget).
@@ -23,4 +28,3 @@ Text variables are grouped as having text or not having text.
 To see patterns with text variables, they should first be turned into
 factors.
 }
-

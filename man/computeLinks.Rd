@@ -12,4 +12,3 @@ computeLinks(data)
 \description{
 Computes the links between the nodes, so that can be expressed as a network.
 }
-

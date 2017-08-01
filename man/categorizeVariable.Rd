@@ -24,4 +24,3 @@ of numeric data exceeds this value, the variable is quantized.}
 \description{
 Quantizes a numeric variable.
 }
-
