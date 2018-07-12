@@ -3,5 +3,6 @@
 export(SankeyDiagram)
 importFrom(flipTransformations,AdjustDataToReflectWeights)
 importFrom(flipTransformations,Factor)
+importFrom(networkD3,JS)
 importFrom(networkD3,sankeyNetwork)
 importFrom(stats,xtabs)

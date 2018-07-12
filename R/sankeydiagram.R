@@ -7,14 +7,23 @@
 #' @param subset An optional vector specifying a subset of observations to be
 #'   used in the fitting process.
 #' @param weights An optional vector of sampling weights.
-#' @importFrom networkD3 sankeyNetwork
+#' @param font.size Font size of node labels.
+#' @param font.family Font family of node labels.
+#' @param colors Colors of the nodes, supplied as a vector of hex colors.
+#' @param node.width Width of the width.
+#' @param link.color One of \code{"None", "Source", "Target"}. This specifies how whether
+#'     the links are shown in grey (None), the same color as the source node, or the same
+#'     color as the target node.
+#' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom flipTransformations AdjustDataToReflectWeights
 #' @return A sankey diagram (HTMLwidget).
 #' @details Text variables are grouped as having text or not having text.
 #' To see patterns with text variables, they should first be turned into
 #' factors.
 #' @export
-SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NULL)
+SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NULL,
+                          font.size = 12, font.family = "Times New Roman", colors = NULL,
+                          link.color = c("None", "Source", "Target")[1], node.width = 30)
 {
     if (!is.data.frame(data))
         data <- as.data.frame(data)
@@ -39,14 +48,33 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     else
         suppressWarnings(AdjustDataToReflectWeights(subset.data, weights))
 
-
     variables <- categorizeData(weight.subset.data, max.categories)
     links <- computeLinks(variables)
     nodes <- nodeDictionary(variables)
-    sankeyNetwork(Links = links, Nodes = nodes,
-                Source = "source", Target = "target",
-                Value = "value", NodeID = "name",
-                fontSize= 12, nodeWidth = 30)
+
+    # Setting colors
+    if (is.null(colors))
+        color.str <- "d3.scale.category20()"
+    else
+    {
+        if (length(colors) < nrow(nodes))
+            colors <- paste0(colors, rep("", nrow(nodes)))
+        color.str <- paste0('d3.scale.ordinal().range(["',
+                     paste(c(colors[-(1:2)], colors[1:2]), collapse = '","'), '"])')
+    }
+    grps <- 0:(nrow(nodes)-1)
+    if (link.color == "None")       # nodes at each level to be the same
+        nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
+    else
+        nodes$group <- factor(grps) # all nodes different colors
+    if (link.color == "Source")
+        links$group <- as.factor(links$source)
+    else
+        links$group <- as.factor(links$target)
+    sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
+                Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
+                Source = "source", Target = "target", Value = "value",
+                fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str))
 }
 
 #' computeLinks
@@ -94,7 +122,8 @@ nodeDictionary <- function(list.of.factors)
             nodes <- c(nodes, r)
          }
     }
-data.frame(name = nodes)}
+    data.frame(name = nodes)
+}
 
 #' categorizeData
 #'

@@ -4,7 +4,9 @@
 \alias{SankeyDiagram}
 \title{Sankey Diagram}
 \usage{
-SankeyDiagram(data, max.categories = 8, subset = NULL, weights = NULL)
+SankeyDiagram(data, max.categories = 8, subset = NULL, weights = NULL,
+  font.size = 12, font.family = "Times New Roman", colors = NULL,
+  link.color = c("None", "Source", "Target")[1], node.width = 30)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
@@ -16,6 +18,18 @@ of numeric data exceeds this value, the variable is quantized.}
 used in the fitting process.}
 
 \item{weights}{An optional vector of sampling weights.}
+
+\item{font.size}{Font size of node labels.}
+
+\item{font.family}{Font family of node labels.}
+
+\item{colors}{Colors of the nodes, supplied as a vector of hex colors.}
+
+\item{link.color}{One of \code{"None", "Source", "Target"}. This specifies how whether
+the links are shown in grey (None), the same color as the source node, or the same
+color as the target node.}
+
+\item{node.width}{Width of the width.}
 }
 \value{
 A sankey diagram (HTMLwidget).
