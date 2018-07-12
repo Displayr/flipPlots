@@ -52,16 +52,7 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     links <- computeLinks(variables)
     nodes <- nodeDictionary(variables)
 
-    # Setting colors
-    if (is.null(colors))
-        color.str <- "d3.scale.category20()"
-    else
-    {
-        if (length(colors) < nrow(nodes))
-            colors <- paste0(colors, rep("", nrow(nodes)))
-        color.str <- paste0('d3.scale.ordinal().range(["',
-                     paste(c(colors[-(1:2)], colors[1:2]), collapse = '","'), '"])')
-    }
+    # Setting up colors
     grps <- 0:(nrow(nodes)-1)
     if (link.color == "None")       # nodes at each level to be the same
         nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
@@ -71,10 +62,20 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         links$group <- as.factor(links$source)
     else
         links$group <- as.factor(links$target)
+    if (is.null(colors))
+        color.str <- "d3.scaleOrdinal(d3.schemeCategory20);"
+    else
+    {
+        if (length(colors) < nrow(nodes))
+            colors <- paste0(colors, rep("", nrow(nodes)))
+        color.str <- paste0('d3.scaleOrdinal() .domain(["',
+                     paste(levels(nodes$group), collapse = '","'), '"]) .range(["',
+                     paste(c(colors[-(1:2)], colors[1:2]), collapse = '","'), '"]);')
+    }
     sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
                 Source = "source", Target = "target", Value = "value",
-                fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str))
+                fontSize = font.size, fontFamily = font.family)#, colourScale = JS(color.str))
 }
 
 #' computeLinks
