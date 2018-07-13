@@ -10,12 +10,14 @@
 #' @param font.size Font size of node labels.
 #' @param font.family Font family of node labels.
 #' @param colors Colors of the nodes, supplied as a vector of hex colors.
+#'    Transparency values (alpha) will be ignored.
 #' @param node.width Width of the width.
-#' @param link.color One of \code{"None", "Source", "Target"}. This specifies how whether
-#'     the links are shown in grey (None), the same color as the source node, or the same
+#' @param link.color One of \code{"None", "Source", "Target"}. This specifies whether
+#'     the links are shown in grey (None); the same color as the source node; or the same
 #'     color as the target node.
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom flipTransformations AdjustDataToReflectWeights
+#' @importFrom grDevices col2rgb rgb
 #' @return A sankey diagram (HTMLwidget).
 #' @details Text variables are grouped as having text or not having text.
 #' To see patterns with text variables, they should first be turned into
@@ -58,6 +60,7 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
     else
         nodes$group <- factor(grps) # all nodes different colors
+
     if (link.color == "Source")
         links$group <- as.factor(links$source)
     else
@@ -65,17 +68,29 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     if (is.null(colors))
         color.str <- "d3.scaleOrdinal(d3.schemeCategory20);"
     else
-    {
-        if (length(colors) < nrow(nodes))
-            colors <- paste0(colors, rep("", nrow(nodes)))
-        color.str <- paste0('d3.scaleOrdinal() .domain(["',
-                     paste(levels(nodes$group), collapse = '","'), '"]) .range(["',
-                     paste(c(colors[-(1:2)], colors[1:2]), collapse = '","'), '"]);')
-    }
+        color.str <- paste0('d3.scaleOrdinal() .domain([\'',
+                     paste(levels(nodes$group), collapse = '\',\''), '\']) .range([\'',
+                     paste(colorsToHex(colors), collapse = '\',\''), '\']);')
+
     sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
                 Source = "source", Target = "target", Value = "value",
-                fontSize = font.size, fontFamily = font.family)#, colourScale = JS(color.str))
+                fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str))
+}
+
+# Ensures it is always a 6-digit hex
+colorsToHex <- function(xx)
+{
+    res <- sapply(xx, function(x){tryCatch(rgb(t(col2rgb(x)), maxColorValue = 255),
+                                           error=function(cond){NA})})
+    ind <- which(is.na(res))
+    if (length(ind) > 0)
+    {
+        res[ind] <- "#000000"
+        for (i in ind)
+            warning("Invalid color '", names(res)[i], "' replaced with '#000000'")
+    }
+    return(res)
 }
 
 #' computeLinks

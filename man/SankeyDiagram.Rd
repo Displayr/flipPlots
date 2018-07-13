@@ -23,10 +23,11 @@ used in the fitting process.}
 
 \item{font.family}{Font family of node labels.}
 
-\item{colors}{Colors of the nodes, supplied as a vector of hex colors.}
+\item{colors}{Colors of the nodes, supplied as a vector of hex colors.
+Transparency values (alpha) will be ignored.}
 
-\item{link.color}{One of \code{"None", "Source", "Target"}. This specifies how whether
-the links are shown in grey (None), the same color as the source node, or the same
+\item{link.color}{One of \code{"None", "Source", "Target"}. This specifies whether
+the links are shown in grey (None); the same color as the source node; or the same
 color as the target node.}
 
 \item{node.width}{Width of the width.}
