@@ -6,7 +6,8 @@
 \usage{
 SankeyDiagram(data, max.categories = 8, subset = NULL, weights = NULL,
   font.size = 12, font.family = "Times New Roman", colors = NULL,
-  link.color = c("None", "Source", "Target")[1], node.width = 30)
+  link.color = c("None", "Source", "Target", "First variable",
+  "Last variable")[1], node.width = 30)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
@@ -26,9 +27,9 @@ used in the fitting process.}
 \item{colors}{Colors of the nodes, supplied as a vector of hex colors.
 Transparency values (alpha) will be ignored.}
 
-\item{link.color}{One of \code{"None", "Source", "Target"}. This specifies whether
-the links are shown in grey (None); the same color as the source node; or the same
-color as the target node.}
+\item{link.color}{One of \code{"None", "Source", "Target", "First variable", "Last variable"}.
+This specifies whether the links are shown in grey (None); the same color as the source node;
+or the same color as the target node.}
 
 \item{node.width}{Width of the width.}
 }

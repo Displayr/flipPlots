@@ -12,9 +12,9 @@
 #' @param colors Colors of the nodes, supplied as a vector of hex colors.
 #'    Transparency values (alpha) will be ignored.
 #' @param node.width Width of the width.
-#' @param link.color One of \code{"None", "Source", "Target"}. This specifies whether
-#'     the links are shown in grey (None); the same color as the source node; or the same
-#'     color as the target node.
+#' @param link.color One of \code{"None", "Source", "Target", "First variable", "Last variable"}.
+#'    This specifies whether the links are shown in grey (None); the same color as the source node;
+#'    or the same color as the target node.
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom flipTransformations AdjustDataToReflectWeights
 #' @importFrom grDevices col2rgb rgb
@@ -25,7 +25,8 @@
 #' @export
 SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NULL,
                           font.size = 12, font.family = "Times New Roman", colors = NULL,
-                          link.color = c("None", "Source", "Target")[1], node.width = 30)
+                          link.color = c("None", "Source", "Target", "First variable", "Last variable")[1],
+                          node.width = 30)
 {
     if (!is.data.frame(data))
         data <- as.data.frame(data)
@@ -58,13 +59,20 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     grps <- 0:(nrow(nodes)-1)
     if (link.color == "None")       # nodes at each level to be the same
         nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
+    else if (link.color == "Last variable" || link.color == "First variable")
+        nodes$group <- factor(getNodeGroups(link.color, links))
     else
         nodes$group <- factor(grps) # all nodes different colors
 
     if (link.color == "Source")
         links$group <- as.factor(links$source)
+    else if (link.color == "Last variable")
+        links$group <- as.factor(nodes$group[links$target+1])
+    else if (link.color == "First variable")
+        links$group <- as.factor(nodes$group[links$source+1])
     else
         links$group <- as.factor(links$target)
+
     if (is.null(colors))
         color.str <- "d3.scaleOrdinal(d3.schemeCategory20);"
     else
@@ -77,6 +85,41 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
                 Source = "source", Target = "target", Value = "value",
                 fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str))
 }
+
+getNodeGroups <- function(type, links)
+{
+    num.nodes <- length(unique(unlist(links$source, links$target)))
+    grps <- rep(NA, num.nodes)
+    gval <- rep(NA, num.nodes)
+
+    indexes <- 1:nrow(links)
+    src.ind <- 1
+    tgt.ind <- 2
+    if (type == "Last variable")
+    {
+        indexes <- rev(indexes)
+        src.ind <- 2
+        tgt.ind <- 1
+    }
+
+    for (i in indexes)
+    {
+        tmp.node <- links[i,src.ind]
+        if (is.na(grps[tmp.node+1]))
+            grps[tmp.node+1] <- tmp.node
+        else
+            tmp.node <- grps[tmp.node+1]
+
+        if (is.na(gval[links[i,tgt.ind]+1]) ||
+            gval[links[i,tgt.ind]+1] < links$value[i])
+        {
+            grps[links[i,tgt.ind]+1] <- tmp.node
+            gval[links[i,tgt.ind]+1] <- links$value[i]
+        }
+    }
+    return(grps)
+}
+
 
 # Ensures it is always a 6-digit hex
 colorsToHex <- function(xx)
