@@ -12,9 +12,12 @@
 #' @param colors Colors of the nodes, supplied as a vector of hex colors.
 #'    Transparency values (alpha) will be ignored.
 #' @param node.width Width of the width.
-#' @param link.color One of \code{"None", "Source", "Target", "First variable", "Last variable"}.
-#'    This specifies whether the links are shown in grey (None); the same color as the source node;
-#'    or the same color as the target node.
+#' @param link.color One of \code{"None", "Source", "Target", "First variable",
+#'    "Last variable"}. This specifies whether the links are shown in grey (None);
+#'    the same color as the source node; the same color as the target node; or
+#'    the same color as node in the first or last variable.
+#' @param variables.share.values If \code{TRUE}, and \code{link.color = "Source"}
+#'    or \code{"Target"}, then the same set colors will be used for each variable.
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom flipTransformations AdjustDataToReflectWeights
 #' @importFrom grDevices col2rgb rgb
@@ -25,7 +28,8 @@
 #' @export
 SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NULL,
                           font.size = 12, font.family = "Times New Roman", colors = NULL,
-                          link.color = c("None", "Source", "Target", "First variable", "Last variable")[1],
+                          link.color = c("None", "Source", "Target", "First variable",
+                          "Last variable")[1], variables.share.values = FALSE,
                           node.width = 30)
 {
     if (!is.data.frame(data))
@@ -55,23 +59,44 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     links <- computeLinks(variables)
     nodes <- nodeDictionary(variables)
 
-    # Setting up colors
+    # Determine color of nodes
     grps <- 0:(nrow(nodes)-1)
-    if (link.color == "None")       # nodes at each level to be the same
+    if (variables.share.values && link.color %in% c("Source", "Target"))
+    {
+        .getLevels <- function(x, useNA = "ifany")
+        {
+            if (is.factor(x))
+                return(levels(x))
+            else
+                return(names(table(as.factor(unlist(x)), useNA = useNA)))
+        }
+        all.levels <- if (is.factor(weight.subset.data[[1]])) .getLevels(weight.subset.data[[1]])
+                      else                                    .getLevels(weight.subset.data)
+
+        grps <- c()
+        for (i in 1:ncol(weight.subset.data))
+        {
+            tmp.ind <-  match(.getLevels(weight.subset.data[[i]]), all.levels)
+            grps <- c(grps, tmp.ind)
+        }
+        nodes$group <- factor(grps)
+    }
+    else if (link.color == "None")       # nodes at each level to be the same
         nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
     else if (link.color == "Last variable" || link.color == "First variable")
         nodes$group <- factor(getNodeGroups(link.color, links))
     else
         nodes$group <- factor(grps) # all nodes different colors
 
+    # Determine colors of links
     if (link.color == "Source")
-        links$group <- as.factor(links$source)
+        links$group <- as.factor(nodes$group[links$source+1])
+    else if (link.color == "Target")
+        links$group <- as.factor(nodes$group[links$target+1])
     else if (link.color == "Last variable")
         links$group <- as.factor(nodes$group[links$target+1])
     else if (link.color == "First variable")
         links$group <- as.factor(nodes$group[links$source+1])
-    else
-        links$group <- as.factor(links$target)
 
     if (is.null(colors))
         color.str <- "d3.scaleOrdinal(d3.schemeCategory20);"
