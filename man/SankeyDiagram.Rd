@@ -7,7 +7,8 @@
 SankeyDiagram(data, max.categories = 8, subset = NULL, weights = NULL,
   font.size = 12, font.family = "Times New Roman", colors = NULL,
   link.color = c("None", "Source", "Target", "First variable",
-  "Last variable")[1], variables.share.values = FALSE, node.width = 30)
+  "Last variable")[1], variables.share.values = FALSE, node.width = 30,
+  node.padding = 10)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
@@ -36,6 +37,8 @@ the same color as node in the first or last variable.}
 or \code{"Target"}, then the same set colors will be used for each variable.}
 
 \item{node.width}{Width of the width.}
+
+\item{node.padding}{Vertical space between nodes.}
 }
 \value{
 A sankey diagram (HTMLwidget).

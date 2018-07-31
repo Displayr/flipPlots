@@ -12,6 +12,7 @@
 #' @param colors Colors of the nodes, supplied as a vector of hex colors.
 #'    Transparency values (alpha) will be ignored.
 #' @param node.width Width of the width.
+#' @param node.padding Vertical space between nodes.
 #' @param link.color One of \code{"None", "Source", "Target", "First variable",
 #'    "Last variable"}. This specifies whether the links are shown in grey (None);
 #'    the same color as the source node; the same color as the target node; or
@@ -30,7 +31,7 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
                           font.size = 12, font.family = "Times New Roman", colors = NULL,
                           link.color = c("None", "Source", "Target", "First variable",
                           "Last variable")[1], variables.share.values = FALSE,
-                          node.width = 30)
+                          node.width = 30, node.padding = 10)
 {
     if (!is.data.frame(data))
         data <- as.data.frame(data)
@@ -107,7 +108,7 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
 
     sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
-                Source = "source", Target = "target", Value = "value",
+                Source = "source", Target = "target", Value = "value", nodePadding = node.padding,
                 fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str))
 }
 
