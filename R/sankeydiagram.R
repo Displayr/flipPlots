@@ -20,7 +20,6 @@
 #' @param variables.share.values If \code{TRUE}, and \code{link.color = "Source"}
 #'    or \code{"Target"}, then the same set colors will be used for each variable.
 #' @importFrom networkD3 sankeyNetwork JS
-#' @importFrom flipTransformations AdjustDataToReflectWeights
 #' @importFrom grDevices col2rgb rgb
 #' @return A sankey diagram (HTMLwidget).
 #' @details Text variables are grouped as having text or not having text.
@@ -51,13 +50,8 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         weights <- weights[subset]
     }
 
-    weight.subset.data <- if (is.null(weights))
-        subset.data
-    else
-        suppressWarnings(AdjustDataToReflectWeights(subset.data, weights))
-
-    variables <- categorizeData(weight.subset.data, max.categories)
-    links <- computeLinks(variables)
+    variables <- categorizeData(subset.data, max.categories)
+    links <- computeLinks(variables, weights)
     nodes <- nodeDictionary(variables)
 
     # Determine color of nodes
@@ -71,13 +65,13 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
             else
                 return(names(table(as.factor(unlist(x)), useNA = useNA)))
         }
-        all.levels <- if (is.factor(weight.subset.data[[1]])) .getLevels(weight.subset.data[[1]])
-                      else                                    .getLevels(weight.subset.data)
+        all.levels <- if (is.factor(subset.data[[1]])) .getLevels(subset.data[[1]])
+                      else                                    .getLevels(subset.data)
 
         grps <- c()
-        for (i in 1:ncol(weight.subset.data))
+        for (i in 1:ncol(subset.data))
         {
-            tmp.ind <-  match(.getLevels(weight.subset.data[[i]]), all.levels)
+            tmp.ind <-  match(.getLevels(subset.data[[i]]), all.levels)
             grps <- c(grps, tmp.ind)
         }
         nodes$group <- factor(grps)
@@ -166,8 +160,10 @@ colorsToHex <- function(xx)
 #'
 #' Computes the links between the nodes, so that can be expressed as a network.
 #' @param data A \code{\link{data.frame}} or \code{\link{list}} of variables.
+#' @param weights A numeric vector with length equal to the number of rows in
+#'  \code{data}. This is used to adjust the width of the links.
 #' @importFrom stats xtabs
-computeLinks <- function(data) {
+computeLinks <- function(data, weights) {
     links <- NULL
     counter <- 0
     n <- length(data)
@@ -177,7 +173,8 @@ computeLinks <- function(data) {
         x.names <- levels(x)
         n.x <- length(x.names)
         n.y <- nlevels(y)
-        x.y <- xtabs(~ x + y)
+        x.y <- if (is.null(weights)) xtabs(~ x + y)
+                  else               xtabs(weights ~ x + y)
         for (i.x in 1:n.x) {
             row.node <- counter + i.x - 1
             for (i.y in 1:n.y) {

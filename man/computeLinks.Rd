@@ -4,10 +4,13 @@
 \alias{computeLinks}
 \title{computeLinks}
 \usage{
-computeLinks(data)
+computeLinks(data, weights)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{list}} of variables.}
+
+\item{weights}{A numeric vector with length equal to the number of rows in
+\code{data}. This is used to adjust the width of the links.}
 }
 \description{
 Computes the links between the nodes, so that can be expressed as a network.
