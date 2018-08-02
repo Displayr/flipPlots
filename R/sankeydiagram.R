@@ -50,7 +50,11 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         weights <- weights[subset]
     }
 
-    variables <- categorizeData(subset.data, max.categories)
+    tmp.is.numeric <- sapply(subset.data, is.numeric)
+    if (link.color %in% c("Source", "Target") && variables.share.values &&
+        any(tmp.is.numeric) && !all(tmp.is.numeric))
+        stop("'Variables share common values' has been set to true so variables must be of the same type.")
+    variables <- categorizeData(subset.data, max.categories, variables.share.values)
     links <- computeLinks(variables, weights)
     nodes <- nodeDictionary(variables)
 
@@ -58,23 +62,10 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     grps <- 0:(nrow(nodes)-1)
     if (variables.share.values && link.color %in% c("Source", "Target"))
     {
-        .getLevels <- function(x, useNA = "ifany")
-        {
-            if (is.factor(x))
-                return(levels(x))
-            else
-                return(names(table(as.factor(unlist(x)), useNA = useNA)))
-        }
-        all.levels <- if (is.factor(subset.data[[1]])) .getLevels(subset.data[[1]])
-                      else                                    .getLevels(subset.data)
-
-        grps <- c()
-        for (i in 1:ncol(subset.data))
-        {
-            tmp.ind <-  match(.getLevels(subset.data[[i]]), all.levels)
-            grps <- c(grps, tmp.ind)
-        }
-        nodes$group <- factor(grps)
+        all.levels <- attr(variables, "all.levels")
+        tmp.var.names <- paste(names(variables), ": ", sep = "", collapse = "|")
+        tmp.node.names <- gsub(tmp.var.names, "", nodes$name)
+        nodes$group <- factor(match(tmp.node.names, all.levels))
     }
     else if (link.color == "None")       # nodes at each level to be the same
         nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
@@ -213,20 +204,42 @@ nodeDictionary <- function(list.of.factors)
 #' Quantizes numeric variables.
 #' @param data A \code{\link{data.frame}} or \code{\link{list}} of variables.
 #' @param max.categories When the number of unique values
+#' @param share.values Whether the values in each variable are expected to be the same.
 #' of numeric data exceeds this value, the variable is quantized.
-categorizeData <- function(data, max.categories)
+categorizeData <- function(data, max.categories, share.values)
 {
     var.names <- names(data)
     n <- length(var.names)
+    breaks <- NULL
+    if (share.values)
+    {
+        if (is.numeric(data[[1]]) && length(unique(unlist(data))) > max.categories)
+        {
+            n.cuts <- max.categories - if (any(is.na(unlist(data)))) 1 else 0
+            tmp.range <- range(unlist(data), na.rm = TRUE)
+            breaks <- seq(from = tmp.range[1], to = tmp.range[2], length = n.cuts+1)
+            breaks[1] <- (1 - 0.001) * breaks[1]
+            breaks[n.cuts+1] <- (1 + 0.001) * breaks[n.cuts+1]
+            tmp.dat <- cut(unlist(data), breaks)
+            tmp.dat <- addNA(tmp.dat, ifany = TRUE)
+            all.levels <- levels(tmp.dat) # must be in the right order
+        }
+        else
+            all.levels <- names(table(as.factor(unlist(data)), useNA = "ifany"))
+    }
+
     nodes <- NULL
     for (i in 1:n)
     {
-        vr <- categorizeVariable(data[[i]], max.categories, var.names[i])
+        vr <- categorizeVariable(data[[i]], max.categories, var.names[i], breaks = breaks)
         data[[i]] <- vr
         for (r in levels(vr))
             nodes <- c(nodes, r)
     }
-data}
+    if (share.values)
+        attr(data, "all.levels") <- all.levels
+    data
+}
 
 #' categorizeVariable
 #'
@@ -240,10 +253,11 @@ data}
 #' smallest category is merged with the smallest adjacent category.
 #' Missing values are not merged. With character variables, the data is merged into missing
 #' versus non-missing data.
+#' @param breaks Optional numeric vector used as the cutoff points to quantize numeric variables
 #' @param var.name The name of the variable.
 #' of numeric data exceeds this value, the variable is quantized.
 #' @importFrom flipTransformations Factor
-categorizeVariable <- function(x, max.categories, var.name)
+categorizeVariable <- function(x, max.categories, var.name, breaks = NULL)
 {
     if (max.categories < 2)
         stop("'max.categories must be more than 1.")
@@ -282,7 +296,7 @@ categorizeVariable <- function(x, max.categories, var.name)
             if (n.cuts == 1)
                 valid <- factor(as.integer(!is.na(x)), 1:2, c("Data", "NA"))
             else
-                valid <- cut(x, n.cuts)
+                valid <- if (is.null(breaks)) cut(x, n.cuts) else cut(x, breaks)
         } else {
             valid <- rep( "Text", n)
             valid[x == ""] <- "BLANK"
@@ -291,6 +305,7 @@ categorizeVariable <- function(x, max.categories, var.name)
        valid <- Factor(x)
     }
     valid <- addNA(valid, ifany = TRUE)
+    attr(valid, "values") <- levels(valid) 
     levels(valid) <- paste(var.name, levels(valid), sep = ": ")
     valid
 }

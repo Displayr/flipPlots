@@ -4,7 +4,7 @@
 \alias{categorizeVariable}
 \title{categorizeVariable}
 \usage{
-categorizeVariable(x, max.categories, var.name)
+categorizeVariable(x, max.categories, var.name, breaks = NULL)
 }
 \arguments{
 \item{x}{A variable.}
@@ -20,6 +20,8 @@ versus non-missing data.}
 
 \item{var.name}{The name of the variable.
 of numeric data exceeds this value, the variable is quantized.}
+
+\item{breaks}{Optional numeric vector used as the cutoff points to quantize numeric variables}
 }
 \description{
 Quantizes a numeric variable.

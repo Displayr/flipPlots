@@ -4,12 +4,14 @@
 \alias{categorizeData}
 \title{categorizeData}
 \usage{
-categorizeData(data, max.categories)
+categorizeData(data, max.categories, share.values)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{list}} of variables.}
 
-\item{max.categories}{When the number of unique values
+\item{max.categories}{When the number of unique values}
+
+\item{share.values}{Whether the values in each variable are expected to be the same.
 of numeric data exceeds this value, the variable is quantized.}
 }
 \description{
