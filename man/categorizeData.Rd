@@ -4,10 +4,12 @@
 \alias{categorizeData}
 \title{categorizeData}
 \usage{
-categorizeData(data, max.categories, share.values)
+categorizeData(data, weights, max.categories, share.values)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{list}} of variables.}
+
+\item{weights}{A numeric vector giving the weight of each row in \code{data}.}
 
 \item{max.categories}{When the number of unique values}
 

@@ -36,6 +36,8 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         data <- as.data.frame(data)
     if (nrow(data) < 2)
         stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
+    if (max.categories <= 2)
+        stop("Maximum number of categories must be greater than 2.")
 
     if (!is.null(weights) & length(weights) != nrow(data))
         stop("'weights' and 'data' are required to have the same number of observations. They do not.")
@@ -54,7 +56,7 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     if (link.color %in% c("Source", "Target") && variables.share.values &&
         any(tmp.is.numeric) && !all(tmp.is.numeric))
         stop("'Variables share common values' has been set to true so variables must be of the same type.")
-    variables <- categorizeData(subset.data, max.categories, variables.share.values)
+    variables <- categorizeData(subset.data, weights, max.categories, variables.share.values)
     links <- computeLinks(variables, weights)
     nodes <- nodeDictionary(variables)
 
@@ -67,8 +69,8 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         tmp.node.names <- gsub(tmp.var.names, "", nodes$name)
         nodes$group <- factor(match(tmp.node.names, all.levels))
     }
-    else if (link.color == "None")       # nodes at each level to be the same
-        nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
+    else if (link.color == "None")      # nodes at each level to be the same
+         nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
     else if (link.color == "Last variable" || link.color == "First variable")
         nodes$group <- factor(getNodeGroups(link.color, links))
     else
@@ -154,7 +156,8 @@ colorsToHex <- function(xx)
 #' @param weights A numeric vector with length equal to the number of rows in
 #'  \code{data}. This is used to adjust the width of the links.
 #' @importFrom stats xtabs
-computeLinks <- function(data, weights) {
+computeLinks <- function(data, weights)
+{
     links <- NULL
     counter <- 0
     n <- length(data)
@@ -180,7 +183,8 @@ computeLinks <- function(data, weights) {
     }
     links <- as.data.frame(links)
     names(links) <- c("source", "target", "value")
-links}
+    links
+}
 
 #' nodeDictionary
 #'
@@ -191,9 +195,8 @@ nodeDictionary <- function(list.of.factors)
     nodes <- NULL
     for (vr in list.of.factors)
     {
-        for (r in levels(vr)) {
+        for (r in levels(vr))
             nodes <- c(nodes, r)
-         }
     }
     data.frame(name = nodes)
 }
@@ -203,10 +206,11 @@ nodeDictionary <- function(list.of.factors)
 #' Creates a dictionary of the nodes.
 #' Quantizes numeric variables.
 #' @param data A \code{\link{data.frame}} or \code{\link{list}} of variables.
+#' @param weights A numeric vector giving the weight of each row in \code{data}.
 #' @param max.categories When the number of unique values
 #' @param share.values Whether the values in each variable are expected to be the same.
 #' of numeric data exceeds this value, the variable is quantized.
-categorizeData <- function(data, max.categories, share.values)
+categorizeData <- function(data, weights, max.categories, share.values)
 {
     var.names <- names(data)
     n <- length(var.names)
@@ -227,86 +231,104 @@ categorizeData <- function(data, max.categories, share.values)
         else
             all.levels <- names(table(as.factor(unlist(data)), useNA = "ifany"))
     }
-
-    nodes <- NULL
-    for (i in 1:n)
+    num.values <- sapply(data, function(vv) length(unique(vv)))
+    var.ordered <- order(num.values, decreasing = TRUE)
+    
+    # Numeric breaks can be identified without any interaction between variables
+    # Factor is used if variable is non-numeric or if there are only a few values
+    for (i in var.ordered)
+        data[[i]] <- quantizeVariable(data[[i]], max.categories, breaks = breaks) 
+    
+    for (i in var.ordered)
     {
-        vr <- categorizeVariable(data[[i]], max.categories, var.names[i], breaks = breaks)
-        data[[i]] <- vr
-        for (r in levels(vr))
-            nodes <- c(nodes, r)
+        while (length(unique(data[[i]])) > max.categories)
+        {
+            node.change <- findNodesToMerge(data, i, weights)
+            data[[i]] <- mergeNodes(data[[i]], node.change)
+            if (share.values)
+               for (j in 1:n)
+                    mergeNodes(data[[i]], node.change)
+        }
+        data[[i]] <- addNA(data[[i]], ifany = TRUE)
+        levels(data[[i]]) <- paste(var.names[i], levels(data[[i]]), sep = ": ")
     }
     if (share.values)
         attr(data, "all.levels") <- all.levels
     data
 }
 
-#' categorizeVariable
-#'
-#' Quantizes a numeric variable.
-#' @param x A variable.
-#' @param max.categories With numeric
-#' variables, \code{\link{cut}} is used, unless \code{max.categories} has a value of
-#' 2 and there are missing values, in which case the data is turned into a factor
-#' with levels of "Data" and "NA"). With factors, the two smallest
-#' categories are merged (based on unweighted data). With ordered factors, the
-#' smallest category is merged with the smallest adjacent category.
-#' Missing values are not merged. With character variables, the data is merged into missing
-#' versus non-missing data.
-#' @param breaks Optional numeric vector used as the cutoff points to quantize numeric variables
-#' @param var.name The name of the variable.
-#' of numeric data exceeds this value, the variable is quantized.
-#' @importFrom flipTransformations Factor
-categorizeVariable <- function(x, max.categories, var.name, breaks = NULL)
+#' findNodesToMerge
+#' 
+#' Identifies the pair of nodes to merge which will minimize
+#' the number of distinct links (ignoring weights). 
+#' @param df dataframe containing factor variables only.
+#' @param column index of the column which we are looking to merge nodes for
+#' @param weights numeric vector containing weights for each row of \code{df}.
+findNodesToMerge <- function(df, column, weights = NULL)
 {
-    if (max.categories < 2)
-        stop("'max.categories must be more than 1.")
-    uniques <- unique(x)
-    n.unique <- length(uniques)
-    n <- length(x)
-    if (n.unique > max.categories)
+    lvls <- levels(df[[column]])
+    n <- length(lvls)
+    profile <- do.call("paste", c(df[-column], sep = "\\r"))
+    if (is.null(weights))
+        weights <- rep(1, nrow(df))
+
+    # Minimize number fo links that are not shared and
+    # If tied, minimize size of merged nodes 
+    m.diff <- matrix(NA, n, n) # number of differences 
+    m.size <- matrix(NA, n, n) # weight of merged node
+    for (i in 1:(n-1))
     {
-        if(is.factor(x) | (ordered <- is.ordered(x)))
+        for (j in (i+1):n)
         {
-            x <- Factor(x)
-            n.to.merge <- n.unique - max.categories
-            for (i in 1:n.to.merge)
-            {
-                counts <- table(x)
-                if (!ordered)
-                    counts <- sort(counts)
-                if (!ordered | length(counts) == 2)
-                    merge <- 1:2
-                else
-                {
-                    merge <- match(min(counts), counts)[1]
-                    if (merge == 1)
-                        merge <- 2
-                    else if (merge == length(counts) & ordered)
-                        merge <- merge - 1
-                    merge <- c(merge, if(counts[merge - 1] < counts[merge + 1]) merge - 1 else merge + 1)
-                    merge <- sort(merge)
-                }
-                merge <- match(names(counts)[merge], levels(x))
-                levels(x)[merge] <- paste(levels(x)[merge], collapse = ",")
-            }
-            valid <- x
-        } else if (is.numeric(x)) {
-            n.cuts <- max.categories - if(any(is.na(uniques))) 1 else 0
-            if (n.cuts == 1)
-                valid <- factor(as.integer(!is.na(x)), 1:2, c("Data", "NA"))
-            else
-                valid <- if (is.null(breaks)) cut(x, n.cuts) else cut(x, breaks)
-        } else {
-            valid <- rep( "Text", n)
-            valid[x == ""] <- "BLANK"
+            ind.i  <- which(df[[column]] == lvls[i])
+            ind.j  <- which(df[[column]] == lvls[j])
+            ind.ij <- which(!profile[ind.i] %in% profile[ind.j])
+            ind.ji <- which(!profile[ind.j] %in% profile[ind.i])
+            m.diff[i,j] <- sum(weights[c(ind.i[ind.ij], ind.j[ind.ji])])
+            m.size[i,j] <- sum(weights[c(ind.i, ind.j)], na.rm = TRUE)
         }
-    } else {
-       valid <- Factor(x)
     }
-    valid <- addNA(valid, ifany = TRUE)
-    attr(valid, "values") <- levels(valid) 
-    levels(valid) <- paste(var.name, levels(valid), sep = ": ")
-    valid
+    min.diff <- min(m.diff, na.rm = TRUE)
+    ind.min <- which(m.diff == min.diff)
+    if (length(ind.min) > 1)
+    {
+        ind.min.sz <- which.min(m.size[ind.min])
+        ind.min <- ind.min[ind.min.sz]
+    }
+    ind.min <- as.numeric(arrayInd(ind.min, .dim = dim(m.diff)))
+    return(lvls[ind.min])
+}
+
+#' Merge levels in a factor
+#'
+#' @param x factor variable
+#' @param old.nodes a vector containing factor levels to merge
+mergeNodes <- function(x, old.nodes)
+{
+    new.node <- paste(old.nodes, collapse = ", ")
+    ind <- match(old.nodes, levels(x))
+    levels(x)[ind] <- new.node
+    return(x)
+}
+
+#' @importFrom flipTransformations Factor
+quantizeVariable <- function(x, max.categories, breaks = NULL)
+{
+    if (length(unique(x)) <= max.categories || is.factor(x))
+    {
+        x.fac <- Factor(x)
+    
+    } else if (is.numeric(x))
+    {
+        n.cuts <- max.categories - if(any(is.na(x))) 1 else 0
+        x.fac <- if (is.null(breaks)) cut(x, n.cuts) else cut(x, breaks)
+    
+    } else
+    {
+        x.fac <- rep("Text", length(x))
+        x.fac[x == ""] <- "BLANK"
+    }
+    x.fac <- addNA(x.fac, ifany = TRUE)
+    return(x.fac)
 }
 
