@@ -226,7 +226,6 @@ categorizeData <- function(data, weights, max.categories, share.values)
             breaks[n.cuts+1] <- (1 + 0.001) * breaks[n.cuts+1]
         }
         all.dat <- quantizeVariable(unlist(data), max.categories, breaks = breaks)
-        all.levels <- levels(all.dat)
     }
     num.values <- sapply(data, function(vv) length(unique(vv)))
     var.ordered <- order(num.values, decreasing = TRUE)
@@ -243,14 +242,17 @@ categorizeData <- function(data, weights, max.categories, share.values)
             node.change <- findNodesToMerge(data, i, weights)
             data[[i]] <- mergeNodes(data[[i]], node.change)
             if (share.values)
+            {
                for (j in 1:n)
-                    mergeNodes(data[[i]], node.change)
+                    data[[i]] <- mergeNodes(data[[i]], node.change)
+                all.dat <- mergeNodes(all.dat, node.change)
+            }
         }
         data[[i]] <- addNA(data[[i]], ifany = TRUE)
         levels(data[[i]]) <- paste(var.names[i], levels(data[[i]]), sep = ": ")
     }
     if (share.values)
-        attr(data, "all.levels") <- all.levels
+        attr(data, "all.levels") <- levels(all.dat)
     data
 }
 
@@ -271,6 +273,15 @@ findNodesToMerge <- function(df, column, weights = NULL)
 {
     lvls <- levels(df[[column]])
     n <- length(lvls)
+
+    # If there are many categories ignore linkage patterns
+    # and merge the smallest categories in the old way
+    if (n > 50)
+    {
+        tb <- sort(table(df[[column]]))
+        return(names(tb)[1:2])
+    }
+
     profile <- do.call("paste", c(df[-column], sep = "\\r"))
     if (is.null(weights))
         weights <- rep(1, nrow(df))
