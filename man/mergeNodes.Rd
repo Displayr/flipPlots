@@ -9,7 +9,9 @@ mergeNodes(x, old.nodes)
 \arguments{
 \item{x}{factor variable}
 
-\item{old.nodes}{a vector containing factor levels to merge}
+\item{old.nodes}{a vector containing factor levels to merge.
+Note level names are used rather than the numeric representation
+is used so it can be applied to multiple factors}
 }
 \description{
 Merge levels in a factor

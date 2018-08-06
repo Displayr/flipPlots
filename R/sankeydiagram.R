@@ -224,12 +224,9 @@ categorizeData <- function(data, weights, max.categories, share.values)
             breaks <- seq(from = tmp.range[1], to = tmp.range[2], length = n.cuts+1)
             breaks[1] <- (1 - 0.001) * breaks[1]
             breaks[n.cuts+1] <- (1 + 0.001) * breaks[n.cuts+1]
-            tmp.dat <- cut(unlist(data), breaks)
-            tmp.dat <- addNA(tmp.dat, ifany = TRUE)
-            all.levels <- levels(tmp.dat) # must be in the right order
         }
-        else
-            all.levels <- names(table(as.factor(unlist(data)), useNA = "ifany"))
+        all.dat <- quantizeVariable(unlist(data), max.categories, breaks = breaks)
+        all.levels <- levels(all.dat)
     }
     num.values <- sapply(data, function(vv) length(unique(vv)))
     var.ordered <- order(num.values, decreasing = TRUE)
@@ -260,7 +257,13 @@ categorizeData <- function(data, weights, max.categories, share.values)
 #' findNodesToMerge
 #' 
 #' Identifies the pair of nodes to merge which will minimize
-#' the number of distinct links (ignoring weights). 
+#' distinct links. Note this uses the weights, so adding multiple
+#' small links may be preferred to adding a single heavy link.
+#' Note also that the link to the merged node i.e. (A,B+C) is the
+#' has a weight that is the sum of (A,B) and (A,C). The relative
+#' proportions are not taken into account.
+#" If there are multiple node-pairs with the same number of distinct
+#  links, then the pair to give the smallest merged node is used. 
 #' @param df dataframe containing factor variables only.
 #' @param column index of the column which we are looking to merge nodes for
 #' @param weights numeric vector containing weights for each row of \code{df}.
@@ -302,7 +305,9 @@ findNodesToMerge <- function(df, column, weights = NULL)
 #' Merge levels in a factor
 #'
 #' @param x factor variable
-#' @param old.nodes a vector containing factor levels to merge
+#' @param old.nodes a vector containing factor levels to merge.
+#'   Note level names are used rather than the numeric representation
+#'   is used so it can be applied to multiple factors
 mergeNodes <- function(x, old.nodes)
 {
     new.node <- paste(old.nodes, collapse = ", ")
@@ -314,11 +319,11 @@ mergeNodes <- function(x, old.nodes)
 #' @importFrom flipTransformations Factor
 quantizeVariable <- function(x, max.categories, breaks = NULL)
 {
-    if (length(unique(x)) <= max.categories || is.factor(x))
+    if (is.null(breaks) && (length(unique(x)) <= max.categories || is.factor(x)))
     {
         x.fac <- Factor(x)
     
-    } else if (is.numeric(x))
+    } else if (is.numeric(x)) # if breaks is supplied, this clause is always used
     {
         n.cuts <- max.categories - if(any(is.na(x))) 1 else 0
         x.fac <- if (is.null(breaks)) cut(x, n.cuts) else cut(x, breaks)

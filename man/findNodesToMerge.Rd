@@ -15,5 +15,9 @@ findNodesToMerge(df, column, weights = NULL)
 }
 \description{
 Identifies the pair of nodes to merge which will minimize
-the number of distinct links (ignoring weights).
+distinct links. Note this uses the weights, so adding multiple
+small links may be preferred to adding a single heavy link.
+Note also that the link to the merged node i.e. (A,B+C) is the
+has a weight that is the sum of (A,B) and (A,C). The relative
+proportions are not taken into account.
 }

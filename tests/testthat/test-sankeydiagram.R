@@ -1,61 +1,6 @@
 library(stats)
 
 context("Sankey Diagram")
-test_that("categorizeVariables",
-          {
-
-              data(colas, package = "flipExampleData")
-              v <- colas$d1
-              # Factor
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-              # Factor with missing data
-              v[c(1,10,23)] <- NA
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-              # Ordered factor
-              v <- ordered(colas$d1)
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-              # Ordered  with missing data
-              v[c(1,10,23)] <- NA
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-              # Numeric
-              v <- as.numeric(colas$d1)
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-              # Numeric with missing data
-              v[c(1,10,23)] <- NA
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-              # character
-              v <- as.character(colas$d1)
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-              # Numeric with missing data
-              v[c(1,10,23)] <- NA
-              for (i in 2:20) {
-                  new.v <- flipPlots:::categorizeVariable(v, max.categories = i, var.name = "age")
-                  expect_true(length(unique(new.v)) <= i)
-              }
-})
-
-
 test_that("Sankey diagrams",
           {
 
@@ -78,18 +23,17 @@ test_that("Sankey diagrams",
               p <- colas[, c("d1", "d2")]
               p <- data.frame(p)
               expect_error(print(SankeyDiagram(p, max.categories = 1)))
-              for (i in 2:20)
+              for (i in 3:20)
                 expect_error(print(SankeyDiagram(p, max.categories = i)), NA)
               p$d2 <- ordered(p$d2)
-              for (i in 2:20)
+              for (i in 3:20)
               {
                   pm <- SankeyDiagram(p, max.categories = i)
                   expect_error(print(pm), NA)
               }
-              flipPlots:::categorizeVariable(p$d1, max.categories = 2, var.name = "age")
-              SankeyDiagram(p, max.categories = 2)
+              SankeyDiagram(p, max.categories = 3)
               p <- colas[, c("d3", "d1")]
-              SankeyDiagram(p, max.categories = 2)
+              SankeyDiagram(p, max.categories = 3)
 })
 
 expenses <- structure(list(Category = structure(c(4L, 2L, 1L, 2L, 1L, 3L,
@@ -1026,3 +970,98 @@ test_that("Numeric variables",
 {
     expect_error(SankeyDiagram(datNumeric, link.color = "Source", variables.share.values = TRUE), NA)
 })
+
+datText <- structure(list(Q1_Gender = structure(c(1L, 1L, 2L, 2L, 1L, 2L,
+2L, 1L, 1L, 1L, 2L, 2L, 2L, 1L, 2L, 2L, 2L, 1L, 1L, 2L, 2L, 2L,
+2L, 2L, 2L, 2L, 1L, 2L, 1L, 1L, 2L, 2L, 2L, 1L, 1L, 2L, 2L, 1L,
+2L, 2L, 2L, 2L, 1L, 2L, 2L, 2L, 2L, 1L, 2L, 2L, 2L, 2L, 2L, 1L,
+1L, 1L, 1L, 2L, 2L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L,
+1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 1L, 1L,
+1L, 2L, 2L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 2L, 2L, 2L, 1L, 1L, 2L,
+1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 1L, 2L, 2L, 2L, 1L, 2L,
+2L, 2L, 2L, 2L, 1L, 1L, 2L, 2L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 2L,
+2L, 2L, 1L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 2L, 2L, 2L,
+1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 1L, 2L, 1L,
+2L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L,
+1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
+1L, 1L, 1L, 1L, 1L, 1L), .Label = c("Male", "Female"), class = "factor", questiontype = "PickOne", name = "Q1", label = "Q1_Gender", question = "Q1_Gender"),
+    structure.c..2713356459....4697558946....3572816992....7169244672... = structure(c(56L,
+    138L, 133L, 169L, 76L, 119L, 30L, 149L, 26L, 202L, 69L, 88L,
+    182L, 157L, 121L, 203L, 19L, 99L, 32L, 96L, 183L, 137L, 78L,
+    43L, 16L, 132L, 130L, 198L, 200L, 70L, 158L, 134L, 112L,
+    4L, 75L, 5L, 161L, 104L, 83L, 176L, 66L, 187L, 29L, 195L,
+    151L, 123L, 64L, 97L, 201L, 60L, 150L, 18L, 11L, 164L, 92L,
+    100L, 127L, 79L, 34L, 45L, 8L, 31L, 44L, 122L, 58L, 65L,
+    178L, 111L, 153L, 80L, 163L, 143L, 57L, 180L, 148L, 21L,
+    94L, 38L, 168L, 105L, 102L, 77L, 28L, 48L, 166L, 98L, 185L,
+    47L, 191L, 196L, 179L, 51L, 63L, 126L, 53L, 155L, 144L, 101L,
+    142L, 40L, 9L, 204L, 23L, 171L, 35L, 116L, 174L, 87L, 156L,
+    107L, 170L, 184L, 72L, 173L, 194L, 117L, 93L, 61L, 152L,
+    103L, 95L, 25L, 146L, 67L, 108L, 113L, 128L, 81L, 141L, 36L,
+    74L, 27L, 193L, 12L, 55L, 73L, 54L, 52L, 188L, 120L, 59L,
+    71L, 17L, 139L, 160L, 115L, 124L, 140L, 172L, 177L, 154L,
+    22L, 125L, 14L, 131L, 20L, 3L, 129L, 2L, 165L, 106L, 50L,
+    42L, 162L, 199L, 68L, 192L, 62L, 82L, 147L, 135L, 181L, 197L,
+    85L, 110L, 1L, 84L, 10L, 13L, 89L, 41L, 90L, 15L, 33L, 175L,
+    186L, 91L, 114L, 49L, 86L, 189L, 159L, 46L, 167L, 37L, 118L,
+    136L, 39L, 145L, 7L, 109L, 6L, 190L, 24L), .Label = c("1128637539",
+    "1145887988", "1157196216", "1245671145", "1321456183", "1333137162",
+    "1344724413", "1367235791", "1381633594", "1385528814", "1512498786",
+    "1533575946", "1548245329", "1564692622", "1666526718", "1681384926",
+    "1835325182", "1838371469", "1875733825", "1884993736", "1923676331",
+    "2123398582", "2145885693", "2159149469", "2214394433", "2259721885",
+    "2265818188", "2294387349", "2323674471", "2348229151", "2428374753",
+    "2468175142", "2479832822", "2553835174", "2597649268", "2598529283",
+    "2626973414", "2662821434", "2758284479", "2844794626", "2845318915",
+    "2873586171", "2892938652", "2927568293", "2941763832", "2966234434",
+    "3218363763", "3269988321", "3278329965", "3323245446", "3329656493",
+    "3345942152", "3378396544", "3523565131", "3566258747", "3572816992",
+    "3591659876", "3629824718", "3685385524", "3716959587", "3719657677",
+    "3726984923", "3769863826", "3798948431", "3839245644", "3842329534",
+    "3956476577", "3984945782", "3997893199", "4138939635", "4146577588",
+    "4242819518", "4258714293", "4281791681", "4284156287", "4315372837",
+    "4379293694", "4392178233", "4434371676", "4458513996", "4497584676",
+    "4638913231", "4644556998", "4657411685", "4794929625", "4861263979",
+    "4863626775", "4924655652", "4959815485", "4992699135", "5161778319",
+    "5184256819", "5278189828", "5285314352", "5289313291", "5362875422",
+    "5383137272", "5485222297", "5543348984", "5552142259", "5633357864",
+    "5635349861", "5689537285", "5721851261", "5728411187", "5767742626",
+    "5775977279", "5793818688", "5915973755", "5916718856", "5919577679",
+    "5922431364", "5965683166", "5986471173", "5994675585", "6125198849",
+    "6165716397", "6174265959", "6179746498", "6234147966", "6369426484",
+    "6568638267", "6616152959", "6642182639", "6671914877", "6684347758",
+    "6685181658", "6716784334", "6718143715", "6724725643", "6789128283",
+    "6794625711", "6797129669", "6837224216", "6857913476", "6925257824",
+    "7147844586", "7169244672", "7178674687", "7187736442", "7216842755",
+    "7252122311", "7339449691", "7343564276", "7346518431", "7355617391",
+    "7374272948", "7392281626", "7461148296", "7543583393", "7564339788",
+    "7612777571", "7661642962", "7757827346", "7761869155", "7766334486",
+    "7897613819", "8127612456", "8128716858", "8139183856", "8242218232",
+    "8332431283", "8335286557", "8337492592", "8343873562", "8388362595",
+    "8456443771", "8544655428", "8591483111", "8645313658", "8651368991",
+    "8659678167", "8678262638", "8683372219", "8729958711", "8756924831",
+    "8795648123", "8796781476", "8847852527", "8912526689", "9127712591",
+    "9141998723", "9166619467", "9171479678", "9268842155", "9274995215",
+    "9337725435", "9366621519", "9379333826", "9449592831", "9485757253",
+    "9524245545", "9531919588", "9532597996", "9578689565", "9641775822",
+    "9665316194", "9765377468", "9797246358", "9818758559", "9869754839",
+    "9914965219", "9965382796", "9999291226"), class = "factor")), .Names = c("Q1_Gender",
+"structure.c..2713356459....4697558946....3572816992....7169244672..."
+), row.names = c(3L, 4L, 5L, 7L, 8L, 12L, 13L, 16L, 17L, 20L,
+21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 30L, 31L, 32L, 33L,
+34L, 35L, 36L, 37L, 38L, 39L, 40L, 43L, 44L, 45L, 46L, 47L, 48L,
+49L, 51L, 52L, 53L, 54L, 57L, 59L, 62L, 67L, 68L, 69L, 71L, 73L,
+74L, 75L, 76L, 77L, 80L, 81L, 83L, 87L, 88L, 89L, 90L, 93L, 95L,
+96L, 98L, 99L, 100L, 101L, 103L, 104L, 106L, 107L, 110L, 112L,
+114L, 115L, 116L, 119L, 121L, 122L, 123L, 125L, 126L, 128L, 129L,
+131L, 132L, 133L, 134L, 135L, 136L, 137L, 139L, 140L, 141L, 143L,
+144L, 145L, 146L, 147L, 148L, 149L, 152L, 154L, 155L, 156L, 157L,
+158L, 160L, 161L, 163L, 164L, 166L, 167L, 170L, 171L, 173L, 176L,
+177L, 178L, 179L, 180L, 181L, 182L, 183L, 184L, 185L, 186L, 187L,
+188L, 189L, 195L, 196L, 197L, 199L, 201L, 202L, 203L, 206L, 208L,
+210L, 211L, 212L, 213L, 215L, 217L, 218L, 219L, 220L, 221L, 222L,
+224L, 226L, 227L, 228L, 229L, 230L, 232L, 233L, 235L, 238L, 239L,
+241L, 244L, 245L, 246L, 247L, 248L, 250L, 251L, 252L, 253L, 254L,
+255L, 256L, 258L, 259L, 261L, 262L, 263L, 266L, 268L, 269L, 270L,
+271L, 274L, 278L, 279L, 281L, 283L, 285L, 286L, 287L, 288L, 289L,
+290L, 292L, 298L, 303L, 304L, 305L, 306L, 309L, 310L, 312L), class = "data.frame")
