@@ -322,6 +322,8 @@ findNodesToMerge <- function(df, column, weights = NULL)
 mergeNodes <- function(x, old.nodes)
 {
     new.node <- paste(old.nodes, collapse = ", ")
+    if (nchar(new.node) > 100)
+        new.node <- paste0(substr(new.node, 1, 100), " ...")
     ind <- match(old.nodes, levels(x))
     levels(x)[ind] <- new.node
     return(x)
