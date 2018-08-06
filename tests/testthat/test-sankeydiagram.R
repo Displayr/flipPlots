@@ -23,17 +23,17 @@ test_that("Sankey diagrams",
               p <- colas[, c("d1", "d2")]
               p <- data.frame(p)
               expect_error(print(SankeyDiagram(p, max.categories = 1)))
-              for (i in 3:20)
+              for (i in 2:20)
                 expect_error(print(SankeyDiagram(p, max.categories = i)), NA)
               p$d2 <- ordered(p$d2)
-              for (i in 3:20)
+              for (i in 2:20)
               {
                   pm <- SankeyDiagram(p, max.categories = i)
                   expect_error(print(pm), NA)
               }
-              SankeyDiagram(p, max.categories = 3)
+              SankeyDiagram(p, max.categories = 2)
               p <- colas[, c("d3", "d1")]
-              SankeyDiagram(p, max.categories = 3)
+              SankeyDiagram(p, max.categories = 2)
 })
 
 expenses <- structure(list(Category = structure(c(4L, 2L, 1L, 2L, 1L, 3L,

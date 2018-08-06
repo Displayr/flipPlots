@@ -36,8 +36,8 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         data <- as.data.frame(data)
     if (nrow(data) < 2)
         stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
-    if (max.categories <= 2)
-        stop("Maximum number of categories must be greater than 2.")
+    if (max.categories < 2)
+        stop("Maximum number of categories must be greater than 1.")
 
     if (!is.null(weights) & length(weights) != nrow(data))
         stop("'weights' and 'data' are required to have the same number of observations. They do not.")
@@ -229,12 +229,12 @@ categorizeData <- function(data, weights, max.categories, share.values)
     }
     num.values <- sapply(data, function(vv) length(unique(vv)))
     var.ordered <- order(num.values, decreasing = TRUE)
-    
+
     # Numeric breaks can be identified without any interaction between variables
     # Factor is used if variable is non-numeric or if there are only a few values
     for (i in var.ordered)
-        data[[i]] <- quantizeVariable(data[[i]], max.categories, breaks = breaks) 
-    
+        data[[i]] <- quantizeVariable(data[[i]], max.categories, breaks = breaks)
+
     for (i in var.ordered)
     {
         while (length(unique(data[[i]])) > max.categories)
@@ -257,7 +257,7 @@ categorizeData <- function(data, weights, max.categories, share.values)
 }
 
 #' findNodesToMerge
-#' 
+#'
 #' Identifies the pair of nodes to merge which will minimize
 #' distinct links. Note this uses the weights, so adding multiple
 #' small links may be preferred to adding a single heavy link.
@@ -265,7 +265,7 @@ categorizeData <- function(data, weights, max.categories, share.values)
 #' has a weight that is the sum of (A,B) and (A,C). The relative
 #' proportions are not taken into account.
 #" If there are multiple node-pairs with the same number of distinct
-#  links, then the pair to give the smallest merged node is used. 
+#  links, then the pair to give the smallest merged node is used.
 #' @param df dataframe containing factor variables only.
 #' @param column index of the column which we are looking to merge nodes for
 #' @param weights numeric vector containing weights for each row of \code{df}.
@@ -287,8 +287,8 @@ findNodesToMerge <- function(df, column, weights = NULL)
         weights <- rep(1, nrow(df))
 
     # Minimize number fo links that are not shared and
-    # If tied, minimize size of merged nodes 
-    m.diff <- matrix(NA, n, n) # number of differences 
+    # If tied, minimize size of merged nodes
+    m.diff <- matrix(NA, n, n) # number of differences
     m.size <- matrix(NA, n, n) # weight of merged node
     for (i in 1:(n-1))
     {
@@ -333,12 +333,12 @@ quantizeVariable <- function(x, max.categories, breaks = NULL)
     if (is.null(breaks) && (length(unique(x)) <= max.categories || is.factor(x)))
     {
         x.fac <- Factor(x)
-    
+
     } else if (is.numeric(x)) # if breaks is supplied, this clause is always used
     {
         n.cuts <- max.categories - if(any(is.na(x))) 1 else 0
-        x.fac <- if (is.null(breaks)) cut(x, n.cuts) else cut(x, breaks)
-    
+        x.fac <- if (is.null(breaks)) cut(x, max(2, n.cuts)) else cut(x, breaks)
+
     } else
     {
         x.fac <- rep("Text", length(x))
