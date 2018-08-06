@@ -4,7 +4,7 @@
 \alias{mergeNodes}
 \title{Merge levels in a factor}
 \usage{
-mergeNodes(x, old.nodes)
+mergeNodes(x, old.nodes, nchar)
 }
 \arguments{
 \item{x}{factor variable}
@@ -12,6 +12,8 @@ mergeNodes(x, old.nodes)
 \item{old.nodes}{a vector containing factor levels to merge.
 Note level names are used rather than the numeric representation
 is used so it can be applied to multiple factors}
+
+\item{nchar}{Maximum number of characters in each label.}
 }
 \description{
 Merge levels in a factor

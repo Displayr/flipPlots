@@ -4,17 +4,22 @@
 \alias{categorizeData}
 \title{categorizeData}
 \usage{
-categorizeData(data, weights, max.categories, share.values)
+categorizeData(data, weights, max.categories, share.values, label.show.varname,
+  label.max.length)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{list}} of variables.}
 
 \item{weights}{A numeric vector giving the weight of each row in \code{data}.}
 
-\item{max.categories}{When the number of unique values}
+\item{max.categories}{When the number of unique values exceeds this value,
+the variable is quantized.}
 
-\item{share.values}{Whether the values in each variable are expected to be the same.
-of numeric data exceeds this value, the variable is quantized.}
+\item{share.values}{Whether the values in each variable are expected to be the same.}
+
+\item{label.show.varname}{Whether to include the variable name in the node label.}
+
+\item{label.max.length}{Maximum number of characters in the node label.}
 }
 \description{
 Creates a dictionary of the nodes.

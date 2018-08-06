@@ -19,6 +19,8 @@
 #'    the same color as node in the first or last variable.
 #' @param variables.share.values If \code{TRUE}, and \code{link.color = "Source"}
 #'    or \code{"Target"}, then the same set colors will be used for each variable.
+#' @param label.max.length Maximum number of characters in each node label.
+#' @param label.show.varname Show variable name in node label.
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom grDevices col2rgb rgb
 #' @return A sankey diagram (HTMLwidget).
@@ -30,6 +32,7 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
                           font.size = 12, font.family = "Times New Roman", colors = NULL,
                           link.color = c("None", "Source", "Target", "First variable",
                           "Last variable")[1], variables.share.values = FALSE,
+                          label.show.varname = TRUE, label.max.length = 100,
                           node.width = 30, node.padding = 10)
 {
     if (!is.data.frame(data))
@@ -56,7 +59,8 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     if (link.color %in% c("Source", "Target") && variables.share.values &&
         any(tmp.is.numeric) && !all(tmp.is.numeric))
         stop("'Variables share common values' has been set to true so variables must be of the same type.")
-    variables <- categorizeData(subset.data, weights, max.categories, variables.share.values)
+    variables <- categorizeData(subset.data, weights, max.categories, 
+        variables.share.values, label.show.varname, label.max.length)
     links <- computeLinks(variables, weights)
     nodes <- nodeDictionary(variables)
 
@@ -207,10 +211,13 @@ nodeDictionary <- function(list.of.factors)
 #' Quantizes numeric variables.
 #' @param data A \code{\link{data.frame}} or \code{\link{list}} of variables.
 #' @param weights A numeric vector giving the weight of each row in \code{data}.
-#' @param max.categories When the number of unique values
+#' @param max.categories When the number of unique values exceeds this value,
+#' the variable is quantized.
 #' @param share.values Whether the values in each variable are expected to be the same.
-#' of numeric data exceeds this value, the variable is quantized.
-categorizeData <- function(data, weights, max.categories, share.values)
+#' @param label.show.varname Whether to include the variable name in the node label. 
+#' @param label.max.length Maximum number of characters in the node label.
+categorizeData <- function(data, weights, max.categories, share.values, 
+                           label.show.varname, label.max.length)
 {
     var.names <- names(data)
     n <- length(var.names)
@@ -240,16 +247,19 @@ categorizeData <- function(data, weights, max.categories, share.values)
         while (length(unique(data[[i]])) > max.categories)
         {
             node.change <- findNodesToMerge(data, i, weights)
-            data[[i]] <- mergeNodes(data[[i]], node.change)
+            data[[i]] <- mergeNodes(data[[i]], node.change, label.max.length)
             if (share.values)
             {
                for (j in 1:n)
-                    data[[i]] <- mergeNodes(data[[i]], node.change)
-                all.dat <- mergeNodes(all.dat, node.change)
+                    data[[i]] <- mergeNodes(data[[i]], node.change, label.max.length)
+                all.dat <- mergeNodes(all.dat, node.change, label.max.length)
             }
         }
         data[[i]] <- addNA(data[[i]], ifany = TRUE)
-        levels(data[[i]]) <- paste(var.names[i], levels(data[[i]]), sep = ": ")
+        if (label.show.varname)
+            levels(data[[i]]) <- paste(var.names[i], levels(data[[i]]), sep = ": ")
+        else
+            levels(data[[i]]) <- paste0("", levels(data[[i]]))
     }
     if (share.values)
         attr(data, "all.levels") <- levels(all.dat)
@@ -319,11 +329,12 @@ findNodesToMerge <- function(df, column, weights = NULL)
 #' @param old.nodes a vector containing factor levels to merge.
 #'   Note level names are used rather than the numeric representation
 #'   is used so it can be applied to multiple factors
-mergeNodes <- function(x, old.nodes)
+#' @param nchar Maximum number of characters in each label.
+mergeNodes <- function(x, old.nodes, nchar)
 {
     new.node <- paste(old.nodes, collapse = ", ")
-    if (nchar(new.node) > 100)
-        new.node <- paste0(substr(new.node, 1, 100), " ...")
+    if (nchar(new.node) > nchar)
+        new.node <- paste0(substr(new.node, 1, nchar), " ...")
     ind <- match(old.nodes, levels(x))
     levels(x)[ind] <- new.node
     return(x)

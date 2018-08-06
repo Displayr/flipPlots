@@ -7,7 +7,8 @@
 SankeyDiagram(data, max.categories = 8, subset = NULL, weights = NULL,
   font.size = 12, font.family = "Times New Roman", colors = NULL,
   link.color = c("None", "Source", "Target", "First variable",
-  "Last variable")[1], variables.share.values = FALSE, node.width = 30,
+  "Last variable")[1], variables.share.values = FALSE,
+  label.show.varname = TRUE, label.max.length = 100, node.width = 30,
   node.padding = 10)
 }
 \arguments{
@@ -35,6 +36,10 @@ the same color as node in the first or last variable.}
 
 \item{variables.share.values}{If \code{TRUE}, and \code{link.color = "Source"}
 or \code{"Target"}, then the same set colors will be used for each variable.}
+
+\item{label.show.varname}{Show variable name in node label.}
+
+\item{label.max.length}{Maximum number of characters in each node label.}
 
 \item{node.width}{Width of the width.}
 
