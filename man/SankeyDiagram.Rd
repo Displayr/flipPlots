@@ -4,12 +4,14 @@
 \alias{SankeyDiagram}
 \title{Sankey Diagram}
 \usage{
-SankeyDiagram(data, max.categories = 8, subset = NULL, weights = NULL,
-  font.size = 12, font.family = "Times New Roman", colors = NULL,
-  link.color = c("None", "Source", "Target", "First variable",
-  "Last variable")[1], variables.share.values = FALSE,
-  label.show.varname = TRUE, label.max.length = 100, node.width = 30,
-  node.padding = 10)
+SankeyDiagram(data, max.categories = 8, subset = NULL,
+  weights = NULL, font.size = 12, font.family = "Times New Roman",
+  colors = NULL, link.color = c("None", "Source", "Target",
+  "First variable", "Last variable")[1], variables.share.values = FALSE,
+  label.show.varname = TRUE, label.max.length = 100,
+  label.show.counts = FALSE, label.show.percentages = FALSE,
+  node.width = 30, node.padding = 10,
+  hovertext.show.percentages = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
@@ -41,9 +43,15 @@ or \code{"Target"}, then the same set colors will be used for each variable.}
 
 \item{label.max.length}{Maximum number of characters in each node label.}
 
+\item{label.show.counts}{Append count data to node labels.}
+
+\item{label.show.percentages}{Append percentages to node labels.}
+
 \item{node.width}{Width of the width.}
 
 \item{node.padding}{Vertical space between nodes.}
+
+\item{hovertext.show.percentages}{Show percentages instead of counts in the hovertext.}
 }
 \value{
 A sankey diagram (HTMLwidget).

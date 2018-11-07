@@ -4,13 +4,15 @@
 \alias{computeLinks}
 \title{computeLinks}
 \usage{
-computeLinks(data, weights)
+computeLinks(data, weights, show.percentages = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{list}} of variables.}
 
 \item{weights}{A numeric vector with length equal to the number of rows in
 \code{data}. This is used to adjust the width of the links.}
+
+\item{show.percentages}{Whether to show percentages or counts}
 }
 \description{
 Computes the links between the nodes, so that can be expressed as a network.

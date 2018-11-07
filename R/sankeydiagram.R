@@ -21,6 +21,9 @@
 #'    or \code{"Target"}, then the same set colors will be used for each variable.
 #' @param label.max.length Maximum number of characters in each node label.
 #' @param label.show.varname Show variable name in node label.
+#' @param label.show.counts Append count data to node labels.
+#' @param label.show.percentages Append percentages to node labels.
+#' @param hovertext.show.percentages Show percentages instead of counts in the hovertext.
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom grDevices col2rgb rgb
 #' @return A sankey diagram (HTMLwidget).
@@ -33,7 +36,9 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
                           link.color = c("None", "Source", "Target", "First variable",
                           "Last variable")[1], variables.share.values = FALSE,
                           label.show.varname = TRUE, label.max.length = 100,
-                          node.width = 30, node.padding = 10)
+                          label.show.counts = FALSE, label.show.percentages = FALSE,
+                          node.width = 30, node.padding = 10, 
+                          hovertext.show.percentages = FALSE)
 {
     if (!is.data.frame(data))
         data <- as.data.frame(data)
@@ -59,10 +64,10 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     if (link.color %in% c("Source", "Target") && variables.share.values &&
         any(tmp.is.numeric) && !all(tmp.is.numeric))
         stop("'Variables share common values' has been set to true so variables must be of the same type.")
-    variables <- categorizeData(subset.data, weights, max.categories, 
+    variables <- categorizeData(subset.data, weights, max.categories,
         variables.share.values, label.show.varname, label.max.length)
-    links <- computeLinks(variables, weights)
-    nodes <- nodeDictionary(variables)
+    links <- computeLinks(variables, weights, hovertext.show.percentages)
+    nodes <- nodeDictionary(variables, weights, label.show.counts, label.show.percentages)
 
     # Determine color of nodes
     grps <- 0:(nrow(nodes)-1)
@@ -100,7 +105,8 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
     sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
                 Source = "source", Target = "target", Value = "value", nodePadding = node.padding,
-                fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str))
+                fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str),
+                units = if (hovertext.show.percentages) "%" else "")
 }
 
 getNodeGroups <- function(type, links)
@@ -159,12 +165,15 @@ colorsToHex <- function(xx)
 #' @param data A \code{\link{data.frame}} or \code{\link{list}} of variables.
 #' @param weights A numeric vector with length equal to the number of rows in
 #'  \code{data}. This is used to adjust the width of the links.
+#' @param show.percentages Whether to show percentages or counts
 #' @importFrom stats xtabs
-computeLinks <- function(data, weights)
+computeLinks <- function(data, weights, show.percentages = FALSE)
 {
     links <- NULL
     counter <- 0
     n <- length(data)
+    tmp.total <- nrow(data)
+
     for (i in 1:(n - 1)){
         x <- data[[i]]
         y <- data[[i + 1]]
@@ -177,9 +186,13 @@ computeLinks <- function(data, weights)
             row.node <- counter + i.x - 1
             for (i.y in 1:n.y) {
                 value <- x.y[i.x, i.y]
-                if (value > 0) {
+                if (value > 0)
+                {
+                    if (show.percentages)
+                        value <- value / tmp.total * 100
+
                     column.node <- counter + n.x + i.y - 1
-                    links <- rbind(links,c(row.node,column.node, x.y[i.x, i.y]))
+                    links <- rbind(links,c(row.node,column.node, value))
                 }
             }
         }
@@ -190,17 +203,26 @@ computeLinks <- function(data, weights)
     links
 }
 
-#' nodeDictionary
-#'
-#' Creates a dictionary of the nodes.
-#' @param list.of.factors Factors representing variables in the data file.
-nodeDictionary <- function(list.of.factors)
+nodeDictionary <- function(list.of.factors, weights, show.counts, show.percentages)
 {
     nodes <- NULL
     for (vr in list.of.factors)
     {
-        for (r in levels(vr))
-            nodes <- c(nodes, r)
+        tmp.info <- if (is.null(weights)) xtabs(~vr)
+                    else                  xtabs(weights~vr)
+
+        suffix <- ""
+        if (show.counts)
+            suffix <- paste("n =", tmp.info)
+        if (show.percentages)
+        {
+            denom <- if (!is.null(weights)) sum(weights, na.rm = TRUE) else length(vr)
+            suffix <- paste(suffix, sprintf("%.0f%%", tmp.info/denom*100), 
+                sep = if (show.counts) ", " else "")
+        }
+        if (nchar(suffix[1]) > 0)
+            suffix <- paste0("(", suffix, ")")       
+        nodes <- c(nodes, paste(levels(vr), suffix))
     }
     data.frame(name = nodes)
 }
@@ -214,9 +236,9 @@ nodeDictionary <- function(list.of.factors)
 #' @param max.categories When the number of unique values exceeds this value,
 #' the variable is quantized.
 #' @param share.values Whether the values in each variable are expected to be the same.
-#' @param label.show.varname Whether to include the variable name in the node label. 
+#' @param label.show.varname Whether to include the variable name in the node label.
 #' @param label.max.length Maximum number of characters in the node label.
-categorizeData <- function(data, weights, max.categories, share.values, 
+categorizeData <- function(data, weights, max.categories, share.values,
                            label.show.varname, label.max.length)
 {
     var.names <- names(data)
