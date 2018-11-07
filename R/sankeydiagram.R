@@ -6,7 +6,9 @@
 #' of numeric data exceeds this value, the variable is quantized.
 #' @param subset An optional vector specifying a subset of observations to be
 #'   used in the fitting process.
-#' @param weights An optional vector of sampling weights.
+#' @param weights An optional vector of weights. If not provided, the width of
+#' the links is proportional to the number of rows in the data frame that correspond
+#' to the path (flow).
 #' @param font.size Font size of node labels.
 #' @param font.family Font family of node labels.
 #' @param colors Colors of the nodes, supplied as a vector of hex colors.
