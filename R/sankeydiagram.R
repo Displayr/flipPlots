@@ -78,6 +78,8 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         all.levels <- attr(variables, "all.levels")
         tmp.var.names <- paste(names(variables), ": ", sep = "", collapse = "|")
         tmp.node.names <- gsub(tmp.var.names, "", nodes$name)
+        if (label.show.counts || label.show.percentages)
+            tmp.node.names <- gsub(" \\([a-zA-Z0-9 =%,]*\\)$", "", tmp.node.names, perl = TRUE)
         nodes$group <- factor(match(tmp.node.names, all.levels))
     }
     else if (link.color == "None")      # nodes at each level to be the same
@@ -210,21 +212,24 @@ nodeDictionary <- function(list.of.factors, weights, show.counts, show.percentag
     nodes <- NULL
     for (vr in list.of.factors)
     {
-        tmp.info <- if (is.null(weights)) xtabs(~vr)
-                    else                  xtabs(weights~vr)
-
-        suffix <- ""
-        if (show.counts)
-            suffix <- paste("n =", tmp.info)
-        if (show.percentages)
+        if (show.counts || show.percentages)
         {
-            denom <- if (!is.null(weights)) sum(weights, na.rm = TRUE) else length(vr)
-            suffix <- paste(suffix, sprintf("%.0f%%", tmp.info/denom*100), 
-                sep = if (show.counts) ", " else "")
+            tmp.info <- if (is.null(weights)) xtabs(~vr)
+                        else                  xtabs(weights~vr)
+
+            suffix <- ""
+            if (show.counts)
+                suffix <- paste("n =", tmp.info)
+            if (show.percentages)
+            {
+                denom <- if (!is.null(weights)) sum(weights, na.rm = TRUE) else length(vr)
+                suffix <- paste(suffix, sprintf("%.0f%%", tmp.info/denom*100), 
+                    sep = if (show.counts) ", " else "")
+            }
+            nodes <- c(nodes, paste0(levels(vr), " (", suffix, ")"))
         }
-        if (nchar(suffix[1]) > 0)
-            suffix <- paste0("(", suffix, ")")       
-        nodes <- c(nodes, paste(levels(vr), suffix))
+        else     
+            nodes <- c(nodes, levels(vr))
     }
     data.frame(name = nodes)
 }
