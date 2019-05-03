@@ -6,11 +6,11 @@
 \usage{
 SankeyDiagram(data, max.categories = 8, subset = NULL,
   weights = NULL, font.size = 12, font.family = "Times New Roman",
-  colors = NULL, link.color = c("None", "Source", "Target",
-  "First variable", "Last variable")[1], variables.share.values = FALSE,
-  label.show.varname = TRUE, label.max.length = 100,
-  label.show.counts = FALSE, label.show.percentages = FALSE,
-  node.width = 30, node.padding = 10,
+  font.unit = "px", colors = NULL, link.color = c("None", "Source",
+  "Target", "First variable", "Last variable")[1],
+  variables.share.values = FALSE, label.show.varname = TRUE,
+  label.max.length = 100, label.show.counts = FALSE,
+  label.show.percentages = FALSE, node.width = 30, node.padding = 10,
   hovertext.show.percentages = FALSE)
 }
 \arguments{
@@ -29,6 +29,10 @@ to the path (flow).}
 \item{font.size}{Font size of node labels.}
 
 \item{font.family}{Font family of node labels.}
+
+\item{font.unit}{One of "px" of "pt". By default all font sizes are specified in terms of
+pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
+points ("pt"), which will be consistent with font sizes in text boxes.}
 
 \item{colors}{Colors of the nodes, supplied as a vector of hex colors.
 Transparency values (alpha) will be ignored.}

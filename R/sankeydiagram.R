@@ -11,6 +11,9 @@
 #' to the path (flow).
 #' @param font.size Font size of node labels.
 #' @param font.family Font family of node labels.
+#' @param font.unit One of "px" of "pt". By default all font sizes are specified in terms of
+#'  pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
+#'  points ("pt"), which will be consistent with font sizes in text boxes.
 #' @param colors Colors of the nodes, supplied as a vector of hex colors.
 #'    Transparency values (alpha) will be ignored.
 #' @param node.width Width of the width.
@@ -34,12 +37,13 @@
 #' factors.
 #' @export
 SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NULL,
-                          font.size = 12, font.family = "Times New Roman", colors = NULL,
+                          font.size = 12, font.family = "Times New Roman",
+                          font.unit = "px", colors = NULL,
                           link.color = c("None", "Source", "Target", "First variable",
                           "Last variable")[1], variables.share.values = FALSE,
                           label.show.varname = TRUE, label.max.length = 100,
                           label.show.counts = FALSE, label.show.percentages = FALSE,
-                          node.width = 30, node.padding = 10, 
+                          node.width = 30, node.padding = 10,
                           hovertext.show.percentages = FALSE)
 {
     if (!is.data.frame(data))
@@ -105,6 +109,14 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
         color.str <- paste0('d3.scaleOrdinal() .domain([\'',
                      paste(levels(nodes$group), collapse = '\',\''), '\']) .range([\'',
                      paste(colorsToHex(colors), collapse = '\',\''), '\']);')
+
+    # For the other chart types, the font size conversion
+    # happens inside flipChart::CChart but SankeyDiagram is called separately.
+    if (tolower(font.unit) %in% c("pt", "point", "points"))
+    {
+        fsc <- 1.3333
+        font.size = round(fsc * font.size, 0)
+    }
 
     sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
@@ -223,12 +235,12 @@ nodeDictionary <- function(list.of.factors, weights, show.counts, show.percentag
             if (show.percentages)
             {
                 denom <- if (!is.null(weights)) sum(weights, na.rm = TRUE) else length(vr)
-                suffix <- paste(suffix, sprintf("%.0f%%", tmp.info/denom*100), 
+                suffix <- paste(suffix, sprintf("%.0f%%", tmp.info/denom*100),
                     sep = if (show.counts) ", " else "")
             }
             nodes <- c(nodes, paste0(levels(vr), " (", suffix, ")"))
         }
-        else     
+        else
             nodes <- c(nodes, levels(vr))
     }
     data.frame(name = nodes)
