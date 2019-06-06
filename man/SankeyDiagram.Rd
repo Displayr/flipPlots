@@ -4,7 +4,8 @@
 \alias{SankeyDiagram}
 \title{Sankey Diagram}
 \usage{
-SankeyDiagram(data, max.categories = 8, subset = NULL,
+SankeyDiagram(data = NULL, links.and.nodes = NULL,
+  output.data.only = FALSE, max.categories = 8, subset = NULL,
   weights = NULL, font.size = 12, font.family = "Times New Roman",
   font.unit = "px", colors = NULL, link.color = c("None", "Source",
   "Target", "First variable", "Last variable")[1],
@@ -15,6 +16,11 @@ SankeyDiagram(data, max.categories = 8, subset = NULL,
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
+
+\item{links.and.nodes}{Input a list structure from a previous call of SankeyDiagram
+with \code{output.data.only = TRUE}.}
+
+\item{output.data.only}{Only outputs the link and node structure without printing the sankey diagram.}
 
 \item{max.categories}{When the number of unique values
 of numeric data exceeds this value, the variable is quantized.}

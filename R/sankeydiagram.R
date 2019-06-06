@@ -2,6 +2,9 @@
 #'
 #' Creates a sankey diagram of the relationship between different variables.
 #' @param data A \code{\link{data.frame}} of variables.
+#' @param output.data.only Only outputs the link and node structure without printing the sankey diagram.
+#' @param links.and.nodes Input a list structure from a previous call of SankeyDiagram
+#'  with \code{output.data.only = TRUE}.
 #' @param max.categories When the number of unique values
 #' of numeric data exceeds this value, the variable is quantized.
 #' @param subset An optional vector specifying a subset of observations to be
@@ -36,7 +39,8 @@
 #' To see patterns with text variables, they should first be turned into
 #' factors.
 #' @export
-SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NULL,
+SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only = FALSE,
+                          max.categories = 8, subset = NULL, weights = NULL,
                           font.size = 12, font.family = "Times New Roman",
                           font.unit = "px", colors = NULL,
                           link.color = c("None", "Source", "Target", "First variable",
@@ -46,62 +50,74 @@ SankeyDiagram <- function(data, max.categories = 8, subset = NULL, weights = NUL
                           node.width = 30, node.padding = 10,
                           hovertext.show.percentages = FALSE)
 {
-    if (!is.data.frame(data))
-        data <- as.data.frame(data)
-    if (nrow(data) < 2)
-        stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
-    if (max.categories < 2)
-        stop("Maximum number of categories must be greater than 1.")
-
-    if (!is.null(weights) & length(weights) != nrow(data))
-        stop("'weights' and 'data' are required to have the same number of observations. They do not.")
-    if (!is.null(subset) & length(subset) > 1 & length(subset) != nrow(data))
-        stop("'subset' and 'data' are required to have the same number of observations. They do not.")
-
-    # Take subset and resample to generate a weighted sample, if necessary.
-    if (is.null(subset))
-        subset.data <- data
-    else {
-        subset.data <- data[subset, , drop = FALSE]
-        weights <- weights[subset]
-    }
-
-    tmp.is.numeric <- sapply(subset.data, is.numeric)
-    if (link.color %in% c("Source", "Target") && variables.share.values &&
-        any(tmp.is.numeric) && !all(tmp.is.numeric))
-        stop("'Variables share common values' has been set to true so variables must be of the same type.")
-    variables <- categorizeData(subset.data, weights, max.categories,
-        variables.share.values, label.show.varname, label.max.length)
-    links <- computeLinks(variables, weights, hovertext.show.percentages)
-    nodes <- nodeDictionary(variables, weights, label.show.counts, label.show.percentages)
-
-    # Determine color of nodes
-    grps <- 0:(nrow(nodes)-1)
-    if (variables.share.values && link.color %in% c("Source", "Target"))
+    if (!is.null(links.and.nodes))
     {
-        all.levels <- attr(variables, "all.levels")
-        tmp.var.names <- paste(names(variables), ": ", sep = "", collapse = "|")
-        tmp.node.names <- gsub(tmp.var.names, "", nodes$name)
-        if (label.show.counts || label.show.percentages)
-            tmp.node.names <- gsub(" \\([a-zA-Z0-9 =%,]*\\)$", "", tmp.node.names, perl = TRUE)
-        nodes$group <- factor(match(tmp.node.names, all.levels))
-    }
-    else if (link.color == "None")      # nodes at each level to be the same
-         nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
-    else if (link.color == "Last variable" || link.color == "First variable")
-        nodes$group <- factor(getNodeGroups(link.color, links))
-    else
-        nodes$group <- factor(grps) # all nodes different colors
+        link.color <- links.and.nodes$link.color
+        links <- links.and.nodes$links
+        nodes <- links.and.nodes$nodes
 
-    # Determine colors of links
-    if (link.color == "Source")
-        links$group <- as.factor(nodes$group[links$source+1])
-    else if (link.color == "Target")
-        links$group <- as.factor(nodes$group[links$target+1])
-    else if (link.color == "Last variable")
-        links$group <- as.factor(nodes$group[links$target+1])
-    else if (link.color == "First variable")
-        links$group <- as.factor(nodes$group[links$source+1])
+    } else
+    {
+        if (!is.data.frame(data))
+            data <- as.data.frame(data)
+        if (nrow(data) < 2)
+            stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
+        if (max.categories < 2)
+            stop("Maximum number of categories must be greater than 1.")
+
+        if (!is.null(weights) & length(weights) != nrow(data))
+            stop("'weights' and 'data' are required to have the same number of observations. They do not.")
+        if (!is.null(subset) & length(subset) > 1 & length(subset) != nrow(data))
+            stop("'subset' and 'data' are required to have the same number of observations. They do not.")
+
+        # Take subset and resample to generate a weighted sample, if necessary.
+        if (is.null(subset))
+            subset.data <- data
+        else {
+            subset.data <- data[subset, , drop = FALSE]
+            weights <- weights[subset]
+        }
+
+        tmp.is.numeric <- sapply(subset.data, is.numeric)
+        if (link.color %in% c("Source", "Target") && variables.share.values &&
+            any(tmp.is.numeric) && !all(tmp.is.numeric))
+            stop("'Variables share common values' has been set to true so variables must be of the same type.")
+        variables <- categorizeData(subset.data, weights, max.categories,
+            variables.share.values, label.show.varname, label.max.length)
+        links <- computeLinks(variables, weights, hovertext.show.percentages)
+        nodes <- nodeDictionary(variables, weights, label.show.counts, label.show.percentages)
+
+        # Determine color of nodes
+        grps <- 0:(nrow(nodes)-1)
+        if (variables.share.values && link.color %in% c("Source", "Target"))
+        {
+            all.levels <- attr(variables, "all.levels")
+            tmp.var.names <- paste(names(variables), ": ", sep = "", collapse = "|")
+            tmp.node.names <- gsub(tmp.var.names, "", nodes$name)
+            if (label.show.counts || label.show.percentages)
+                tmp.node.names <- gsub(" \\([a-zA-Z0-9 =%,]*\\)$", "", tmp.node.names, perl = TRUE)
+            nodes$group <- factor(match(tmp.node.names, all.levels))
+        }
+        else if (link.color == "None")      # nodes at each level to be the same
+             nodes$group <- factor(rep(1:ncol(variables), sapply(variables, function(x){length(unique(x))})))
+        else if (link.color == "Last variable" || link.color == "First variable")
+            nodes$group <- factor(getNodeGroups(link.color, links))
+        else
+            nodes$group <- factor(grps) # all nodes different colors
+
+        # Determine colors of links
+        if (link.color == "Source")
+            links$group <- as.factor(nodes$group[links$source+1])
+        else if (link.color == "Target")
+            links$group <- as.factor(nodes$group[links$target+1])
+        else if (link.color == "Last variable")
+            links$group <- as.factor(nodes$group[links$target+1])
+        else if (link.color == "First variable")
+            links$group <- as.factor(nodes$group[links$source+1])
+    }
+
+    if (output.data.only)
+        return(list(link.color = link.color, links = links, nodes = nodes))
 
     if (is.null(colors))
         color.str <- "d3.scaleOrdinal(d3.schemeCategory20);"
