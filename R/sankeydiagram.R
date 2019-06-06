@@ -55,6 +55,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
         link.color <- links.and.nodes$link.color
         links <- links.and.nodes$links
         nodes <- links.and.nodes$nodes
+        hovertext.show.percentages <- links.and.nodes$hovertext.show.percentages
 
     } else
     {
@@ -117,7 +118,8 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
     }
 
     if (output.data.only)
-        return(list(link.color = link.color, links = links, nodes = nodes))
+        return(list(link.color = link.color, links = links, nodes = nodes, 
+                    hovertext.show.percentages = hovertext.show.percentages))
 
     if (is.null(colors))
         color.str <- "d3.scaleOrdinal(d3.schemeCategory20);"
