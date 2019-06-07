@@ -32,6 +32,7 @@
 #' @param label.show.counts Append count data to node labels.
 #' @param label.show.percentages Append percentages to node labels.
 #' @param hovertext.show.percentages Show percentages instead of counts in the hovertext.
+#' @param sinks.right Logical indicating whether to move the last nodes to the right border of the plot.
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom grDevices col2rgb rgb
 #' @return A sankey diagram (HTMLwidget).
@@ -47,7 +48,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
                           "Last variable")[1], variables.share.values = FALSE,
                           label.show.varname = TRUE, label.max.length = 100,
                           label.show.counts = FALSE, label.show.percentages = FALSE,
-                          node.width = 30, node.padding = 10,
+                          node.width = 30, node.padding = 10, sinks.right = TRUE,
                           hovertext.show.percentages = FALSE)
 {
     if (!is.null(links.and.nodes))
@@ -118,7 +119,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
     }
 
     if (output.data.only)
-        return(list(link.color = link.color, links = links, nodes = nodes, 
+        return(list(link.color = link.color, links = links, nodes = nodes,
                     hovertext.show.percentages = hovertext.show.percentages))
 
     if (is.null(colors))
@@ -140,7 +141,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
                 Source = "source", Target = "target", Value = "value", nodePadding = node.padding,
                 fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str),
-                units = if (hovertext.show.percentages) "%" else "")
+                units = if (hovertext.show.percentages) "%" else "", sinksRight = sinks.right)
 }
 
 getNodeGroups <- function(type, links)

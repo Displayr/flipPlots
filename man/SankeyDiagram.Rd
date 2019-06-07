@@ -12,7 +12,7 @@ SankeyDiagram(data = NULL, links.and.nodes = NULL,
   variables.share.values = FALSE, label.show.varname = TRUE,
   label.max.length = 100, label.show.counts = FALSE,
   label.show.percentages = FALSE, node.width = 30, node.padding = 10,
-  hovertext.show.percentages = FALSE)
+  sinks.right = TRUE, hovertext.show.percentages = FALSE)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
@@ -62,6 +62,8 @@ or \code{"Target"}, then the same set colors will be used for each variable.}
 \item{node.width}{Width of the width.}
 
 \item{node.padding}{Vertical space between nodes.}
+
+\item{sinks.right}{Logical indicating whether to move the last nodes to the right border of the plot.}
 
 \item{hovertext.show.percentages}{Show percentages instead of counts in the hovertext.}
 }
