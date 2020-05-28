@@ -60,7 +60,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
 
     } else
     {
-        data <- as.data.frame(as.list(data), stringsAsFactors = TRUE)
+        data <- as.data.frame(as.list(data), stringsAsFactors = TRUE, check.names = FALSE)
         if (nrow(data) < 2)
             stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
         if (max.categories < 2)
