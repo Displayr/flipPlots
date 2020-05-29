@@ -60,7 +60,22 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
 
     } else
     {
-        data <- as.data.frame(as.list(data), stringsAsFactors = TRUE, check.names = FALSE)
+        if (!is.data.frame(data))
+            data <- as.data.frame(data)
+        else if (!is.null(attr(data[[1]], "questiontype")))
+        {
+            # From R 4.0, stringsAsFactors defaults to FALSE.
+            # Because of this, a specific call to as.data.frame() in the
+            # Visualization - Sankey Diagram wiki code no longer behaves as
+            # before. This only affects users who supplied variables as data,
+            # which is why we check for the questiontype attribute.
+            # The code below converts any strings to factors, which would have
+            # previously been done by the call to as.data.frame().
+            data <- as.data.frame(as.list(data),
+                                  stringsAsFactors = TRUE,
+                                  check.names = FALSE)
+        }
+
         if (nrow(data) < 2)
             stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
         if (max.categories < 2)
