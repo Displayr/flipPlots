@@ -1,7 +1,7 @@
 Package: flipPlots
 Type: Package
 Title: Creates Plots
-Version: 1.2.0
+Version: 1.2.1
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Wrappers for various plot types.
