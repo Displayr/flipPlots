@@ -4,8 +4,14 @@
 \alias{categorizeData}
 \title{categorizeData}
 \usage{
-categorizeData(data, weights, max.categories, share.values,
-  label.show.varname, label.max.length)
+categorizeData(
+  data,
+  weights,
+  max.categories,
+  share.values,
+  label.show.varname,
+  label.max.length
+)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{list}} of variables.}

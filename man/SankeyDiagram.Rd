@@ -4,15 +4,28 @@
 \alias{SankeyDiagram}
 \title{Sankey Diagram}
 \usage{
-SankeyDiagram(data = NULL, links.and.nodes = NULL,
-  output.data.only = FALSE, max.categories = 8, subset = NULL,
-  weights = NULL, font.size = 12, font.family = "Times New Roman",
-  font.unit = "px", colors = NULL, link.color = c("None", "Source",
-  "Target", "First variable", "Last variable")[1],
-  variables.share.values = FALSE, label.show.varname = TRUE,
-  label.max.length = 100, label.show.counts = FALSE,
-  label.show.percentages = FALSE, node.width = 30, node.padding = 10,
-  sinks.right = TRUE, hovertext.show.percentages = FALSE)
+SankeyDiagram(
+  data = NULL,
+  links.and.nodes = NULL,
+  output.data.only = FALSE,
+  max.categories = 8,
+  subset = NULL,
+  weights = NULL,
+  font.size = 12,
+  font.family = "Times New Roman",
+  font.unit = "px",
+  colors = NULL,
+  link.color = c("None", "Source", "Target", "First variable", "Last variable")[1],
+  variables.share.values = FALSE,
+  label.show.varname = TRUE,
+  label.max.length = 100,
+  label.show.counts = FALSE,
+  label.show.percentages = FALSE,
+  node.width = 30,
+  node.padding = 10,
+  sinks.right = TRUE,
+  hovertext.show.percentages = FALSE
+)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} of variables.}
