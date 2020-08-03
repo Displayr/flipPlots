@@ -12,7 +12,8 @@ SplineWithSimultaneousConfIntervals(
   weights = NULL,
   seed = 42,
   number.draws = 30,
-  confidence = 0.95
+  confidence = 0.95,
+  trim.padding = FALSE
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ in the analysis.}
 \item{number.draws}{Number of possible trend lines to super-impose.}
 
 \item{confidence}{Width of confidence interval shown around the spline.}
+
+\item{trim.padding}{Logical; whether to remove padding around plotly chart.
+Default is set to false so that output is the same as old charts.}
 }
 \description{
 Plots spline with confidence intervals

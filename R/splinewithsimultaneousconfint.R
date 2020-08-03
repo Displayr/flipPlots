@@ -10,6 +10,8 @@
 #' @param seed Random seed for reproducibility
 #' @param confidence Width of confidence interval shown around the spline.
 #' @param number.draws Number of possible trend lines to super-impose.
+#' @param trim.padding Logical; whether to remove padding around plotly chart.
+#'   Default is set to false so that output is the same as old charts.
 #' @importFrom flipTransformations AsNumeric AdjustDataToReflectWeights
 #' @importFrom mgcv gam mroot
 #' @importFrom ggplot2 ggplot geom_ribbon geom_path aes theme_set theme_bw labs scale_y_continuous
@@ -26,7 +28,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 weights = NULL,
                                                 seed = 42,
                                                 number.draws = 30,
-                                                confidence = 0.95)
+                                                confidence = 0.95,
+                                                trim.padding = FALSE)
 {
     data <- data.frame(outcome = AsNumeric(outcome, binary = FALSE),
                       predictor = predictor,
@@ -56,10 +59,10 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     # Fitting the model
     m <- gam(outcome ~ s(predictor.numeric), data = data, link = if(logit) family(binomial) else identity,
              method = "REML")
-    newd <- with(data, 
-                 data.frame(predictor.numeric = seq(min(predictor.numeric, na.rm = TRUE), 
+    newd <- with(data,
+                 data.frame(predictor.numeric = seq(min(predictor.numeric, na.rm = TRUE),
                                 max(predictor.numeric, na.rm = TRUE), length = 200),
-                            predictor = seq(min(predictor, na.rm = TRUE), 
+                            predictor = seq(min(predictor, na.rm = TRUE),
                                 max(predictor, na.rm = TRUE), length = 200)))
     if (inherits(newd$predictor, "POSIXct"))
         newd$predictor <- as.POSIXct(newd$predictor, origin = "1970-01-01")
@@ -68,7 +71,7 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     se.fit <- pred$se.fit
 
     # Sample from MVN random deviates
-    rmvn <- function(n, mu, sig) 
+    rmvn <- function(n, mu, sig)
     {
         L <- mroot(sig)
         m <- ncol(L)
@@ -104,7 +107,7 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
         stackFits <- stack(as.data.frame(fits[, rnd]))
         stackFits <- transform(stackFits, predictor.numeric = rep(newd$predictor.numeric, length(rnd)))
         stackFits$predictor = newd$predictor
-        p = p + geom_path(data = stackFits, 
+        p = p + geom_path(data = stackFits,
                 mapping = aes(y = .data$values, x = .data$predictor, group = .data$ind),
                 alpha = 0.4, colour = "grey20")
     }
@@ -112,5 +115,6 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
         p <- p + scale_y_continuous(labels = percent)
     p <- ggplotly(p)
     p <- config(p, displayModeBar = FALSE)
+    p$sizingPolicy$browser$padding <- if (trim.padding) 0 else 40
     p
 }
