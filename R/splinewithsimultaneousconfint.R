@@ -33,9 +33,11 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
 {
     if (type == "Binary Logit")
     {
-        twolevel <- DichotomizeFactor(as.factor(outcome))
+        twolevel <- try(DichotomizeFactor(as.factor(outcome)), silent = TRUE)
+        if (inherits(twolevel, "try-error"))
+            stop("Could not construct Binary Logit model because the Outcome variable could not be converted into two levels")
         tidy.outcome <- twolevel == levels(twolevel)[2]
-        attr(outcome, "label") <- levels(twolevel)[2]
+        attr(outcome, "label") <- paste(attr(outcome, "label"), levels(twolevel)[2])
     } else
         tidy.outcome <- AsNumeric(outcome, binary = FALSE)
 
