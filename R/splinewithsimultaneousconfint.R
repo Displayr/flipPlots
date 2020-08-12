@@ -12,7 +12,7 @@
 #' @param number.draws Number of possible trend lines to super-impose.
 #' @param trim.padding Logical; whether to remove padding around plotly chart.
 #'   Default is set to false so that output is the same as old charts.
-#' @importFrom flipTransformations AsNumeric AdjustDataToReflectWeights
+#' @importFrom flipTransformations AsNumeric AdjustDataToReflectWeights DichotomizeFactor
 #' @importFrom mgcv gam mroot
 #' @importFrom ggplot2 ggplot geom_ribbon geom_path aes theme_set theme_bw labs scale_y_continuous
 #' @importFrom plotly ggplotly config
@@ -31,7 +31,15 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 confidence = 0.95,
                                                 trim.padding = FALSE)
 {
-    data <- data.frame(outcome = AsNumeric(outcome, binary = FALSE),
+    if (type == "Binary Logit")
+    {
+        twolevel <- DichotomizeFactor(as.factor(outcome))
+        tidy.outcome <- twolevel == levels(twolevel)[2]
+        attr(outcome, "label") <- levels(twolevel)[2]
+    } else
+        tidy.outcome <- AsNumeric(outcome, binary = FALSE)
+
+    data <- data.frame(outcome = tidy.outcome,
                       predictor = predictor,
                       predictor.numeric = scale(as.numeric(predictor)))
     logit <- type == "Binary Logit"
