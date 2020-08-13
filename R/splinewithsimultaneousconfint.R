@@ -78,7 +78,9 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     xlab <- attr(predictor, "label")
 
     # Fitting the model
-    m <- gam(outcome ~ s(predictor.numeric), data = data, link = if(logit) family(binomial) else identity,
+    m <- gam(outcome ~ s(predictor.numeric), data = data,
+             family = if (logit) binomial else gaussian,
+             #link = if(logit) family(binomial) else identity,
              method = "REML")
     newd <- with(data,
                  data.frame(predictor.numeric = seq(min(predictor.numeric, na.rm = TRUE),
