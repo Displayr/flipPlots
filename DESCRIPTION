@@ -20,6 +20,7 @@ Suggests:
     stats,
     testthat,
 Remotes:
-    Displayr/flipTransformations
+    Displayr/flipTransformations,
+    Displayr/plotly
 RoxygenNote: 7.1.1
 Encoding: UTF-8
