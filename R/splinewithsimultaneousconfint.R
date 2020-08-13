@@ -31,13 +31,24 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 confidence = 0.95,
                                                 trim.padding = FALSE)
 {
+    if (length(unique(outcome)) == 1)
+        stop("Could not construct model as outcome variable contains only one value.")
     if (type == "Binary Logit")
     {
         twolevel <- try(DichotomizeFactor(as.factor(outcome)), silent = TRUE)
-        if (inherits(twolevel, "try-error"))
-            stop("Could not construct Binary Logit model because the Outcome variable could not be converted into two levels")
-        tidy.outcome <- twolevel == levels(twolevel)[2]
-        attr(outcome, "label") <- paste(attr(outcome, "label"), levels(twolevel)[2])
+        if (!inherits(twolevel, "try-error"))
+        {
+            tidy.outcome <- twolevel == levels(twolevel)[2]
+            attr(outcome, "label") <- paste(attr(outcome, "label"), levels(twolevel)[2])
+        } else
+        {
+            # DichotomizeFactor can have trouble if variable is very unbalanced
+            # because it uses cumulative probabilities
+            vals <- names(sort(table(outcome), decreasing = TRUE))
+            tidy.outcome <- outcome != vals[1]
+            attr(outcome, "label") <- paste(attr(outcome, "label"),
+                                            paste(vals[-1], collapse = " or "))
+        }
     } else
         tidy.outcome <- AsNumeric(outcome, binary = FALSE)
 
