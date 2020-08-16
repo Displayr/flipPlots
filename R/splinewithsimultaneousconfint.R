@@ -19,7 +19,7 @@
 #' @importFrom utils stack
 #' @importFrom scales percent
 #' @importFrom rlang .data
-#' @importFrom stats binomial coef complete.cases family predict quantile rnorm vcov
+#' @importFrom stats binomial coef complete.cases family predict quantile rnorm vcov gaussian
 #' @export
 SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 predictor,
@@ -35,20 +35,13 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
         stop("Could not construct model as outcome variable contains only one value.")
     if (type == "Binary Logit")
     {
+        # If outcome variable is too unbalanced then binary logit model
+        # cannot be fitted anyway so no need to continue
         twolevel <- try(DichotomizeFactor(as.factor(outcome)), silent = TRUE)
-        if (!inherits(twolevel, "try-error"))
-        {
-            tidy.outcome <- twolevel == levels(twolevel)[2]
-            attr(outcome, "label") <- paste(attr(outcome, "label"), levels(twolevel)[2])
-        } else
-        {
-            # DichotomizeFactor can have trouble if variable is very unbalanced
-            # because it uses cumulative probabilities
-            vals <- names(sort(table(outcome), decreasing = TRUE))
-            tidy.outcome <- outcome != vals[1]
-            attr(outcome, "label") <- paste(attr(outcome, "label"),
-                                            paste(vals[-1], collapse = " or "))
-        }
+        if (inherits(twolevel, "try-error"))
+            stop("Outcome variable cannot be dichotimized (e.g. perhaps only has 1 value).")
+        tidy.outcome <- twolevel == levels(twolevel)[2]
+        attr(outcome, "label") <- paste(attr(outcome, "label"), levels(twolevel)[2])
     } else
         tidy.outcome <- AsNumeric(outcome, binary = FALSE)
 
@@ -79,8 +72,7 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
 
     # Fitting the model
     m <- gam(outcome ~ s(predictor.numeric), data = data,
-             family = if (logit) binomial else gaussian,
-             #link = if(logit) family(binomial) else identity,
+             family = if (logit) binomial(link="logit") else gaussian(link="identity"),
              method = "REML")
     newd <- with(data,
                  data.frame(predictor.numeric = seq(min(predictor.numeric, na.rm = TRUE),
@@ -89,9 +81,12 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                 max(predictor, na.rm = TRUE), length = 200)))
     if (inherits(newd$predictor, "POSIXct"))
         newd$predictor <- as.POSIXct(newd$predictor, origin = "1970-01-01")
-    pred <- predict(m, newd, se.fit = TRUE)
+    pred <- predict(m, newd, type = "response", se.fit = TRUE)
     pred$predictor <- newd$predictor
-    se.fit <- pred$se.fit
+
+    # Get standard errors on scale of linear predictors
+    predB <- predict(m, newd, type = "link", se.fit = TRUE)
+    se.fit <- predB$se.fit
 
     # Sample from MVN random deviates
     rmvn <- function(n, mu, sig)
@@ -110,8 +105,14 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     masd <- apply(absDev, 2L, max)
     crit <- quantile(masd, prob = confidence, type = 8)
     pred <- data.frame(data.frame(pred), newd,
-                       uprS = pred$fit + (crit * pred$se.fit),
-                       lwrS = pred$fit - (crit * pred$se.fit))
+                       uprS = predB$fit + (crit * predB$se.fit),
+                       lwrS = predB$fit - (crit * predB$se.fit))
+    if (logit)
+    {
+        invlink <- family(m)$linkinv
+        pred$uprS <- invlink(pred$uprS)
+        pred$lwrS <- invlink(pred$lwrS)
+    }
     sims <- rmvn(N, mu = coef(m), sig = Vb)
     fits <- Cg %*% t(sims)
 
@@ -127,7 +128,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     if (number.draws > 0)
     {
         rnd <- sample(N, number.draws)
-        stackFits <- stack(as.data.frame(fits[, rnd]))
+        stackFits <- if (logit) stack(as.data.frame(invlink(fits[, rnd])))
+                     else       stack(as.data.frame(fits[, rnd]))
         stackFits <- transform(stackFits, predictor.numeric = rep(newd$predictor.numeric, length(rnd)))
         stackFits$predictor = newd$predictor
         p = p + geom_path(data = stackFits,
