@@ -1,17 +1,27 @@
 language: r
 r:
   - release
-dist: xenial
-sudo: required
+dist: bionic
 cache: packages
 warnings_are_errors: false
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+    packages:
+      - libgdal-dev
+      - libproj-dev
+      - python-protobuf
+      - libprotoc-dev
+      - libprotobuf-dev
+      - libv8-dev
+      - librsvg2-dev
+      - libmpfr-dev
 
 # install debian libraries to match R-servers
 # update pre-installed packages to latest versions
 before_install:
-  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-  - sudo apt-get -qq update
-  - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev
   - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
   - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
