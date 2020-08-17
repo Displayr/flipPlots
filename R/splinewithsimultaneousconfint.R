@@ -81,12 +81,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                 max(predictor, na.rm = TRUE), length = 200)))
     if (inherits(newd$predictor, "POSIXct"))
         newd$predictor <- as.POSIXct(newd$predictor, origin = "1970-01-01")
-    pred <- predict(m, newd, type = "response", se.fit = TRUE)
+    pred <- predict(m, newd, type = "link", se.fit = TRUE)
     pred$predictor <- newd$predictor
-
-    # Get standard errors on scale of linear predictors
-    predB <- predict(m, newd, type = "link", se.fit = TRUE)
-    se.fit <- predB$se.fit
 
     # Sample from MVN random deviates
     rmvn <- function(n, mu, sig)
@@ -101,15 +97,16 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     BUdiff <- rmvn(N, mu = rep(0, nrow(Vb)), sig = Vb)
     Cg <- predict(m, newd, type = "lpmatrix")
     simDev <- Cg %*% t(BUdiff)
-    absDev <- abs(sweep(simDev, 1, se.fit, FUN = "/"))
+    absDev <- abs(sweep(simDev, 1, pred$se.fit, FUN = "/"))
     masd <- apply(absDev, 2L, max)
     crit <- quantile(masd, prob = confidence, type = 8)
     pred <- data.frame(data.frame(pred), newd,
-                       uprS = predB$fit + (crit * predB$se.fit),
-                       lwrS = predB$fit - (crit * predB$se.fit))
+                       uprS = pred$fit + (crit * pred$se.fit),
+                       lwrS = pred$fit - (crit * pred$se.fit))
     if (logit)
     {
         invlink <- family(m)$linkinv
+        pred$fit <- invlink(pred$fit)
         pred$uprS <- invlink(pred$uprS)
         pred$lwrS <- invlink(pred$lwrS)
     }
