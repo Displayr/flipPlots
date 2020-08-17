@@ -12,14 +12,14 @@
 #' @param number.draws Number of possible trend lines to super-impose.
 #' @param trim.padding Logical; whether to remove padding around plotly chart.
 #'   Default is set to false so that output is the same as old charts.
-#' @importFrom flipTransformations AsNumeric AdjustDataToReflectWeights
+#' @importFrom flipTransformations AsNumeric AdjustDataToReflectWeights DichotomizeFactor
 #' @importFrom mgcv gam mroot
 #' @importFrom ggplot2 ggplot geom_ribbon geom_path aes theme_set theme_bw labs scale_y_continuous
 #' @importFrom plotly ggplotly config
 #' @importFrom utils stack
 #' @importFrom scales percent
 #' @importFrom rlang .data
-#' @importFrom stats binomial coef complete.cases family predict quantile rnorm vcov
+#' @importFrom stats binomial coef complete.cases family predict quantile rnorm vcov gaussian
 #' @export
 SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 predictor,
@@ -31,7 +31,21 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 confidence = 0.95,
                                                 trim.padding = FALSE)
 {
-    data <- data.frame(outcome = AsNumeric(outcome, binary = FALSE),
+    if (length(unique(outcome)) == 1)
+        stop("Could not construct model as outcome variable contains only one value.")
+    if (type == "Binary Logit")
+    {
+        # If outcome variable is too unbalanced then binary logit model
+        # cannot be fitted anyway so no need to continue
+        twolevel <- try(DichotomizeFactor(as.factor(outcome)), silent = TRUE)
+        if (inherits(twolevel, "try-error"))
+            stop("Outcome variable cannot be dichotimized (e.g. perhaps only has 1 value).")
+        tidy.outcome <- twolevel == levels(twolevel)[2]
+        attr(outcome, "label") <- paste(attr(outcome, "label"), levels(twolevel)[2])
+    } else
+        tidy.outcome <- AsNumeric(outcome, binary = FALSE)
+
+    data <- data.frame(outcome = tidy.outcome,
                       predictor = predictor,
                       predictor.numeric = scale(as.numeric(predictor)))
     logit <- type == "Binary Logit"
@@ -57,7 +71,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     xlab <- attr(predictor, "label")
 
     # Fitting the model
-    m <- gam(outcome ~ s(predictor.numeric), data = data, link = if(logit) family(binomial) else identity,
+    m <- gam(outcome ~ s(predictor.numeric), data = data,
+             family = if (logit) binomial(link="logit") else gaussian(link="identity"),
              method = "REML")
     newd <- with(data,
                  data.frame(predictor.numeric = seq(min(predictor.numeric, na.rm = TRUE),
@@ -66,9 +81,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                 max(predictor, na.rm = TRUE), length = 200)))
     if (inherits(newd$predictor, "POSIXct"))
         newd$predictor <- as.POSIXct(newd$predictor, origin = "1970-01-01")
-    pred <- predict(m, newd, se.fit = TRUE)
+    pred <- predict(m, newd, type = "link", se.fit = TRUE)
     pred$predictor <- newd$predictor
-    se.fit <- pred$se.fit
 
     # Sample from MVN random deviates
     rmvn <- function(n, mu, sig)
@@ -83,12 +97,19 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     BUdiff <- rmvn(N, mu = rep(0, nrow(Vb)), sig = Vb)
     Cg <- predict(m, newd, type = "lpmatrix")
     simDev <- Cg %*% t(BUdiff)
-    absDev <- abs(sweep(simDev, 1, se.fit, FUN = "/"))
+    absDev <- abs(sweep(simDev, 1, pred$se.fit, FUN = "/"))
     masd <- apply(absDev, 2L, max)
     crit <- quantile(masd, prob = confidence, type = 8)
     pred <- data.frame(data.frame(pred), newd,
                        uprS = pred$fit + (crit * pred$se.fit),
                        lwrS = pred$fit - (crit * pred$se.fit))
+    if (logit)
+    {
+        invlink <- family(m)$linkinv
+        pred$fit <- invlink(pred$fit)
+        pred$uprS <- invlink(pred$uprS)
+        pred$lwrS <- invlink(pred$lwrS)
+    }
     sims <- rmvn(N, mu = coef(m), sig = Vb)
     fits <- Cg %*% t(sims)
 
@@ -104,7 +125,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     if (number.draws > 0)
     {
         rnd <- sample(N, number.draws)
-        stackFits <- stack(as.data.frame(fits[, rnd]))
+        stackFits <- if (logit) stack(as.data.frame(invlink(fits[, rnd])))
+                     else       stack(as.data.frame(fits[, rnd]))
         stackFits <- transform(stackFits, predictor.numeric = rep(newd$predictor.numeric, length(rnd)))
         stackFits$predictor = newd$predictor
         p = p + geom_path(data = stackFits,
