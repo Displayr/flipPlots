@@ -23,6 +23,7 @@ r_packages:
   - devtools
   - roxygen2
   - covr
+  - networkD3
 
 r_github_packages:
   - Displayr/flipDevTools
