@@ -252,6 +252,7 @@ computeLinks <- function(data, weights, show.percentages = FALSE)
     links
 }
 
+#' @importFrom verbs Sum
 nodeDictionary <- function(list.of.factors, weights, show.counts, show.percentages)
 {
     nodes <- NULL
@@ -267,7 +268,7 @@ nodeDictionary <- function(list.of.factors, weights, show.counts, show.percentag
                 suffix <- paste("n =", tmp.info)
             if (show.percentages)
             {
-                denom <- if (!is.null(weights)) sum(weights, na.rm = TRUE) else length(vr)
+                denom <- if (!is.null(weights)) Sum(weights) else length(vr)
                 suffix <- paste(suffix, sprintf("%.0f%%", tmp.info/denom*100),
                     sep = if (show.counts) ", " else "")
             }
@@ -353,6 +354,7 @@ categorizeData <- function(data, weights, max.categories, share.values,
 #' @param df dataframe containing factor variables only.
 #' @param column index of the column which we are looking to merge nodes for
 #' @param weights numeric vector containing weights for each row of \code{df}.
+#' @importFrom verbs Sum
 findNodesToMerge <- function(df, column, weights = NULL)
 {
     lvls <- levels(df[[column]])
@@ -382,8 +384,8 @@ findNodesToMerge <- function(df, column, weights = NULL)
             ind.j  <- which(df[[column]] == lvls[j])
             ind.ij <- which(!profile[ind.i] %in% profile[ind.j])
             ind.ji <- which(!profile[ind.j] %in% profile[ind.i])
-            m.diff[i,j] <- sum(weights[c(ind.i[ind.ij], ind.j[ind.ji])])
-            m.size[i,j] <- sum(weights[c(ind.i, ind.j)], na.rm = TRUE)
+            m.diff[i,j] <- Sum(weights[c(ind.i[ind.ij], ind.j[ind.ji])], remove.missing = FALSE)
+            m.size[i,j] <- Sum(weights[c(ind.i, ind.j)])
         }
     }
     min.diff <- min(m.diff, na.rm = TRUE)
