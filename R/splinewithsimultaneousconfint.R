@@ -20,6 +20,7 @@
 #' @importFrom scales percent
 #' @importFrom rlang .data
 #' @importFrom stats binomial coef complete.cases family predict quantile rnorm vcov gaussian
+#' @importFrom verbs Sum
 #' @export
 SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 predictor,
@@ -62,7 +63,7 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     {
         data <- try(AdjustDataToReflectWeights(data, weights))
         if (inherits(data, "try-error"))
-            stop("Could not create dataset of ", ceiling(sum(weights)),
+            stop("Could not create dataset of ", ceiling(Sum(weights, remove.missing = FALSE)),
                  " observations as specified by the weights")
     }
 
