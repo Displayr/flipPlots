@@ -25,6 +25,9 @@
 #'    "Last variable"}. This specifies whether the links are shown in grey (None);
 #'    the same color as the source node; the same color as the target node; or
 #'    the same color as node in the first or last variable.
+#' @param node.position.automatic Position nodes automatically to reduce
+#'    the number of overlapping links. This is turned on by default, and when
+#'    turned off the nodes will be positioned in order they are given in the data.
 #' @param variables.share.values If \code{TRUE}, and \code{link.color = "Source"}
 #'    or \code{"Target"}, then the same set colors will be used for each variable.
 #' @param label.max.length Maximum number of characters in each node label.
@@ -48,6 +51,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
                           "Last variable")[1], variables.share.values = FALSE,
                           label.show.varname = TRUE, label.max.length = 100,
                           label.show.counts = FALSE, label.show.percentages = FALSE,
+                          node.position.automatic = TRUE,
                           node.width = 30, node.padding = 10, sinks.right = TRUE,
                           hovertext.show.percentages = FALSE)
 {
@@ -155,7 +159,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
                 Source = "source", Target = "target", Value = "value", nodePadding = node.padding,
                 fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str),
-                iterations = 0,
+                iterations = if (node.position.automatic) 32 else 0,
                 units = if (hovertext.show.percentages) "%" else "", sinksRight = sinks.right)
 }
 

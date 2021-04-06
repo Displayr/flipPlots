@@ -21,6 +21,7 @@ SankeyDiagram(
   label.max.length = 100,
   label.show.counts = FALSE,
   label.show.percentages = FALSE,
+  node.position.automatic = TRUE,
   node.width = 30,
   node.padding = 10,
   sinks.right = TRUE,
@@ -71,6 +72,10 @@ or \code{"Target"}, then the same set colors will be used for each variable.}
 \item{label.show.counts}{Append count data to node labels.}
 
 \item{label.show.percentages}{Append percentages to node labels.}
+
+\item{node.position.automatic}{Position nodes automatically to reduce
+the number of overlapping links. This is turned on by default, and when
+turned off the nodes will be positioned in order they are given in the data.}
 
 \item{node.width}{Width of the width.}
 
