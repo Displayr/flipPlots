@@ -155,12 +155,14 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
         font.size = round(fsc * font.size, 0)
     }
 
-    sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
+    res <- sankeyNetwork(Links = links, LinkGroup = if (link.color == "None") NULL else 'group',
                 Nodes = nodes, NodeID = 'name', NodeGroup = 'group', nodeWidth = node.width,
                 Source = "source", Target = "target", Value = "value", nodePadding = node.padding,
                 fontSize = font.size, fontFamily = font.family, colourScale = JS(color.str),
                 iterations = if (node.position.automatic) 32 else 0,
                 units = if (hovertext.show.percentages) "%" else "", sinksRight = sinks.right)
+    class(res) <- c(class(res), "visualization-selector")
+    return(res)
 }
 
 getNodeGroups <- function(type, links)
