@@ -54,8 +54,7 @@ to the path (flow).}
 pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
 points ("pt"), which will be consistent with font sizes in text boxes.}
 
-\item{colors}{Colors of the nodes, supplied as a vector of hex colors.
-Transparency values (alpha) will be ignored.}
+\item{colors}{Colors of the nodes, supplied as a vector of hex colors.}
 
 \item{link.color}{One of \code{"None", "Source", "Target", "First variable",
 "Last variable"}. This specifies whether the links are shown in grey (None);
