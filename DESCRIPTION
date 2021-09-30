@@ -22,6 +22,7 @@ Suggests:
     testthat,
 Remotes:
     Displayr/flipTransformations,
+    Displayr/networkD3,
     Displayr/plotly,
     Displayr/verbs
 RoxygenNote: 7.1.1
