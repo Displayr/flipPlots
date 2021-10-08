@@ -361,7 +361,7 @@ categorizeData <- function(data, weights, max.categories, share.values,
 #' @param df dataframe containing factor variables only.
 #' @param column index of the column which we are looking to merge nodes for
 #' @param weights numeric vector containing weights for each row of \code{df}.
-#' @importFrom verbs Sum
+#' @importFrom verbs Sum SumEmptyHandling
 findNodesToMerge <- function(df, column, weights = NULL)
 {
     lvls <- levels(df[[column]])
@@ -391,8 +391,8 @@ findNodesToMerge <- function(df, column, weights = NULL)
             ind.j  <- which(df[[column]] == lvls[j])
             ind.ij <- which(!profile[ind.i] %in% profile[ind.j])
             ind.ji <- which(!profile[ind.j] %in% profile[ind.i])
-            m.diff[i,j] <- Sum(weights[c(ind.i[ind.ij], ind.j[ind.ji])], remove.missing = FALSE)
-            m.size[i,j] <- Sum(weights[c(ind.i, ind.j)])
+            m.diff[i,j] <- SumEmptyHandling(weights[c(ind.i[ind.ij], ind.j[ind.ji])], remove.missing = FALSE)
+            m.size[i,j] <- SumEmptyHandling(weights[c(ind.i, ind.j)])
         }
     }
     min.diff <- min(m.diff, na.rm = TRUE)
