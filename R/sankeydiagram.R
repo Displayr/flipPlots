@@ -304,6 +304,9 @@ categorizeData <- function(data, weights, max.categories, share.values,
     var.names <- names(data)
     n <- length(var.names)
     breaks <- NULL
+    .truncate <- function(labels, n) ifelse(nchar(labels) > label.max.length, 
+        paste0(substr(labels, 1, label.max.length), " ..."), labels)
+
     if (share.values)
     {
         if (is.numeric(data[[1]]) && length(unique(unlist(data))) > max.categories)
@@ -329,19 +332,19 @@ categorizeData <- function(data, weights, max.categories, share.values,
         while (length(unique(data[[i]])) > max.categories)
         {
             node.change <- findNodesToMerge(data, i, weights)
-            data[[i]] <- mergeNodes(data[[i]], node.change, label.max.length)
+            data[[i]] <- mergeNodes(data[[i]], node.change)
             if (share.values)
             {
                for (j in 1:n)
-                    data[[i]] <- mergeNodes(data[[i]], node.change, label.max.length)
-                all.dat <- mergeNodes(all.dat, node.change, label.max.length)
+                    data[[i]] <- mergeNodes(data[[i]], node.change)
+                all.dat <- mergeNodes(all.dat, node.change)
             }
         }
         data[[i]] <- addNA(data[[i]], ifany = TRUE)
         if (label.show.varname)
-            levels(data[[i]]) <- paste(var.names[i], levels(data[[i]]), sep = ": ")
+            levels(data[[i]]) <- paste(var.names[i], .truncate(levels(data[[i]])), sep = ": ")
         else
-            levels(data[[i]]) <- paste0("", levels(data[[i]]))
+            levels(data[[i]]) <- paste0("", .truncate(levels(data[[i]])))
     }
     if (share.values)
         attr(data, "all.levels") <- levels(all.dat)
@@ -413,11 +416,9 @@ findNodesToMerge <- function(df, column, weights = NULL)
 #'   Note level names are used rather than the numeric representation
 #'   is used so it can be applied to multiple factors
 #' @param nchar Maximum number of characters in each label.
-mergeNodes <- function(x, old.nodes, nchar)
+mergeNodes <- function(x, old.nodes)
 {
     new.node <- paste(old.nodes, collapse = ", ")
-    if (nchar(new.node) > nchar)
-        new.node <- paste0(substr(new.node, 1, nchar), " ...")
     ind <- match(old.nodes, levels(x))
     levels(x)[ind] <- new.node
     return(x)
