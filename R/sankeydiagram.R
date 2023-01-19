@@ -298,6 +298,7 @@ nodeDictionary <- function(list.of.factors, weights, show.counts, show.percentag
 #' @param share.values Whether the values in each variable are expected to be the same.
 #' @param label.show.varname Whether to include the variable name in the node label.
 #' @param label.max.length Maximum number of characters in the node label.
+#' @importFrom flipU MakeUniqueNames
 categorizeData <- function(data, weights, max.categories, share.values,
                            label.show.varname, label.max.length)
 {
@@ -342,9 +343,9 @@ categorizeData <- function(data, weights, max.categories, share.values,
         }
         data[[i]] <- addNA(data[[i]], ifany = TRUE)
         if (label.show.varname)
-            levels(data[[i]]) <- paste(var.names[i], .truncate(levels(data[[i]])), sep = ": ")
+            levels(data[[i]]) <- MakeUniqueNames(paste(var.names[i], .truncate(levels(data[[i]])), sep = ": "))
         else
-            levels(data[[i]]) <- paste0("", .truncate(levels(data[[i]])))
+            levels(data[[i]]) <- MakeUniqueNames(paste0("", .truncate(levels(data[[i]]))))
     }
     if (share.values)
         attr(data, "all.levels") <- levels(all.dat)
@@ -415,7 +416,6 @@ findNodesToMerge <- function(df, column, weights = NULL)
 #' @param old.nodes a vector containing factor levels to merge.
 #'   Note level names are used rather than the numeric representation
 #'   is used so it can be applied to multiple factors
-#' @param nchar Maximum number of characters in each label.
 mergeNodes <- function(x, old.nodes)
 {
     new.node <- paste(old.nodes, collapse = ", ")
