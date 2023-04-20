@@ -26,6 +26,7 @@ Remotes:
     Displayr/flipU,
     Displayr/networkD3,
     Displayr/plotly,
-    Displayr/verbs
+    Displayr/verbs,
+    Displayr/flipExampleData
 RoxygenNote: 7.1.2
 Encoding: UTF-8
