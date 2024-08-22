@@ -228,7 +228,7 @@ computeLinks <- function(data, weights, show.percentages = FALSE)
     links <- NULL
     counter <- 0
     n <- length(data)
-    tmp.total <- if (!is.null(weights)) Sum(weights) else nrow(data)
+    total <- if (!is.null(weights)) Sum(weights) else nrow(data)
 
     for (i in 1:(n - 1)){
         x <- data[[i]]
@@ -245,7 +245,7 @@ computeLinks <- function(data, weights, show.percentages = FALSE)
                 if (value > 0)
                 {
                     if (show.percentages)
-                        value <- value / tmp.total * 100
+                        value <- value / total * 100
 
                     column.node <- counter + n.x + i.y - 1
                     links <- rbind(links,c(row.node,column.node, value))
