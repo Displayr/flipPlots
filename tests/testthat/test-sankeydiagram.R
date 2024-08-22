@@ -83,7 +83,7 @@ test_that("Sankey diagrams: weights and filter",
                          hovertext.show.percentages = TRUE,
                          output.data.only = TRUE)
     expect_equal(sum(dat$links$value[dat$links$source == 0]),
-                 sum(weights[p$q1 == 1])/sum(weights))
+                 100 * sum(weights[p$q1 == 1])/sum(weights))
 
     data(colas, package = "flipExampleData")
     p <- colas[, c("d1", "d2")]
