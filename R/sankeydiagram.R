@@ -228,7 +228,7 @@ computeLinks <- function(data, weights, show.percentages = FALSE)
     links <- NULL
     counter <- 0
     n <- length(data)
-    tmp.total <- nrow(data)
+    tmp.total <- if (!is.null(weights)) Sum(weights) else nrow(data)
 
     for (i in 1:(n - 1)){
         x <- data[[i]]
@@ -305,7 +305,7 @@ categorizeData <- function(data, weights, max.categories, share.values,
     var.names <- names(data)
     n <- length(var.names)
     breaks <- NULL
-    .truncate <- function(labels, n) ifelse(nchar(labels) > label.max.length, 
+    .truncate <- function(labels, n) ifelse(nchar(labels) > label.max.length,
         paste0(substr(labels, 1, label.max.length), " ..."), labels)
 
     if (share.values)
