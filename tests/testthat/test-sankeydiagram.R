@@ -68,28 +68,35 @@ expenses <- structure(list(Category = structure(c(4L, 2L, 1L, 2L, 1L, 3L,
 4972566, 2915644, 1762927))
 
 test_that("Sankey diagrams: weights and filter",
-          {
-              data(phone, package = "flipExampleData")
-              p <- phone[, c("q1", "q8", "q9", "q27")]
-              subset <- rep(TRUE, nrow(p))
-              subset[phone$q20h3 == "No"] <- FALSE
-              expect_error(print(SankeyDiagram(p, subset = subset)), NA)
-              weights <- sample(3, nrow(p), replace = TRUE)
-              expect_error(print(SankeyDiagram(p, weights = weights)), NA)
-              expect_error(print(SankeyDiagram(p, subset = subset, weights = weights)), NA)
+{
+    data(phone, package = "flipExampleData")
+    p <- phone[, c("q1", "q8", "q9", "q27")]
+    subset <- rep(TRUE, nrow(p))
+    subset[phone$q20h3 == "No"] <- FALSE
+    expect_error(print(SankeyDiagram(p, subset = subset)), NA)
+    weights <- sample(3, nrow(p), replace = TRUE)
+    expect_error(print(SankeyDiagram(p, weights = weights)), NA)
+    expect_error(print(SankeyDiagram(p, subset = subset, weights = weights)), NA)
 
-              data(colas, package = "flipExampleData")
-              p <- colas[, c("d1", "d2")]
-              subset <- rep(TRUE, nrow(p))
-              subset[colas$Q5_5_7 == "No"] <- FALSE
-              expect_error(print(SankeyDiagram(p, subset = subset)), NA)
-              weights <- rnorm(nrow(p))
-              weights[weights < 0] <- 0
-              expect_error(print(SankeyDiagram(p, weights = weights)), NA)
-              expect_error(print(SankeyDiagram(p, subset = subset, weights = weights)), NA)
+    # RS-16902: weights correctly used to compute percentages
+    dat <- SankeyDiagram(p, weights = weights,
+                         hovertext.show.percentages = TRUE,
+                         output.data.only = TRUE)
+    expect_equal(sum(dat$links$value[dat$links$source == 0]),
+                 100 * sum(weights[p$q1 == 1])/sum(weights))
 
-              # Large weights
-              expect_error(SankeyDiagram(expenses, weights = attr(expenses, "weights")), NA)
+    data(colas, package = "flipExampleData")
+    p <- colas[, c("d1", "d2")]
+    subset <- rep(TRUE, nrow(p))
+    subset[colas$Q5_5_7 == "No"] <- FALSE
+    expect_error(print(SankeyDiagram(p, subset = subset)), NA)
+    weights <- rnorm(nrow(p))
+    weights[weights < 0] <- 0
+    expect_error(print(SankeyDiagram(p, weights = weights)), NA)
+    expect_error(print(SankeyDiagram(p, subset = subset, weights = weights)), NA)
+
+    # Large weights
+    expect_error(SankeyDiagram(expenses, weights = attr(expenses, "weights")), NA)
 })
 
 datNumeric <- structure(list(Length = structure(c(0.455, 0.35, 0.53, 0.44,
