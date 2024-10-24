@@ -79,6 +79,14 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
                                   check.names = FALSE)
         }
 
+        # If we are reading from raw text, then text columns should already be factors
+        # but if table was constructed in other ways, we still want to convert text
+        # to factors
+        for (i in 1:ncol(data)) {
+            if (is.character(data[[i]]))
+                data[[i]] <- as.factor(data[[i]])
+        }
+
         if (nrow(data) < 2)
             stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
         if (max.categories < 2)
