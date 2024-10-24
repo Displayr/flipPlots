@@ -64,7 +64,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
     } else
     {
         if (!is.data.frame(data))
-            data <- as.data.frame(data)
+            data <- as.data.frame(data, stringsAsFactors = TRUE)
         else if (!is.null(attr(data[[1]], "questiontype")))
         {
             # From R 4.0, stringsAsFactors defaults to FALSE.
