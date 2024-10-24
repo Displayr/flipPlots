@@ -64,7 +64,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
     } else
     {
         if (!is.data.frame(data))
-            data <- as.data.frame(data)
+            data <- as.data.frame(data, stringsAsFactors = TRUE)
         else if (!is.null(attr(data[[1]], "questiontype")))
         {
             # From R 4.0, stringsAsFactors defaults to FALSE.
@@ -77,6 +77,14 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
             data <- as.data.frame(as.list(data),
                                   stringsAsFactors = TRUE,
                                   check.names = FALSE)
+        }
+
+        # If we are reading from raw text, then text columns should already be factors
+        # but if table was constructed in other ways, we still want to convert text
+        # to factors
+        for (i in 1:ncol(data)) {
+            if (is.character(data[[i]]))
+                data[[i]] <- as.factor(data[[i]])
         }
 
         if (nrow(data) < 2)
