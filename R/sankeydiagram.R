@@ -84,7 +84,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
         # but if table was constructed in other ways, we still want to convert text
         # to factors
         for (i in 1:ncol(data)) {
-            if (!is.factor(data[[i]]))
+            if (!is.factor(data[[i]]) && !is.numeric(data[[i]]))
                 data[[i]] <- Factor(data[[i]])
         }
 
