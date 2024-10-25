@@ -12,7 +12,7 @@ Imports:
     flipU,
     networkD3,
     mgcv,
-    ggplot2,
+    ggplot2 (<= 3.4.4),
     plotly,
     scales,
     rlang,
