@@ -1,7 +1,7 @@
 Package: flipPlots
 Type: Package
 Title: Creates Plots
-Version: 1.3.6
+Version: 1.3.7
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Wrappers for various plot types.
@@ -28,5 +28,5 @@ Remotes:
     Displayr/plotly,
     Displayr/verbs,
     Displayr/flipExampleData
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.1
 Encoding: UTF-8

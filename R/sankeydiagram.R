@@ -37,6 +37,7 @@
 #' @param sinks.right Logical indicating whether to move the last nodes to the right border of the plot.
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom grDevices col2rgb rgb
+#' @importFrom flipTransformations Factor
 #' @return A sankey diagram (HTMLwidget).
 #' @details Text variables are grouped as having text or not having text.
 #' To see patterns with text variables, they should first be turned into
@@ -83,8 +84,8 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
         # but if table was constructed in other ways, we still want to convert text
         # to factors
         for (i in 1:ncol(data)) {
-            if (is.character(data[[i]]))
-                data[[i]] <- as.factor(data[[i]])
+            if (!is.factor(data[[i]]))
+                data[[i]] <- Factor(data[[i]])
         }
 
         if (nrow(data) < 2)
