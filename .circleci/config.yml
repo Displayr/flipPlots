@@ -7,7 +7,7 @@ parameters:
     default: ""
   remote-deps:
     type: string
-    default: ""
+    default: cran/ggplot2@3.4.4
   plugins-branch:
     type: string
     default: ""
