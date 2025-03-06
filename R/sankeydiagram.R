@@ -38,6 +38,7 @@
 #' @importFrom networkD3 sankeyNetwork JS
 #' @importFrom grDevices col2rgb rgb
 #' @importFrom flipTransformations Factor
+#' @importFrom flipU StopForUserError
 #' @return A sankey diagram (HTMLwidget).
 #' @details Text variables are grouped as having text or not having text.
 #' To see patterns with text variables, they should first be turned into
@@ -89,14 +90,14 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
         }
 
         if (nrow(data) < 2)
-            stop(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
+            StopForUserError(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
         if (max.categories < 2)
-            stop("Maximum number of categories must be greater than 1.")
+            StopForUserError("Maximum number of categories must be greater than 1.")
 
         if (!is.null(weights) & length(weights) != nrow(data))
-            stop("'weights' and 'data' are required to have the same number of observations. They do not.")
+            StopForUserError("'weights' and 'data' are required to have the same number of observations. They do not.")
         if (!is.null(subset) & length(subset) > 1 & length(subset) != nrow(data))
-            stop("'subset' and 'data' are required to have the same number of observations. They do not.")
+            StopForUserError("'subset' and 'data' are required to have the same number of observations. They do not.")
 
         # Take subset and resample to generate a weighted sample, if necessary.
         if (is.null(subset))
@@ -109,7 +110,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
         tmp.is.numeric <- sapply(subset.data, is.numeric)
         if (link.color %in% c("Source", "Target") && variables.share.values &&
             any(tmp.is.numeric) && !all(tmp.is.numeric))
-            stop("'Variables share common values' has been set to true so variables must be of the same type.")
+            StopForUserError("'Variables share common values' has been set to true so variables must be of the same type.")
         variables <- categorizeData(subset.data, weights, max.categories,
             variables.share.values, label.show.varname, label.max.length)
         links <- computeLinks(variables, weights, hovertext.show.percentages)
@@ -453,4 +454,3 @@ quantizeVariable <- function(x, max.categories, breaks = NULL)
     x.fac <- addNA(x.fac, ifany = TRUE)
     return(x.fac)
 }
-

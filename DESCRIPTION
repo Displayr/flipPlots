@@ -9,7 +9,7 @@ License: GPL-3
 LazyData: FALSE
 Imports:
     flipTransformations,
-    flipU,
+    flipU (>= 1.6.2),
     networkD3,
     mgcv,
     ggplot2 (<= 3.4.4),
@@ -28,5 +28,5 @@ Remotes:
     Displayr/plotly,
     Displayr/verbs,
     Displayr/flipExampleData
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
