@@ -13,6 +13,7 @@
 #' @param trim.padding Logical; whether to remove padding around plotly chart.
 #'   Default is set to false so that output is the same as old charts.
 #' @importFrom flipTransformations AsNumeric AdjustDataToReflectWeights DichotomizeFactor
+#' @importFrom flipU StopForUserError
 #' @importFrom mgcv gam mroot
 #' @importFrom ggplot2 ggplot geom_ribbon geom_path aes theme_set theme_bw labs scale_y_continuous
 #' @importFrom plotly ggplotly config
@@ -33,14 +34,14 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 trim.padding = FALSE)
 {
     if (length(unique(outcome)) == 1)
-        stop("Could not construct model as outcome variable contains only one value.")
+        StopForUserError("Could not construct model as outcome variable contains only one value.")
     if (type == "Binary Logit")
     {
         # If outcome variable is too unbalanced then binary logit model
         # cannot be fitted anyway so no need to continue
         twolevel <- try(DichotomizeFactor(as.factor(outcome)), silent = TRUE)
         if (inherits(twolevel, "try-error"))
-            stop("Outcome variable cannot be dichotimized (e.g. perhaps only has 1 value).")
+            StopForUserError("Outcome variable cannot be dichotimized (e.g. perhaps only has 1 value).")
         tidy.outcome <- twolevel == levels(twolevel)[2]
         attr(outcome, "label") <- paste(attr(outcome, "label"), levels(twolevel)[2])
     } else
@@ -55,7 +56,7 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     if (length(subset) > 1)
     {
         if (length(subset) != nrow(data))
-            stop("Filter does not have the same length as the input data. Select a variable from the same data set.")
+            StopForUserError("Filter does not have the same length as the input data. Select a variable from the same data set.")
         data <- subset(data, subset)
         weights <- subset(weights, subset)
     }
@@ -63,8 +64,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     {
         data <- try(AdjustDataToReflectWeights(data, weights))
         if (inherits(data, "try-error"))
-            stop("Could not create dataset of ", ceiling(Sum(weights, remove.missing = FALSE)),
-                 " observations as specified by the weights")
+            StopForUserError("Could not create dataset of ", ceiling(Sum(weights, remove.missing = FALSE)),
+                             " observations as specified by the weights")
     }
 
     data <- data[complete.cases(data), ]
