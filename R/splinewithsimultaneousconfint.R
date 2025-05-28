@@ -1,5 +1,6 @@
 #' Plots spline with confidence intervals
 #'
+#' @inheritParams flipStandardCharts::Line
 #' @param outcome Outcome variable shown in the y-axis. This should be convertible using \code{AsNumeric}.
 #' @param predictor Predictor variable shown in the x-axis. This should be a numeric or date variable.
 #' @param type Regression link function used. Currently can be "Binary Logit" or "Linear".
@@ -9,17 +10,25 @@
 #' @param weights Optional numeric vector used as sampling weights.
 #' @param seed Random seed for reproducibility
 #' @param confidence Width of confidence interval shown around the spline.
+#' @param ci.color Color of the ribbon showing the confidence interval.
 #' @param number.draws Number of possible trend lines to super-impose.
-#' @param trim.padding Logical; whether to remove padding around plotly chart.
+#' @param draw.color Color of the possible trend lines.
+#' @param draw.weight Line weight of the possible trend line.
+#' @param mean.color Line color of the mean (or predicted) line.
+#' @param mean.weight Line weight of the mean line.
+#' @param font.units One of "px" of "pt". By default all font sizes are specified in terms of
+#' pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
+#' points ("pt"), which will be consistent with font sizes in text boxes.
+#' @param trim.padding (Deprecated)Logical; whether to remove padding around plotly chart.
 #'   Default is set to false so that output is the same as old charts.
+#' @param ... Other parameters to pass to flipStandardCharts::Line.
+#' @importFrom flipStandardCharts Line
 #' @importFrom flipTransformations AsNumeric AdjustDataToReflectWeights DichotomizeFactor
 #' @importFrom flipU StopForUserError
 #' @importFrom mgcv gam mroot
-#' @importFrom ggplot2 ggplot geom_ribbon geom_path aes theme_set theme_bw labs scale_y_continuous
-#' @importFrom plotly ggplotly config
+#' @importFrom plotly plot_ly add_ribbons add_lines layout config
 #' @importFrom utils stack
 #' @importFrom scales percent
-#' @importFrom rlang .data
 #' @importFrom stats binomial coef complete.cases family predict quantile rnorm vcov gaussian
 #' @importFrom verbs Sum
 #' @export
@@ -31,7 +40,29 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 seed = 42,
                                                 number.draws = 30,
                                                 confidence = 0.95,
-                                                trim.padding = FALSE)
+                                                mean.color = "#000000",
+                                                mean.weight = 2,
+                                                draw.color = "#33333366",
+                                                draw.weight = 1,
+                                                ci.color = "#FF000033",
+                                                y.tick.format = NULL,
+                                                y.hovertext.format = ".1f",
+                                                title = NULL,
+                                                subtitle = NULL,
+                                                x.title = NULL,
+                                                y.title = NULL,
+                                                global.font.family = "Arial",
+                                                global.font.color = rgb(44, 44, 44, maxColorValue = 255),
+                                                title.font.size = 16,
+                                                subtitle.font.size = 12,
+                                                hovertext.font.size = 11,
+                                                y.title.font.size = 12,
+                                                x.title.font.size = 12,
+                                                y.tick.font.size = 10,
+                                                x.tick.font.size = 10,
+                                                font.units = "pt",
+                                                trim.padding = FALSE,
+                                                ...)
 {
     if (length(unique(outcome)) == 1)
         StopForUserError("Could not construct model as outcome variable contains only one value.")
@@ -115,14 +146,49 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     sims <- rmvn(N, mu = coef(m), sig = Vb)
     fits <- Cg %*% t(sims)
 
+    if (is.null(title))
+        title <- paste0("Simultaneous ", confidence * 100, "% confidence intervals for fitted GAM")
+    if (is.null(subtitle))
+        subtitle = sprintf("Each line is one of %i draws from the Bayesian posterior distribution of the model", number.draws)
+    if (is.null(x.title))
+        x.title <- xlab
+    if (is.null(y.title))
+        y.title <- ylab
+    if (is.null(y.tick.format) && logit)
+        y.tick.format <- "%"
+
+    # For the standard charts, the font size conversion happens inside flipChart::CChart
+    if (tolower(font.units) %in% c("pt", "point", "points"))
+    {
+        fsc <- 1.3333
+        title.font.size = round(fsc * title.font.size, 0)
+        subtitle.font.size = round(fsc * subtitle.font.size, 0)
+        hovertext.font.size = round(fsc * hovertext.font.size, 0)
+        y.title.font.size = round(fsc * y.title.font.size, 0)
+        x.title.font.size = round(fsc * x.title.font.size, 0)
+        y.tick.font.size = round(fsc * y.tick.font.size, 0)
+        x.tick.font.size = round(fsc * x.tick.font.size, 0)
+    }
+
     # Create plot
-    theme_set(theme_bw())
-    p <- ggplot(pred, aes(x = .data$predictor, y = .data$fit)) +
-            geom_ribbon(aes(ymin = .data$lwrS, ymax = .data$uprS), alpha = 0.2, fill = "red") +
-            geom_path(lwd = 2) +
-            labs(y = ylab, x = xlab,
-                 title = paste0("Simultaneous ", confidence * 100, "% confidence intervals for fitted GAM"),
-                 subtitle = sprintf("Each line is one of %i draws from the Bayesian posterior distribution of the model", number.draws))
+    plot.data <- pred$fit
+    names(plot.data) <- pred$predictor
+    pp <- Line(plot.data, colors = mean.color, line.thickness = mean.weight,
+             title = title, subtitle = subtitle, x.title = x.title, y.title = y.title,
+             y.tick.format = y.tick.format, y.hovertext.format = y.hovertext.format,
+             global.font.family = global.font.family, global.font.color = global.font.color,
+             title.font.size = title.font.size, subtitle.font.size = subtitle.font.size,
+             y.title.font.size = y.title.font.size, x.title.font.size = x.title.font.size,
+             y.tick.font.size = y.tick.font.size, x.tick.font.size = x.tick.font.size,
+             hovertext.font.size = hovertext.font.size, legend.show = FALSE, ...)
+
+    pp$htmlwidget <- add_ribbons(pp$htmlwidget, x = pred$predictor,
+                     ymin = pred$lwrS, ymax = pred$uprS,
+                     fillcolor = ci.color, line = list(color = "transparent"),
+                     text = sprintf(paste0("[%", y.hovertext.format, ", %", y.hovertext.format, "]"), pred$lwrS, pred$uprS),
+                     hovertemplate = "%{x}: %{text}",
+                     hoverlabel = list(font = list(color = flipStandardCharts:::autoFontColor(ci.color))),
+                     name = "Confidence Interval")
 
     if (number.draws > 0)
     {
@@ -131,14 +197,14 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                      else       stack(as.data.frame(fits[, rnd]))
         stackFits <- transform(stackFits, predictor.numeric = rep(newd$predictor.numeric, length(rnd)))
         stackFits$predictor = newd$predictor
-        p = p + geom_path(data = stackFits,
-                mapping = aes(y = .data$values, x = .data$predictor, group = .data$ind),
-                alpha = 0.4, colour = "grey20")
+        for (i in unique(stackFits$ind))
+        {
+            ind <- which(stackFits$ind == i)
+            pp$htmlwidget <- add_lines(pp$htmlwidget, x = stackFits$predictor[ind], y = stackFits$values[ind],
+                      line = list(color = draw.color, width = draw.weight),
+                      hoverlabel = list(font = list(color = flipStandardCharts:::autoFontColor(draw.color))),
+                      name = paste("Draw", i))
+        }
     }
-    if (logit)
-        p <- p + scale_y_continuous(labels = percent)
-    p <- ggplotly(p)
-    p <- config(p, displayModeBar = FALSE)
-    p$sizingPolicy$browser$padding <- if (trim.padding) 0 else 40
-    p
+    pp
 }

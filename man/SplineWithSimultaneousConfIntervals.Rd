@@ -13,7 +13,29 @@ SplineWithSimultaneousConfIntervals(
   seed = 42,
   number.draws = 30,
   confidence = 0.95,
-  trim.padding = FALSE
+  mean.color = "#000000",
+  mean.weight = 2,
+  draw.color = "#33333366",
+  draw.weight = 1,
+  ci.color = "#FF000033",
+  y.tick.format = NULL,
+  y.hovertext.format = ".1f",
+  title = NULL,
+  subtitle = NULL,
+  x.title = NULL,
+  y.title = NULL,
+  global.font.family = "Arial",
+  global.font.color = rgb(44, 44, 44, maxColorValue = 255),
+  title.font.size = 16,
+  subtitle.font.size = 12,
+  hovertext.font.size = 11,
+  y.title.font.size = 12,
+  x.title.font.size = 12,
+  y.tick.font.size = 10,
+  x.tick.font.size = 10,
+  font.units = "pt",
+  trim.padding = FALSE,
+  ...
 )
 }
 \arguments{
@@ -35,8 +57,60 @@ in the analysis.}
 
 \item{confidence}{Width of confidence interval shown around the spline.}
 
-\item{trim.padding}{Logical; whether to remove padding around plotly chart.
+\item{mean.color}{Line color of the mean (or predicted) line.}
+
+\item{mean.weight}{Line weight of the mean line.}
+
+\item{draw.color}{Color of the possible trend lines.}
+
+\item{draw.weight}{Line weight of the possible trend line.}
+
+\item{ci.color}{Color of the ribbon showing the confidence interval.}
+
+\item{y.tick.format}{A string representing a d3 formatting code.
+See https://github.com/d3/d3/blob/master/API.md#number-formats-d3-format}
+
+\item{y.hovertext.format}{A string representing a d3 formatting code
+See https://github.com/d3/d3/blob/master/API.md#number-formats-d3-format}
+
+\item{title}{Character; chart title.}
+
+\item{subtitle}{Character}
+
+\item{x.title}{Character, x-axis title; defaults to chart input values;
+to turn off set to "FALSE".}
+
+\item{y.title}{Character, y-axis title; defaults to chart input values;
+to turn off set to "FALSE".}
+
+\item{global.font.family}{Character; font family for all occurrences of any
+font attribute for the chart unless specified individually.}
+
+\item{global.font.color}{Global font color as a named color in character format
+(e.g. "black") or an a hex code.}
+
+\item{title.font.size}{Integer; Title font size; default = 10.}
+
+\item{subtitle.font.size}{Integer; subtitle font size}
+
+\item{hovertext.font.size}{Font size of hover text.}
+
+\item{y.title.font.size}{Integer; y-axis title font size}
+
+\item{x.title.font.size}{Integer; x-axis title font size}
+
+\item{y.tick.font.size}{Integer; y-axis tick label font size}
+
+\item{x.tick.font.size}{Integer; x-axis tick label font size}
+
+\item{font.units}{One of "px" of "pt". By default all font sizes are specified in terms of
+pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
+points ("pt"), which will be consistent with font sizes in text boxes.}
+
+\item{trim.padding}{(Deprecated)Logical; whether to remove padding around plotly chart.
 Default is set to false so that output is the same as old charts.}
+
+\item{...}{Other parameters to pass to flipStandardCharts::Line.}
 }
 \description{
 Plots spline with confidence intervals
