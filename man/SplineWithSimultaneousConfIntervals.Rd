@@ -19,15 +19,14 @@ SplineWithSimultaneousConfIntervals(
   draw.weight = 1,
   ci.color = "#FF000033",
   y.tick.format = NULL,
+  x.grid.width = 1,
   y.hovertext.format = ".1f",
   title = NULL,
-  subtitle = NULL,
   x.title = NULL,
   y.title = NULL,
   global.font.family = "Open Sans",
   global.font.color = rgb(44, 44, 44, maxColorValue = 255),
   title.font.size = 12,
-  subtitle.font.size = 8,
   hovertext.font.size = 9,
   y.title.font.size = 10,
   x.title.font.size = 10,
@@ -70,12 +69,12 @@ in the analysis.}
 \item{y.tick.format}{A string representing a d3 formatting code.
 See https://github.com/d3/d3/blob/master/API.md#number-formats-d3-format}
 
+\item{x.grid.width}{Width of y-grid lines in pixels; 0 = no line}
+
 \item{y.hovertext.format}{A string representing a d3 formatting code
 See https://github.com/d3/d3/blob/master/API.md#number-formats-d3-format}
 
 \item{title}{Character; chart title.}
-
-\item{subtitle}{Character}
 
 \item{x.title}{Character, x-axis title; defaults to chart input values;
 to turn off set to "FALSE".}
@@ -90,8 +89,6 @@ font attribute for the chart unless specified individually.}
 (e.g. "black") or an a hex code.}
 
 \item{title.font.size}{Integer; Title font size; default = 10.}
-
-\item{subtitle.font.size}{Integer; subtitle font size}
 
 \item{hovertext.font.size}{Font size of hover text.}
 

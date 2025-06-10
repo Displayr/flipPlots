@@ -46,15 +46,14 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 draw.weight = 1,
                                                 ci.color = "#FF000033",
                                                 y.tick.format = NULL,
+                                                x.grid.width = 1,
                                                 y.hovertext.format = ".1f",
                                                 title = NULL,
-                                                subtitle = NULL,
                                                 x.title = NULL,
                                                 y.title = NULL,
                                                 global.font.family = "Open Sans",
                                                 global.font.color = rgb(44, 44, 44, maxColorValue = 255),
                                                 title.font.size = 12,
-                                                subtitle.font.size = 8,
                                                 hovertext.font.size = 9,
                                                 y.title.font.size = 10,
                                                 x.title.font.size = 10,
@@ -148,8 +147,6 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
 
     if (is.null(title))
         title <- paste0("Simultaneous ", confidence * 100, "% confidence intervals for fitted GAM")
-    if (is.null(subtitle))
-        subtitle = sprintf("Each line is one of %i draws from the Bayesian posterior distribution of the model", number.draws)
     if (is.null(x.title))
         x.title <- xlab
     if (is.null(y.title))
@@ -162,7 +159,6 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     {
         fsc <- 1.3333
         title.font.size = round(fsc * title.font.size, 0)
-        subtitle.font.size = round(fsc * subtitle.font.size, 0)
         hovertext.font.size = round(fsc * hovertext.font.size, 0)
         y.title.font.size = round(fsc * y.title.font.size, 0)
         x.title.font.size = round(fsc * x.title.font.size, 0)
@@ -174,10 +170,10 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     plot.data <- pred$fit
     names(plot.data) <- pred$predictor
     pp <- Line(plot.data, colors = mean.color, line.thickness = mean.weight,
-             title = title, subtitle = subtitle, x.title = x.title, y.title = y.title,
+             title = title, x.title = x.title, y.title = y.title,
              y.tick.format = y.tick.format, y.hovertext.format = y.hovertext.format,
              global.font.family = global.font.family, global.font.color = global.font.color,
-             title.font.size = title.font.size, subtitle.font.size = subtitle.font.size,
+             title.font.size = title.font.size, x.grid.width = x.grid.width,
              y.title.font.size = y.title.font.size, x.title.font.size = x.title.font.size,
              y.tick.font.size = y.tick.font.size, x.tick.font.size = x.tick.font.size,
              hovertext.font.size = hovertext.font.size, legend.show = FALSE, ...)
