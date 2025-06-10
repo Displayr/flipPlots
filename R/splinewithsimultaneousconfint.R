@@ -169,6 +169,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     # Create plot
     plot.data <- pred$fit
     names(plot.data) <- pred$predictor
+    cat("plot.data:\n")
+    print(plot.data)
     pp <- Line(plot.data, colors = mean.color, line.thickness = mean.weight,
              title = title, x.title = x.title, y.title = y.title,
              y.tick.format = y.tick.format, y.hovertext.format = y.hovertext.format,
@@ -178,7 +180,9 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
              y.tick.font.size = y.tick.font.size, x.tick.font.size = x.tick.font.size,
              hovertext.font.size = hovertext.font.size, legend.show = FALSE, ...)
 
-    pp$htmlwidget <- add_ribbons(pp$htmlwidget, x = pred$predictor,
+    cat("ribbon:\n")
+    print(pred$predictor)
+    pp$htmlwidget <- add_ribbons(pp$htmlwidget, x = names(plot.data),
                      ymin = pred$lwrS, ymax = pred$uprS,
                      fillcolor = ci.color, line = list(color = "transparent"),
                      text = sprintf(paste0("[%", y.hovertext.format, ", %", y.hovertext.format, "]"), pred$lwrS, pred$uprS),
@@ -196,7 +200,8 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
         for (i in unique(stackFits$ind))
         {
             ind <- which(stackFits$ind == i)
-            pp$htmlwidget <- add_lines(pp$htmlwidget, x = stackFits$predictor[ind], y = stackFits$values[ind],
+            print(stackFits$predictor[ind][1:10])
+            pp$htmlwidget <- add_lines(pp$htmlwidget, x = names(plot.data), y = stackFits$values[ind],
                       line = list(color = draw.color, width = draw.weight),
                       hoverlabel = list(font = list(color = flipStandardCharts:::autoFontColor(draw.color))),
                       name = paste("Draw", i))
