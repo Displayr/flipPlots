@@ -180,7 +180,7 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
              title = title, x.title = x.title, y.title = y.title,
              y.tick.format = y.tick.format, y.hovertext.format = y.hovertext.format,
              global.font.family = global.font.family, global.font.color = global.font.color,
-             title.font.size = title.font.size, x.grid.width = x.grid.width,
+             title.font.size = title.font.size, x.grid.width = x.grid.width, y.zero = y.zero,
              y.title.font.size = y.title.font.size, x.title.font.size = x.title.font.size,
              y.tick.font.size = y.tick.font.size, x.tick.font.size = x.tick.font.size,
              hovertext.font.size = hovertext.font.size, legend.show = FALSE, ...)
