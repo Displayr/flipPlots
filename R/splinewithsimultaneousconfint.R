@@ -169,6 +169,10 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
     # Create plot
     plot.data <- pred$fit
     names(plot.data) <- pred$predictor
+    if (inherits(pred$predictor, "POSIXct")) {
+        cat("predictor is POSIXct")
+        names(plot.data) <- strftime(pred$predictor)
+    }
     cat("plot.data:\n")
     print(plot.data)
     pp <- Line(plot.data, colors = mean.color, line.thickness = mean.weight,
