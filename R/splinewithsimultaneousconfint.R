@@ -48,6 +48,7 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
                                                 y.tick.format = NULL,
                                                 x.grid.width = 1,
                                                 y.hovertext.format = ".1f",
+                                                y.zero = FALSE,
                                                 title = NULL,
                                                 x.title = NULL,
                                                 y.title = NULL,
@@ -168,12 +169,13 @@ SplineWithSimultaneousConfIntervals <- function(outcome,
 
     # Create plot
     plot.data <- pred$fit
-    names(plot.data) <- pred$predictor
+    names(plot.data) <- if (inherits(pred$predictor, "POSIXct")) strftime(pred$predictor)
+                        else pred$predictor
     pp <- Line(plot.data, colors = mean.color, line.thickness = mean.weight,
              title = title, x.title = x.title, y.title = y.title,
              y.tick.format = y.tick.format, y.hovertext.format = y.hovertext.format,
              global.font.family = global.font.family, global.font.color = global.font.color,
-             title.font.size = title.font.size, x.grid.width = x.grid.width,
+             title.font.size = title.font.size, x.grid.width = x.grid.width, y.zero = y.zero,
              y.title.font.size = y.title.font.size, x.title.font.size = x.title.font.size,
              y.tick.font.size = y.tick.font.size, x.tick.font.size = x.tick.font.size,
              hovertext.font.size = hovertext.font.size, legend.show = FALSE, ...)

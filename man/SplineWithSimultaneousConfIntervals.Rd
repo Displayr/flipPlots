@@ -21,6 +21,7 @@ SplineWithSimultaneousConfIntervals(
   y.tick.format = NULL,
   x.grid.width = 1,
   y.hovertext.format = ".1f",
+  y.zero = FALSE,
   title = NULL,
   x.title = NULL,
   y.title = NULL,
@@ -73,6 +74,8 @@ See https://github.com/d3/d3/blob/master/API.md#number-formats-d3-format}
 
 \item{y.hovertext.format}{A string representing a d3 formatting code
 See https://github.com/d3/d3/blob/master/API.md#number-formats-d3-format}
+
+\item{y.zero}{Whether the y-axis should include zero.}
 
 \item{title}{Character; chart title.}
 
