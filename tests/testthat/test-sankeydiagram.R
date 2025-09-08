@@ -1099,6 +1099,7 @@ datText <- structure(list(Q1_Gender = structure(c(2L, 2L, 1L, 1L, 2L, 2L,
 test_that("Many categories",
 {
     expect_error(SankeyDiagram(datText), NA)
+    expect_error(SankeyDiagram(datText, link.color = "Last variable"), NA)
 })
 
 dat.longnames <- structure(list(`D3 - Gender` = structure(c(2L, 1L, 2L, 2L, 2L,
