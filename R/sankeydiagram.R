@@ -176,7 +176,7 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
 
 getNodeGroups <- function(type, links)
 {
-    num.nodes <- length(unique(unlist(links$source, links$target)))
+    num.nodes <- length(unique(c(unlist(links$source), unlist(links$target))))
     grps <- rep(NA, num.nodes)
     gval <- rep(NA, num.nodes)
 
