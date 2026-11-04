@@ -89,6 +89,8 @@ SankeyDiagram <- function(data = NULL, links.and.nodes = NULL, output.data.only 
                 data[[i]] <- Factor(data[[i]])
         }
 
+        if (ncol(data) < 2)
+            StopForUserError("A Sankey diagram shows how cases flow between variables, so it needs at least two variables, but only one was provided. Please provide at least two variables, such as a raw data table with a column for each variable and a row for each case.")
         if (nrow(data) < 2)
             StopForUserError(paste0(nrow(data), "observations: more data is required to create a Sankey diagram."))
         if (max.categories < 2)

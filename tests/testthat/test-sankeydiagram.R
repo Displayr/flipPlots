@@ -36,6 +36,12 @@ test_that("Sankey diagrams",
               SankeyDiagram(p, max.categories = 2)
 })
 
+test_that("Fewer than two variables",
+{
+    one.variable <- data.frame(Gender = factor(c("Male", "Female", "Male")))
+    expect_error(SankeyDiagram(one.variable), "at least two variables")
+})
+
 expenses <- structure(list(Category = structure(c(4L, 2L, 1L, 2L, 1L, 3L,
 2L, 2L, 3L, 5L, 2L, 2L, 1L, 1L, 5L, 3L, 3L, 3L, 1L, 3L, 1L, 2L,
 1L, 1L, 5L, 2L, 4L, 3L, 5L, 1L, 3L, 5L, 5L, 5L, 1L, 3L, 1L, 1L,
