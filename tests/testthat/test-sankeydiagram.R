@@ -36,6 +36,14 @@ test_that("Sankey diagrams",
               SankeyDiagram(p, max.categories = 2)
 })
 
+test_that("Fewer than two rows or columns",
+{
+    one.column <- data.frame(Gender = factor(c("Male", "Female", "Male")))
+    expect_error(SankeyDiagram(one.column), "at least two rows and two columns")
+    one.row <- data.frame(Gender = factor("Male"), Age = factor("Young"))
+    expect_error(SankeyDiagram(one.row), "at least two rows and two columns")
+})
+
 expenses <- structure(list(Category = structure(c(4L, 2L, 1L, 2L, 1L, 3L,
 2L, 2L, 3L, 5L, 2L, 2L, 1L, 1L, 5L, 3L, 3L, 3L, 1L, 3L, 1L, 2L,
 1L, 1L, 5L, 2L, 4L, 3L, 5L, 1L, 3L, 5L, 5L, 5L, 1L, 3L, 1L, 1L,
